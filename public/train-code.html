@@ -1,10 +1,8 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -14,6 +12,14 @@
         }
     </style>
 </head>
+<style>
+    #codeeditor {
+        width: 50%;
+    }
+</style>
+<script>
+    let codeNow = 1;
+</script>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -40,11 +46,37 @@
             </ul>
         </div>
     </nav>
-    <video controls width="250">
-        <source
-            src="https://interview-appworks.s3.ap-northeast-1.amazonaws.com/testing/RecordRTC-202239-a2ykkm135el.webm"
-            type="video/webm" />
-    </video>
+    <h1>CodeMirror 6</h1>
+
+    <form>
+        <div id="codeeditor"></div>
+
+        <input type="submit" value="Submit" onclick="sendto()" />
+    </form>
+    <div id="aaa" onclick="sendto()">click</div>
+    <div id="ans"></div>
+    <script src="./codemirror/editor.bundle.js"></script>
+    <script>
+        function sendto() {
+            console.log(codeNow);
+            axios
+                .post("http://localhost:3000/api/1.0/training/go", {
+                    content: codeNow,
+                })
+                .then(function (response) {
+                    document.querySelector("#ans").textContent = response.data;
+                    // handle success
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
+        }
+    </script>
 </body>
 
 </html>
