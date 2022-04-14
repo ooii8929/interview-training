@@ -60,7 +60,7 @@
         function sendto() {
             console.log(codeNow);
             axios
-                .post("http://localhost:3000/api/1.0/training/go", {
+                .post("https://wooah.app/api/1.0/training/go", {
                     content: codeNow,
                 })
                 .then(function (response) {
