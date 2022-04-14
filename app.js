@@ -6,6 +6,8 @@ const app = express();
 const { PORT_TEST, PORT, NODE_ENV, API_VERSION } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
 
+const dbo = require('./server/models/mongodbcon');
+
 const fs = require('fs');
 
 app.use(express.static('public'));
@@ -30,6 +32,13 @@ const io = require('socket.io')(server, {
         allowedHeaders: ['my-custom-header'],
         credentials: true,
     },
+});
+
+dbo.connectToServer(function (err) {
+    if (err) {
+        console.error(err);
+        process.exit();
+    }
 });
 
 async function findNowRoom(client) {
@@ -80,7 +89,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 
 // API routes
-app.use('/api/' + API_VERSION, [require('./server/routes/user_route'), require('./server/routes/coding_route')]);
+app.use('/api/' + API_VERSION, [require('./server/routes/user_route'), require('./server/routes/coding_route'), require('./server/routes/social_route')]);
 // Page not found
 app.use(function (req, res, next) {
     res.sendStatus(404);
