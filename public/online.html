@@ -114,7 +114,7 @@
 
 
         // 1. Connect to signal server
-        const socket = io('http://localhost:3000');
+        const socket = io('https://wooah.app');
         function joinRoom() {
             socket.emit('joinRoom', 'secret room');
         };
