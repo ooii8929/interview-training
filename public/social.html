@@ -1,0 +1,35 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function sendto() {
+            console.log(codeNow);
+            axios
+                .post("https://wooah.app/api/1.0/training/go", {
+                    content: codeNow,
+                })
+                .then(function (response) {
+                    document.querySelector("#ans").textContent = response.data;
+                    // handle success
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
+        }
+    </script>
+</body>
+
+</html>
