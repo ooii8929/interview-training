@@ -22,13 +22,43 @@
             width: 50%;
         }
     </style>
+    <script async>
+        let codeNowGolang;
+        let codeNowPython = `package main
+        
+        import "fmt"`;
+        let test = async function getQuestions() {
+            console.log('start');
+            await axios
+                .get("/api/1.0/training/javascript")
+                .then(function (response) {
+                    document.querySelector("#question-title").textContent = JSON.stringify(response.data.data.questions[0][0].description);
+                    document.querySelector("#question-description").textContent = JSON.stringify(response.data.data.questions[0][0].description);
+                    codeNowPython = response.data.data.questions[0][0].code;
 
+                    // handle success
+                    console.log(response);
+                    var tag = document.createElement("script");
+                    tag.src = "./codemirror/editor.bundle.js";
+                    document.getElementsByTagName("head")[0].appendChild(tag);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
+        }();
+
+
+
+        console.log('codeNowPython 1', codeNowPython);
+
+    </script>
 </head>
 
-<script>
-    let codeNowGolang = 1;
-    let codeNowPython = 1;
-</script>
+
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -64,6 +94,20 @@
             </ul>
         </div>
     </nav>
+
+    <div id="question">
+        <div id="question-title"></div>
+        <div id="question-description"></div>
+
+        <form>
+            <div id="codeeditor-python" class="codeeditor"></div>
+
+            <input type="button" value="Submit" onclick="sendPythonAnswer()" />
+        </form>
+        <div class="answer-area">
+            <div id="ans-python"></div>
+        </div>
+    </div>
     <h2>Golang Topic</h2>
 
     <form>
@@ -78,20 +122,11 @@
     </div>
 
 
-    <h2>Python Topic</h2>
-
-    <form>
-        <div id="codeeditor-python" class="codeeditor"></div>
-
-        <input type="button" value="Submit" onclick="sendPythonAnswer()" />
-    </form>
-    <div class="answer-area">
-        <div id="ans-python"></div>
-    </div>
 
 
-    <script src="./codemirror/editor.bundle.js"></script>
+
     <script>
+
         function sendGolangAnswer() {
             axios
                 .post("/api/1.0/training/go", {
@@ -129,6 +164,10 @@
                     // always executed
                 });
         }
+
+
+
+
     </script>
 </body>
 

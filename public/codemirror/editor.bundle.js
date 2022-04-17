@@ -23548,10 +23548,7 @@ func main() {
     fmt.Println("Hello world! 123")
 }`;
 
-    const pythonCode = `print('123')`;
-
     codeNowGolang = javascriptCode;
-    codeNowPython = pythonCode;
 
     const textarea = document.querySelector('#codeeditor-golang');
     const textareaPython = document.querySelector('#codeeditor-python');
@@ -23589,6 +23586,8 @@ func main() {
         return editor;
     }
     editorFromTextArea(textarea);
+    console.log('codeNowPython');
+    console.log(codeNowPython);
 
     function editorFromTextAreaUsePython(textareaPython) {
         let editor = new EditorView({
@@ -23607,7 +23606,7 @@ func main() {
                         }
                     }),
                 ],
-                doc: pythonCode,
+                doc: codeNowPython,
             }),
             parent: document.querySelector('#codeeditor-python'),
         });

@@ -17,7 +17,7 @@ func main() {
 const pythonCode = `print('123')`;
 
 codeNowGolang = javascriptCode;
-codeNowPython = pythonCode;
+
 const evaluateCode = (code) => {
     console.clear();
     try {
@@ -63,6 +63,8 @@ function editorFromTextArea(textarea) {
     return editor;
 }
 editorFromTextArea(textarea);
+console.log('codeNowPython');
+console.log(codeNowPython);
 
 function editorFromTextAreaUsePython(textareaPython) {
     let editor = new EditorView({
@@ -81,7 +83,7 @@ function editorFromTextAreaUsePython(textareaPython) {
                     }
                 }),
             ],
-            doc: pythonCode,
+            doc: codeNowPython,
         }),
         parent: document.querySelector('#codeeditor-python'),
     });
