@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker run --rm -v "$(pwd)":/app -it python-image:latest
+docker run --rm -v "$(pwd)":/app -i python-image:latest

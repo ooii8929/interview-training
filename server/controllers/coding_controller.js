@@ -43,7 +43,7 @@ const goCompile = async (req, res) => {
     });
 };
 
-const pythonCompile = async (email, password) => {
+const pythonCompile = async (req, res) => {
     let ans;
     console.log('req.body', req.body);
     const content = req.body.content;
@@ -55,7 +55,7 @@ const pythonCompile = async (email, password) => {
         //file written successfully
     });
 
-    await exec('../util/code-training/build-python.sh', (error, stdout, stderr) => {
+    await exec('./server/util/code-training/build-python.sh', (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
             ans = `${error.message}`;
