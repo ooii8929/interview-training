@@ -75,7 +75,7 @@ const pythonCompile = async (req, res) => {
 
         console.log(ans);
 
-        res.send(ans);
+        res.status(200).send(ans);
     });
 };
 
