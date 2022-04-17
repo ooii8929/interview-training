@@ -9,7 +9,7 @@ const getQuestions = async (profession) => {
     try {
         await conn.query('START TRANSACTION');
 
-        const questions = await conn.query('SELECT * FROM questions');
+        const questions = await conn.query('SELECT * FROM questions WHERE profession = ?', [profession]);
 
         await conn.query('COMMIT');
         return { questions };

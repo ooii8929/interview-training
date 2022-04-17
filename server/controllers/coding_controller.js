@@ -2,6 +2,7 @@ require('dotenv').config();
 var cors = require('cors');
 var bodyParser = require('body-parser');
 const { exec, execFile } = require('child_process');
+const Question = require('../models/question_model');
 const fs = require('fs');
 
 const goCompile = async (req, res) => {
@@ -79,7 +80,7 @@ const pythonCompile = async (req, res) => {
     });
 };
 
-const javascriptCompile = async (accessToken) => {
+const javascriptCompile = async (req, res) => {
     let ans;
     console.log('req.body', req.body);
     const content = req.body.content;
@@ -115,8 +116,16 @@ const javascriptCompile = async (accessToken) => {
     });
 };
 
+const getJavascriptQuestion = async (req, res) => {
+    console.log('123');
+    let questions = await Question.getQuestions(javascript);
+    console.log(questions);
+    return res.status(200).send({ data: questions });
+};
+
 module.exports = {
     goCompile,
     pythonCompile,
     javascriptCompile,
+    getJavascriptQuestion,
 };
