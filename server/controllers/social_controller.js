@@ -2,7 +2,7 @@ require('dotenv').config();
 var ObjectId = require('mongodb').ObjectID;
 // This will help us connect to the database
 const dbo = require('../models/mongodbcon');
-console.log(dbo);
+
 const getAllArticle = async (req, res) => {
     // Get records
     const dbConnect = dbo.getDb();

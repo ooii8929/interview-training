@@ -5,13 +5,27 @@ const { pool } = require('./mysqlcon');
 const { TOKEN_EXPIRE, TOKEN_SECRET } = process.env; // 30 days by seconds
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const _ = require('lodash');
 
-const signUp = async (name, email, password) => {
+const signUp = async (identity, name, email, password, profession) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
-        const emails = await conn.query('SELECT email FROM users WHERE email = ? FOR UPDATE', [email]);
+        let emails;
+        // if student
+        if (identity == 'student') {
+            emails = await conn.query('SELECT email FROM users WHERE email = ? FOR UPDATE', [email]);
+        }
+
+        // if teacher
+        if (identity == 'teacher') {
+            emails = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
+        }
+
+        console.log('emails', emails);
+
+        // check user exist
         if (emails[0].length > 0) {
             await conn.query('COMMIT');
             return { error: 'Email Already Exists' };
@@ -26,24 +40,45 @@ const signUp = async (name, email, password) => {
             password: hash,
             name: name,
             picture: null,
-            create_time: loginAt,
         };
 
-        const accessToken = jwt.sign(
-            {
-                provider: user.provider,
-                name: user.name,
-                email: user.email,
-                picture: user.picture,
-            },
-            TOKEN_SECRET
-        );
-        // user.access_token = accessToken;
+        // if student
+        if (identity == 'student') {
+            const queryStr = 'INSERT INTO users SET ?';
+            const [result] = await conn.query(queryStr, user);
 
-        const queryStr = 'INSERT INTO users SET ?';
-        const [result] = await conn.query(queryStr, user);
+            user.id = result.insertId;
+        }
 
-        user.id = result.insertId;
+        // if teacher
+        if (identity == 'teacher') {
+            const queryStr = 'INSERT INTO teachers SET ?';
+            const [teacherResult] = await conn.query(queryStr, user);
+
+            // get all professions
+            const queryProfessions = 'SELECT * FROM professions WHERE profession IN (?)';
+            const [professionsResult] = await conn.query(queryProfessions, [profession]);
+
+            const allInsertTeacherProfession = [];
+
+            console.log('professionsResult', professionsResult);
+
+            professionsResult.forEach((e) => {
+                const insertTeacherProfession = [];
+                insertTeacherProfession.push(teacherResult.insertId);
+                insertTeacherProfession.push(e.id);
+                allInsertTeacherProfession.push(insertTeacherProfession);
+            });
+
+            console.log('allInsertTeacherProfession', allInsertTeacherProfession);
+
+            // get all professions
+            const insertTandP = 'INSERT INTO teachers_professions (teacher_id, profession_id) VALUES ?';
+            const [insertTeacherProfessionResult] = await conn.query(insertTandP, [allInsertTeacherProfession]);
+
+            user.id = teacherResult.insertId;
+        }
+
         await conn.query('COMMIT');
         return { user };
     } catch (error) {
@@ -62,30 +97,20 @@ const nativeSignIn = async (email, password) => {
 
         const [users] = await conn.query('SELECT * FROM users WHERE email = ?', [email]);
         const user = users[0];
-        if (!bcrypt.compareSync(password, user.password)) {
+
+        const auth = await argon2.verify(user.password, password);
+        console.log(auth);
+        if (!auth) {
             await conn.query('COMMIT');
             return { error: 'Password is wrong' };
         }
 
         const loginAt = new Date();
-        const accessToken = jwt.sign(
-            {
-                provider: user.provider,
-                name: user.name,
-                email: user.email,
-                picture: user.picture,
-            },
-            TOKEN_SECRET
-        );
 
-        const queryStr = 'UPDATE user SET access_token = ?, access_expired = ?, login_at = ? WHERE id = ?';
-        await conn.query(queryStr, [accessToken, TOKEN_EXPIRE, loginAt, user.id]);
+        const queryStr = 'UPDATE users SET last_login_dt = ? WHERE id = ?';
+        await conn.query(queryStr, [loginAt, user.id]);
 
         await conn.query('COMMIT');
-
-        user.access_token = accessToken;
-        user.login_at = loginAt;
-        user.access_expired = TOKEN_EXPIRE;
 
         return { user };
     } catch (error) {
@@ -176,21 +201,10 @@ const getCouponByUser = async (user_id) => {
     return activitiesWithCoupon;
 };
 
-const getGroupOrderByUser = async (user_id) => {
-    const [orderGroup] = await pool.query(
-        'SELECT group_order.id,group_order.size,group_order.color,group_order.price,group_order.product_name,group_order.qty,group_order.number,group_order.email,group_order.p_id,group_order.g_id,group.limit_p,group.current_p,group.discount_type,group.discount_value,group.create_time,group.persistent_s,group.status FROM group_order INNER JOIN `group` ON group_order.g_id = `group`.id  WHERE group_order.u_id = ? AND group_order.status = 1;',
-        user_id
-    );
-
-    return orderGroup;
-};
-
 module.exports = {
     signUp,
     nativeSignIn,
     facebookSignIn,
     getUserDetail,
     getFacebookProfile,
-    getCouponByUser,
-    getGroupOrderByUser,
 };

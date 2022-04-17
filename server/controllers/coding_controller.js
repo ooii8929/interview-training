@@ -8,6 +8,7 @@ const goCompile = async (req, res) => {
     let ans;
     console.log('req.body', req.body);
     const content = req.body.content;
+    console.log('content', content);
     await fs.writeFile('./server/env-build/app.go', content, (err) => {
         if (err) {
             console.error(err);

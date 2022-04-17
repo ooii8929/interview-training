@@ -1,0 +1,59 @@
+#chat-messages{
+    height: 70vh;
+    margin-bottom: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.mirror-mode {
+            -ms-transform: scaleX(-1);
+            -moz-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+        }
+
+        .local-video {
+            bottom: 0;
+            left: 0;
+            position: fixed;
+            width: 15vw;
+        }
+
+        #myVideo {
+            width: 200px;
+            height: 200px;
+            background: rgba(141, 167, 167, 0.178);
+            transform: scaleX(-1);
+        }
+
+        #remoteVideo {
+            width: 500px;
+            height: 500px;
+            background: rgba(141, 167, 143, 0.178);
+        }
+
+        #screenVideo {
+            border: 1px solid #999;
+            width: 98%;
+            max-width: 860px;
+        }
+
+         div {
+            text-align: center;
+        }
+
+        .navbar-brand {
+            width: 100px;
+        }
+
+
+        .bg-info{
+            background-color: #fff !important;
+            border: 1px solid gray;
+        }
+
+        #connect-div{
+            z-index:99;
+        }

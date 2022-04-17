@@ -1,0 +1,74 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <label for="meeting-time">Choose a time for your appointment:</label>
+
+    <input type="datetime-local" id="meeting-time" name="meeting-time" value="2018-06-12T19:30" min="2018-06-07T00:00"
+        max="2018-06-14T00:00">
+
+    <button id="submit">click</button>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        let time = document.querySelector('#meeting-time').value;
+        let submit = document.querySelector('#submit');
+        function generateRandomString() {
+            const crypto = window.crypto || window.msCrypto;
+            let array = new Uint32Array(1);
+
+            return crypto.getRandomValues(array);
+        }
+        function generateUrl() {
+            if (time) {
+                console.log(time);
+                //create room link
+                let roomLink = `${time}_${generateRandomString()}`;
+                alert(roomLink);
+                console.log(roomLink);
+                axios.post('http://localhost:3000/api/1.0/tutor/teacher/schedule', {
+                    teacher_id: 13,
+                    available_time: time,
+                    roomURL: roomLink
+                })
+                    .then(function (response) {
+                        // handle success
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function () {
+                        // always executed
+                    });
+
+                // //show message with link to room
+                // document.querySelector('#room-created').innerHTML = `Room successfully created. Click <a href='${roomLink}'>here</a> to enter room.
+                // Share the room link with your partners.`;
+
+                // //empty the values
+                // document.querySelector('#room-name').value = '';
+                // document.querySelector('#your-name').value = '';
+            } else {
+                document.querySelector('#err-msg').innerText = 'All fields are required';
+            }
+        }
+        submit.addEventListener('click', () => {
+            generateUrl()
+        })
+        console.log('location.origin');
+        console.log(location.origin);
+
+
+    </script>
+</body>
+
+</html>
