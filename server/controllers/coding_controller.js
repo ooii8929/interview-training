@@ -117,10 +117,8 @@ const javascriptCompile = async (req, res) => {
 };
 
 const getJavascriptQuestion = async (req, res) => {
-    console.log('123');
     let questions = await Question.getQuestions('javascript');
-    console.log(questions);
-    return res.status(200).send({ data: questions });
+    return res.status(200).send(questions);
 };
 
 module.exports = {

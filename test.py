@@ -1,1 +1,1 @@
-print('1221231233243')
+var canWdgfaginNim = function(n) {  // 使用此function完成你的邏輯 };

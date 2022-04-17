@@ -1,22 +1,10 @@
 import { EditorState, EditorView, basicSetup } from '@codemirror/basic-setup';
 import { javascript } from '@codemirror/lang-javascript';
-import { python } from '@codemirror/lang-python';
-import { java } from '@codemirror/lang-java';
-import { cpp } from '@codemirror/lang-cpp';
+import { Python } from '@codemirror/lang-python';
+// import { java } from '@codemirror/lang-java';
+// import { cpp } from '@codemirror/lang-cpp';
 
-import { oneDarkTheme } from '@codemirror/theme-one-dark';
-
-const javascriptCode = `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello world! 123")
-}`;
-
-const pythonCode = `print('123')`;
-
-codeNowGolang = javascriptCode;
+// import { oneDarkTheme } from '@codemirror/theme-one-dark';
 
 const evaluateCode = (code) => {
     console.clear();
@@ -28,7 +16,84 @@ const evaluateCode = (code) => {
 };
 
 const textarea = document.querySelector('#codeeditor-golang');
-const textareaPython = document.querySelector('#codeeditor-python');
+const textareaOne = document.querySelector('#codeeditor-one');
+const textareaTwo = document.querySelector('#codeeditor-two');
+const textareaThree = document.querySelector('#codeeditor-three');
+
+if (textarea) {
+    editorFromTextArea(textarea);
+}
+
+if (textareaOne) {
+    editorFromTextAreaOne(textareaOne, codeNowOne);
+}
+
+if (textareaTwo) {
+    editorFromTextAreaTwo(textareaTwo, codeNowTwo);
+}
+if (textareaThree) {
+    editorFromTextAreaOne(textareaThree, codeNowThree);
+}
+
+function editorFromTextAreaOne(textareaBlockId, codeNowNum) {
+    let editor = new EditorView({
+        state: EditorState.create({
+            extensions: [
+                basicSetup,
+                javascript(),
+                EditorView.updateListener.of((v) => {
+                    if (v.docChanged) {
+                        codeNowNum = editor.state.doc.toString();
+                        return codeNowNum;
+                    }
+                }),
+            ],
+            doc: codeNowNum,
+        }),
+        parent: textareaBlockId,
+    });
+
+    // textareaJavascript.parentNode.insertBefore(editor.dom, textareaJavascript);
+
+    // if (textareaJavascript.form) {
+    //     textareaJavascript.form.addEventListener('submit', () => {
+    //         console.log(editor.state.doc.toString());
+    //         textareaJavascript.value = editor.state.doc.toString();
+    //     });
+    // }
+
+    return editor;
+}
+
+function editorFromTextAreaTwo(textareaBlockId, codeNowNum) {
+    let editor = new EditorView({
+        state: EditorState.create({
+            extensions: [
+                basicSetup,
+                javascript(),
+                EditorView.updateListener.of((v) => {
+                    if (v.docChanged) {
+                        codeNowNum = editor.state.doc.toString();
+                        return codeNowNum;
+                    }
+                }),
+            ],
+            doc: codeNowNum,
+        }),
+        parent: textareaBlockId,
+    });
+
+    // textareaJavascript.parentNode.insertBefore(editor.dom, textareaJavascript);
+
+    // if (textareaJavascript.form) {
+    //     textareaJavascript.form.addEventListener('submit', () => {
+    //         console.log(editor.state.doc.toString());
+    //         textareaJavascript.value = editor.state.doc.toString();
+    //     });
+    // }
+
+    return editor;
+}
 
 function editorFromTextArea(textarea) {
     let editor = new EditorView({
@@ -54,48 +119,12 @@ function editorFromTextArea(textarea) {
 
     textarea.parentNode.insertBefore(editor.dom, textarea);
 
-    if (textarea.form)
+    if (textarea.form) {
         textarea.form.addEventListener('submit', () => {
             console.log(editor.state.doc.toString());
             textarea.value = editor.state.doc.toString();
         });
+    }
 
     return editor;
 }
-editorFromTextArea(textarea);
-console.log('codeNowPython');
-console.log(codeNowPython);
-
-function editorFromTextAreaUsePython(textareaPython) {
-    let editor = new EditorView({
-        state: EditorState.create({
-            extensions: [
-                basicSetup,
-                python(),
-                // javascript(),
-                oneDarkTheme,
-                EditorView.updateListener.of((v) => {
-                    if (v.docChanged) {
-                        codeNowPython = editor.state.doc.toString();
-                        console.log(codeNowPython);
-                        console.log('DO SOMETHING WITH THE NEW CODE');
-                        return codeNowPython;
-                    }
-                }),
-            ],
-            doc: codeNowPython,
-        }),
-        parent: document.querySelector('#codeeditor-python'),
-    });
-
-    textarea.parentNode.insertBefore(editor.dom, textareaPython);
-
-    if (textarea.form)
-        textarea.form.addEventListener('submit', () => {
-            console.log(editor.state.doc.toString());
-            textarea.value = editor.state.doc.toString();
-        });
-
-    return editor;
-}
-editorFromTextAreaUsePython(textareaPython);
