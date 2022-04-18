@@ -50,11 +50,13 @@
     </nav>
 
     <div id="main"></div>
+    <div id="tutor"></div>
     <script src="/js/member/check-login.js"></script>
 
     <script>
         function getUserInfo() {
             let main = document.getElementById('main');
+            let tutor = document.getElementById('tutor');
             axios.get('/api/1.0/user/profile', {
                 params: {
                     userID: userID
@@ -68,6 +70,32 @@
                         <li>${response.data[i]['user_id']}</li>
                         <li>${response.data[i]['question_id']}</li>
                         <li>${response.data[i]['video_answer']}</li>
+                        </ul>
+                        </div>`;
+                    }
+                    // handle success
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                });
+
+            axios.get('/api/1.0/tutor/user/appoint', {
+                params: {
+                    userID: userID
+                }
+            })
+                .then(function (response) {
+                    console.log('response', response);
+                    for (var i = 0; i < response.data.length; i++) {
+                        tutor.innerHTML += `<div class="box">
+                        <ul>
+                        <li>上課老師：${response.data[i]['t_id']}</li>
+                        <li>${response.data[i]['available_time']}</li>
+                        <li><a href="/stream.html?room=${response.data[i]['course_url']}">前往上課</a></li>
+                        
+               
                         </ul>
                         </div>`;
                     }

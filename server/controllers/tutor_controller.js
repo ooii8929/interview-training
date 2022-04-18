@@ -56,8 +56,22 @@ const makeAppointment = async (req, res) => {
     res.status(200).send(result);
 };
 
+const getAppointmentURL = async (req, res) => {
+    let { userID } = req.query;
+    console.log('userID', userID);
+    const result = await Tutor.getAllAppointmentByID(userID);
+    if (result.error) {
+        res.status(403).send({ error: result.error });
+        return;
+    }
+    console.log('result', result);
+
+    res.status(200).send(result);
+};
+
 module.exports = {
     createRoom,
     getAllTeacherSchedule,
     makeAppointment,
+    getAppointmentURL,
 };

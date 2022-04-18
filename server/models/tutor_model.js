@@ -55,6 +55,30 @@ const getAllTeacherSchedule = async () => {
     }
 };
 
+const getAllAppointmentByID = async (userID) => {
+    console.log('userID', userID);
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        const userAppointments = await conn.query(
+            'SELECT * FROM appointments INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id WHERE appointments.status = "0" AND appointments.user_id = ?',
+            [userID]
+        );
+        console.log('userAppointments');
+        console.log(userAppointments[0]);
+
+        await conn.query('COMMIT');
+        return userAppointments[0];
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
 const makeAppointment = async (teacher_time_id, user_id) => {
     const conn = await pool.getConnection();
     try {
@@ -96,4 +120,5 @@ module.exports = {
     createRoom,
     getAllTeacherSchedule,
     makeAppointment,
+    getAllAppointmentByID,
 };
