@@ -84,7 +84,7 @@ const javascriptCompile = async (req, res) => {
     let ans;
     console.log('req.body', req.body);
     const content = req.body.content;
-    await fs.writeFile('test.js', content, (err) => {
+    await fs.writeFile('./server/util/code-training/test.js', content, (err) => {
         if (err) {
             console.error(err);
             return;
@@ -92,7 +92,7 @@ const javascriptCompile = async (req, res) => {
         //file written successfully
     });
 
-    await exec('../util/code-training/build-javascript.sh', (error, stdout, stderr) => {
+    await exec('./server/util/code-training/build-javascript.sh', (error, stdout, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
             ans = `${error.message}`;
@@ -112,7 +112,7 @@ const javascriptCompile = async (req, res) => {
 
         console.log(ans);
 
-        res.send(ans);
+        res.status(200).send(ans);
     });
 };
 

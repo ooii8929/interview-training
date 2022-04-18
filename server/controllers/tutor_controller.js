@@ -8,9 +8,8 @@ const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
 
 const createRoom = async (req, res) => {
-    console.log(req.body.roomURL);
     const { teacher_id, available_time, roomURL } = req.body;
-
+    console.log('req.body', teacher_id, available_time, roomURL);
     if (!teacher_id || !available_time || !roomURL) {
         res.status(400).send({ error: 'Request Error: name, email and password are required.' });
         return;

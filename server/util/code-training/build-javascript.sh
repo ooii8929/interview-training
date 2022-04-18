@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker run --rm -v "$(pwd)":/app -it node-image:latest
+docker run --rm -v $(pwd)/server/util/code-training:/app -i node-image:latest

@@ -18,8 +18,9 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
-        let time = document.querySelector('#meeting-time').value;
+        let time = document.getElementById('meeting-time').value;
         let submit = document.querySelector('#submit');
+        console.log('time', time);
         function generateRandomString() {
             const crypto = window.crypto || window.msCrypto;
             let array = new Uint32Array(1);
@@ -28,12 +29,10 @@
         }
         function generateUrl() {
             if (time) {
-                console.log(time);
                 //create room link
                 let roomLink = `${time}_${generateRandomString()}`;
                 alert(roomLink);
-                console.log(roomLink);
-                axios.post('http://localhost:3000/api/1.0/tutor/teacher/schedule', {
+                axios.post('/api/1.0/tutor/teacher/schedule', {
                     teacher_id: 13,
                     available_time: time,
                     roomURL: roomLink
@@ -64,8 +63,6 @@
         submit.addEventListener('click', () => {
             generateUrl()
         })
-        console.log('location.origin');
-        console.log(location.origin);
 
 
     </script>

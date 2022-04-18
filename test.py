@@ -1,1 +1,0 @@
-var canWdgfaginNim = function(n) {  // 使用此function完成你的邏輯 };

@@ -18,7 +18,6 @@ const createRoom = async (teacher_id, tutor_date_time, roomURL) => {
             available_time: tutor_date_time,
             course_url: roomURL,
             status: 0,
-            create_time: loginAt,
         };
 
         const queryStr = 'INSERT INTO teachers_time SET ?';

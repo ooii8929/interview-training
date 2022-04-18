@@ -23197,27 +23197,17 @@
         }));
     }
 
-    const textarea = document.querySelector('#codeeditor-golang');
-    const textareaOne = document.querySelector('#codeeditor-one');
     const textareaTwo = document.querySelector('#codeeditor-two');
     const textareaThree = document.querySelector('#codeeditor-three');
 
-    if (textarea) {
-        editorFromTextArea(textarea);
-    }
-
-    if (textareaOne) {
-        editorFromTextAreaOne(textareaOne, codeNowOne);
-    }
-
     if (textareaTwo) {
-        editorFromTextAreaTwo(textareaTwo, codeNowTwo);
+        editorFromTextAreaTwo(textareaTwo);
     }
     if (textareaThree) {
-        editorFromTextAreaOne(textareaThree, codeNowThree);
+        editorFromTextAreaThree(textareaThree);
     }
 
-    function editorFromTextAreaOne(textareaBlockId, codeNowNum) {
+    function editorFromTextAreaTwo(textareaBlockId) {
         let editor = new EditorView({
             state: EditorState.create({
                 extensions: [
@@ -23225,12 +23215,12 @@
                     javascript(),
                     EditorView.updateListener.of((v) => {
                         if (v.docChanged) {
-                            codeNowNum = editor.state.doc.toString();
-                            return codeNowNum;
+                            codeNowTwo = editor.state.doc.toString();
+                            return codeNowTwo;
                         }
                     }),
                 ],
-                doc: codeNowNum,
+                doc: codeNowTwo,
             }),
             parent: textareaBlockId,
         });
@@ -23247,7 +23237,7 @@
         return editor;
     }
 
-    function editorFromTextAreaTwo(textareaBlockId, codeNowNum) {
+    function editorFromTextAreaThree(textareaBlockId) {
         let editor = new EditorView({
             state: EditorState.create({
                 extensions: [
@@ -23255,60 +23245,51 @@
                     javascript(),
                     EditorView.updateListener.of((v) => {
                         if (v.docChanged) {
-                            codeNowNum = editor.state.doc.toString();
-                            return codeNowNum;
+                            codeNowThree = editor.state.doc.toString();
+                            return codeNowThree;
                         }
                     }),
                 ],
-                doc: codeNowNum,
+                doc: codeNowThree,
             }),
             parent: textareaBlockId,
         });
 
-        // textareaJavascript.parentNode.insertBefore(editor.dom, textareaJavascript);
-
-        // if (textareaJavascript.form) {
-        //     textareaJavascript.form.addEventListener('submit', () => {
-        //         console.log(editor.state.doc.toString());
-        //         textareaJavascript.value = editor.state.doc.toString();
-        //     });
-        // }
-
         return editor;
     }
 
-    function editorFromTextArea(textarea) {
-        let editor = new EditorView({
-            state: EditorState.create({
-                extensions: [
-                    basicSetup,
-                    javascript(),
-                    // javascript(),
-                    oneDarkTheme,
-                    EditorView.updateListener.of((v) => {
-                        if (v.docChanged) {
-                            codeNowGolang = editor.state.doc.toString();
-                            console.log(codeNowGolang);
-                            console.log('DO SOMETHING WITH THE NEW CODE');
-                            return codeNowGolang;
-                        }
-                    }),
-                ],
-                doc: javascriptCode,
-            }),
-            parent: document.querySelector('#codeeditor'),
-        });
+    // function editorFromTextArea(textarea) {
+    //     let editor = new EditorView({
+    //         state: EditorState.create({
+    //             extensions: [
+    //                 basicSetup,
+    //                 javascript(),
+    //                 // javascript(),
+    //                 oneDarkTheme,
+    //                 EditorView.updateListener.of((v) => {
+    //                     if (v.docChanged) {
+    //                         codeNowGolang = editor.state.doc.toString();
+    //                         console.log(codeNowGolang);
+    //                         console.log('DO SOMETHING WITH THE NEW CODE');
+    //                         return codeNowGolang;
+    //                     }
+    //                 }),
+    //             ],
+    //             doc: javascriptCode,
+    //         }),
+    //         parent: document.querySelector('#codeeditor'),
+    //     });
 
-        textarea.parentNode.insertBefore(editor.dom, textarea);
+    //     textarea.parentNode.insertBefore(editor.dom, textarea);
 
-        if (textarea.form) {
-            textarea.form.addEventListener('submit', () => {
-                console.log(editor.state.doc.toString());
-                textarea.value = editor.state.doc.toString();
-            });
-        }
+    //     if (textarea.form) {
+    //         textarea.form.addEventListener('submit', () => {
+    //             console.log(editor.state.doc.toString());
+    //             textarea.value = editor.state.doc.toString();
+    //         });
+    //     }
 
-        return editor;
-    }
+    //     return editor;
+    // }
 
 })();
