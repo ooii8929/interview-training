@@ -3,6 +3,7 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 const { exec, execFile } = require('child_process');
 const Question = require('../models/question_model');
+const Answer = require('../models/answer_model');
 const fs = require('fs');
 
 const goCompile = async (req, res) => {
@@ -121,9 +122,16 @@ const getJavascriptQuestion = async (req, res) => {
     return res.status(200).send(questions);
 };
 
+const storeVideoAnswer = async (req, res) => {
+    let { userID, question_id, video_answer } = req.body.data;
+    let answer = await Answer.insertVideoAnswer(userID, question_id, video_answer);
+    return res.status(200).send(answer);
+};
+
 module.exports = {
     goCompile,
     pythonCompile,
     javascriptCompile,
     getJavascriptQuestion,
+    storeVideoAnswer,
 };

@@ -47,6 +47,8 @@ const wrapAsync = (fn) => {
 
 const authentication = () => {
     return async function (req, res, next) {
+        console.log('req');
+        console.log(req);
         console.log('req.session.userid');
         console.log(req.session.userid);
         if (!req.session.userid) {

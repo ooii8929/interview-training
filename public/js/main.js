@@ -1,14 +1,5 @@
 // get room and user infomation
 const room = getUrlQuery(location.href);
-const username = sessionStorage.getItem('username');
-const userEmail = sessionStorage.getItem('useremail');
-
-// auth
-if (!username) {
-    alert('You need login first');
-    sessionStorage.setItem('returnPage', location.href);
-    window.location.href = './member.html';
-}
 
 // video 標籤
 const localVideo = document.querySelector('video#localVideo');

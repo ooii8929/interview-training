@@ -658,7 +658,7 @@ function saveToDiskOrOpenNewTab(recordRTC) {
     var fileName = getFileName(fileExtension);
 
     document.querySelector('#save-to-disk').parentNode.style.display = 'block';
-    document.querySelector('#save-to-disk').onclick = function () {
+    document.querySelector('#save-to-disk').onclick = async function () {
         if (!recordRTC) return alert('No recording found.');
 
         var file = new File([recordRTC.getBlob()], fileName, {
@@ -672,7 +672,24 @@ function saveToDiskOrOpenNewTab(recordRTC) {
             ACL: 'public-read',
         };
 
-        var request = bucket.putObject(params);
+        var request = await bucket.putObject(params);
+        console.log('request', request);
+        console.log('request', request.params.Key);
+        let questionID = document.getElementById('save-to-disk').getAttribute('data-question-id');
+        axios
+            .post('/api/1.0/training/video', {
+                data: {
+                    userID: userID,
+                    question_id: questionID,
+                    video_answer: request.params.Key,
+                },
+            })
+            .then(function (response) {
+                console.log('response', response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
         request
             .on('httpUploadProgress', function (progress) {

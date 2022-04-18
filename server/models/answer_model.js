@@ -118,16 +118,13 @@ const signIn = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     let { userID } = req.query;
-    console.log('userID');
-    console.log(userID);
-    console.log(typeof userID);
 
     // Get records
     const dbConnect = dbo.getDb();
 
     dbConnect
         .collection('profile')
-        .find({ user_id: userID })
+        .find({ user_id: Number(userID) })
         .limit(50)
         .toArray(function (err, result) {
             if (err) {
@@ -139,27 +136,24 @@ const getUserProfile = async (req, res) => {
         });
 };
 
-const insertUserProfile = async (req, res) => {
-    const { data } = req.body;
-
+const insertVideoAnswer = async (userID, question_id, video_answer) => {
     // Get records
     const dbConnect = dbo.getDb();
-
-    dbConnect.collection('profile').insertOne({
-        user_id: 2,
-        question_id: 2,
-        video_answer: 'https://google.com.tw',
-        code_answer: "console.log('123')",
-    });
-
-    res.status(200).send('Insert finish!');
-
-    return;
+    try {
+        dbConnect.collection('profile').insertOne({
+            user_id: userID,
+            question_id: question_id,
+            video_answer: video_answer,
+        });
+        return { msg: 'success' };
+    } catch (err) {
+        res.status(400).send(err);
+    }
 };
 
 module.exports = {
     signUp,
     signIn,
     getUserProfile,
-    insertUserProfile,
+    insertVideoAnswer,
 };

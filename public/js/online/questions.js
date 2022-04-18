@@ -10,12 +10,13 @@ let test = (function getQuestions() {
         .get('/api/1.0/training/javascript')
         .then(function (response) {
             res = response.data.questions;
-
+            console.log('response.data', response.data);
             // First Question
             document.querySelector('#question-one-title').innerText = res[0][0].title;
             document.querySelector('#question-one-description').innerText = res[0][0].description;
             codeNowOne = res[0][0].code;
             document.querySelector('#question-one-video').setAttribute('src', res[0][0].video);
+            document.querySelector('#save-to-disk').setAttribute('data-question-id', res[0][0].id);
 
             // Second Question
             document.querySelector('#question-two-title').innerText = res[0][1].title;
