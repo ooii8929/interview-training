@@ -9,7 +9,6 @@ const dbo = require('../models/mongodbcon');
 
 const createRoom = async (req, res) => {
     const { teacher_id, available_time, roomURL } = req.body;
-    console.log('req.body', teacher_id, available_time, roomURL);
     if (!teacher_id || !available_time || !roomURL) {
         res.status(400).send({ error: 'Request Error: name, email and password are required.' });
         return;
@@ -35,6 +34,17 @@ const createRoom = async (req, res) => {
     });
 };
 
+const getAllTeacherSchedule = async (req, res) => {
+    const result = await Tutor.getAllTeacherSchedule();
+    if (result.error) {
+        res.status(403).send({ error: result.error });
+        return;
+    }
+
+    res.status(200).send(result);
+};
+
 module.exports = {
     createRoom,
+    getAllTeacherSchedule,
 };

@@ -1,0 +1,57 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="/public/js/member/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .box {
+            width: 40vw;
+            height: 20vh;
+            border: 1px solid black;
+            margin: auto;
+            margin-top: 5%;
+            margin-bottom: 5%;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main">
+
+    </div>
+
+
+    <script>
+        let main = document.getElementById('main')
+        axios.get('/api/1.0/tutor/teacher/schedule')
+            .then(function (response) {
+
+
+                for (var i = 0; i < response.data.length; i++) {
+                    main.innerHTML += `<div class="box">${response.data[i]['t_id']}
+                        
+                        
+                        <button data-teacher="${response.data[i]['t_id']}" data-course-url="${response.data[i]['course_url']}">立即預約</button>
+
+                        </div>`;
+                }
+
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
+    </script>
+</body>
+
+</html>

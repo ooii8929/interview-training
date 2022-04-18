@@ -11,9 +11,7 @@
     text-align: left;
 }
 
-        .navbar-brand {
-            width: 100px;
-        }
+        
 
         .answer-area {
             width: 100vw;
@@ -26,11 +24,6 @@
     margin: auto;
 }
 
-li {
-            border-bottom: 1px solid rgb(189, 189, 189);
-            border-left: 1px solid rgb(189, 189, 189);
-            padding: 0.5em;
-        }
 
         label {
             display: inline-block;
