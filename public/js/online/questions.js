@@ -1,49 +1,64 @@
-let codeNowGolang;
+let codeNow = {};
 let codeNowOne;
 let codeNowTwo;
 let codeNowThree;
-let QuestionNow;
+let QuestionNow = 0;
+let language = 'javascript';
+let getAllQuestionsResponse;
+let allCodeQuestions;
+let nowQuestion;
+let hasVideo = false;
 
 let prev = '';
 let nextOne = '';
 let nextTwo = '';
 
 let test = (async function getQuestions() {
+    // Get Questions
     let response = await axios.get('/api/1.0/training/questions', {
         params: {
             profession: 'backend',
         },
     });
-
+    getAllQuestionsResponse = response.data;
     let res = response.data;
 
+    // filter code questions
+    function isCodeQuestion(x) {
+        return x.video == null;
+    }
+
+    allCodeQuestions = res.filter(isCodeQuestion);
+    if (allCodeQuestions.length !== res.length) {
+        hasVideo = true;
+    }
     for (let i = 0; i < res.length; i++) {
-        console.log('res.length', i);
+        let tmpVarCodeArea = res[i]['id'];
         let tmpVar = i == 0 ? 'one' : i == 1 ? 'two' : i == 2 ? 'three' : 'test';
         let tmpVarCode = '';
         switch (i) {
             case 0:
                 tmpVarCode = 'codeNowOne';
-                codeNowOne = res[i].code;
+                codeNowOne = res[i][language];
                 break;
             case 1:
                 tmpVarCode = 'codeNowTwo';
-                codeNowTwo = res[i].code;
+                codeNowTwo = res[i][language];
                 break;
             case 2:
                 tmpVarCode = 'codeNowThree';
-                codeNowThree = res[i].code;
+                codeNowThree = res[i][language];
                 break;
         }
         if (res[i]['video']) {
             console.log(res[i]['video']);
             // video area
             document.getElementById('test-area').innerHTML += `
-                    <div id="question-${tmpVar}" class="question">
+                    <div id="question-${tmpVar}" class="question" data-order="${i}" style="display:none">
                     <h2>第${tmpVar}題</h2>
                     <div id="question-${tmpVar}-title">${res[i].title}</div>
                     <div id="question-${tmpVar}-description">${res[i].description}</div>
-                    <video id="question-${tmpVar}-video" type="video/webm" controls autoplay preload src="${res[i].video}"></video>
+                    <video id="question-${tmpVar}-video" type="video/webm" controls preload src="${res[i].video}"></video>
 
                     <div class="record">
                         <button id="btn-start-recording">開始回答</button>
@@ -61,15 +76,19 @@ let test = (async function getQuestions() {
                     </div>`;
         } else {
             document.getElementById('test-area').innerHTML += `
-            <div id="question-${tmpVar}" class="question">
+            <div id="question-${tmpVar}" class="question" data-order="${i}" style="display:none">
                     <h2>第${tmpVar}題</h2>
                     <div id="question-${tmpVar}-title">${res[i].title}</div>
                     <div class="question-block question-block-left">
                     <div id="question-${tmpVar}-description">${res[i].description}</div>
                     </div>
                     <div class="question-block question-block-right">
+                    <select class="language-select" data-language="${tmpVarCodeArea}">
+                        <option value="javascript" class='language-btn'>javascript</option>
+                        <option value="python" class='language-btn'>python</option>
+                    </select>
                     <form id="question-${tmpVar}-form">
-                        <div id="codeeditor-${tmpVar}" class="codeeditor codeeditor-javascript"></div>
+                        <div id="codeeditor-${tmpVarCodeArea}" class="codeeditor codeeditor-javascript"></div>
                         <input type="button" value="跑看看" data-question="${res[i].id}" onclick="runAnswer(this)" />
                         <input type="button" value="提交答案" data-question="${res[i].id}" onclick="submitAnswer(this)" />
                     </form>
@@ -78,18 +97,15 @@ let test = (async function getQuestions() {
                     </div>
                     </div>
                     <button id="next-${tmpVar}" class="next-btn">下一題</button>
-                    </div>`;
+                    </div>
+                    <div class="code-history-log" data-log="${res[i].id}"></div>
+                    `;
         }
 
         // code area
     }
 
-    const firstQuestion = document.getElementById('question-one');
-    const secondQuestion = document.getElementById('question-two');
-    const thirdQuestion = document.getElementById('question-three');
-
-    secondQuestion.style.display = 'none';
-    thirdQuestion.style.display = 'none';
+    document.querySelector("[data-order = '0']").style.display = 'block';
 
     // handle success
 
@@ -102,33 +118,39 @@ let test = (async function getQuestions() {
     nextTwo = document.getElementById('next-two');
     nextOne.addEventListener('click', function () {
         console.log('click next');
-        QuestionNow = 2;
-        firstQuestion.style.display = 'none';
-        secondQuestion.style.display = 'inline-block';
+        QuestionNow = 1;
+        document.querySelector("[data-order = '0']").style.display = 'none';
+        document.querySelector("[data-order = '1']").style.display = 'inline-block';
     });
 
     nextTwo.addEventListener('click', function () {
         console.log('click next');
-        QuestionNow = 3;
-        secondQuestion.style.display = 'none';
-        thirdQuestion.style.display = 'inline-block';
+        QuestionNow = 2;
+        document.querySelector("[data-order = '1']").style.display = 'none';
+        document.querySelector("[data-order = '2']").style.display = 'inline-block';
     });
 
-    // import record file
-    var tag = document.createElement('script');
-    tag.src = '/js/online/record.js';
-    document.getElementsByTagName('head')[0].appendChild(tag);
+    if (hasVideo) {
+        // import record file
+        var tag = document.createElement('script');
+        tag.src = '/js/online/record.js';
+        document.getElementsByTagName('head')[0].appendChild(tag);
+    }
 })();
 
 async function submitAnswer(n) {
     let codeSend;
-    if (QuestionNow == 2) {
-        codeSend = codeNowTwo;
+    if (QuestionNow == 0) {
+        codeSend = codeNow[0];
+        QuestionNumString = 'codeNowOne';
+    }
+    if (QuestionNow == 1) {
+        codeSend = codeNow[1];
         QuestionNumString = 'codeNowTwo';
     }
 
-    if (QuestionNow == 3) {
-        codeSend = codeNowThree;
+    if (QuestionNow == 2) {
+        codeSend = codeNow[2];
         QuestionNumString = 'codeNowThree';
     }
 
@@ -156,14 +178,19 @@ async function submitAnswer(n) {
 }
 
 function runAnswer(n) {
+    console.log('test code', codeNow);
     let codeSend;
-    if (QuestionNow == 2) {
-        codeSend = codeNowTwo;
+    if (QuestionNow == 0) {
+        codeSend = codeNow[0];
+        QuestionNumString = 'codeNowOne';
+    }
+    if (QuestionNow == 1) {
+        codeSend = codeNow[1];
         QuestionNumString = 'codeNowTwo';
     }
 
-    if (QuestionNow == 3) {
-        codeSend = codeNowThree;
+    if (QuestionNow == 2) {
+        codeSend = codeNow[2];
         QuestionNumString = 'codeNowThree';
     }
 
@@ -225,7 +252,7 @@ function getUserCodeLog(questionID) {
         .then(function (response) {
             console.log('getUserCodeLog response', response.data);
             for (let i = 0; i < response.data.length; i++) {
-                document.querySelector(`#answer-${QuestionNumString}`).innerHTML += `
+                document.querySelector(`[data-log = '${questionID}']`).innerHTML += `
            <div class="answer-block">${response.data[i].create_dt}</div>
             <div class="answer-block"><div class="answer-history">content:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data[i].content}</div></div>
             <div class="answer-block"><div class="answer-history">answer_status:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data[i].code_answer.answer_status}</div></div>

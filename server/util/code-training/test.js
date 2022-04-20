@@ -1,8 +1,14 @@
+function ListNode(val, next) {
+     this.val = (val===undefined ? 0 : val)
+     this.next = (next===undefined ? null : next)
+}
+ 
 /**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
  */
-var twoSum = function(nums, target) {
+var addTwoNumbers = function(l1, l2) {
     
-};console.log(twoSum([3, 2, 3], 6))
+};console.log(addTwoNumbers({ val: 2, next: { val: 4, next: { val: 3, next: null } } },
+    { val: 5, next: { val: 6, next: { val: 4, next: null } } }))

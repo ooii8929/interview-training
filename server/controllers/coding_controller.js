@@ -87,8 +87,8 @@ const submitCompile = async (req, res) => {
     let answer = await Answer.getQuestionAnswer(req.body.question_id);
     let formalAnswer;
     const content = req.body.content;
-    let contenta = content + answer['call_user_answer'];
-    let formalAnswerContent = answer['formal_answer'] + answer['call_user_answer'];
+    let contenta = content + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
+    let formalAnswerContent = answer['formal_answer'] + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
     await fs.writeFile('./server/util/code-training/answer.js', formalAnswerContent, (err) => {
         if (err) {
@@ -140,8 +140,8 @@ const runCompile = async (req, res) => {
     console.log('answer', answer);
     let formalAnswer;
     const content = req.body.content;
-    let contenta = content + `console.log(twoSum(${answer['run_code_question']}))`;
-    let formalAnswerContent = answer['formal_answer'] + `console.log(twoSum(${answer['run_code_question']}))`;
+    let contenta = content + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
+    let formalAnswerContent = answer['formal_answer'] + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
     await fs.writeFile('./server/util/code-training/answer.js', formalAnswerContent, (err) => {
         if (err) {
@@ -187,20 +187,20 @@ const runCompile = async (req, res) => {
 const getQuestionsByProfession = async (req, res) => {
     let { profession } = req.query;
     let questions = await Question.getQuestions(profession);
-    console.log('questions', questions);
+
     let allQuestions = questions.questions[0];
-    let tmpNum = [];
-    for (let i = 0; i < 3; i++) {
-        tmpNum.push(allQuestions[getRandomInt(allQuestions.length)]);
-    }
+    // let tmpNum = [];
+    // for (let i = 0; i < 3; i++) {
+    //     tmpNum.push(allQuestions[getRandomInt(allQuestions.length)]);
+    // }
 
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * max);
-    }
+    // function getRandomInt(max) {
+    //     return Math.floor(Math.random() * max);
+    // }
 
-    console.log('tmpNum', tmpNum);
+    // console.log('tmpNum', tmpNum);
 
-    return res.status(200).send(tmpNum);
+    return res.status(200).send(allQuestions);
 };
 
 const storeVideoAnswer = async (req, res) => {

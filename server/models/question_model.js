@@ -9,7 +9,7 @@ const getQuestions = async (profession) => {
     try {
         await conn.query('START TRANSACTION');
 
-        const questions = await conn.query('SELECT * FROM questions WHERE profession = ?', [profession]);
+        const questions = await conn.query('SELECT * FROM questions  WHERE profession = ? ORDER BY RAND() LIMIT 3', [profession]);
 
         await conn.query('COMMIT');
         return { questions };
