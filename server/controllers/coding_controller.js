@@ -1,10 +1,13 @@
 require('dotenv').config();
 var cors = require('cors');
 var bodyParser = require('body-parser');
-const { exec, execFile } = require('child_process');
+
 const Question = require('../models/question_model');
 const Answer = require('../models/answer_model');
 const fs = require('fs');
+
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 const goCompile = async (req, res) => {
     let ans;
@@ -73,7 +76,6 @@ const pythonCompile = async (req, res) => {
         console.log(`${stdout}`);
         ans = `${stdout}`;
         console.log(`stdout: ${stdout}`);
-        console.log('ans');
 
         console.log(ans);
 
@@ -81,45 +83,124 @@ const pythonCompile = async (req, res) => {
     });
 };
 
-const javascriptCompile = async (req, res) => {
-    let ans;
-    console.log('req.body', req.body);
+const submitCompile = async (req, res) => {
+    let answer = await Answer.getQuestionAnswer(req.body.question_id);
+    let formalAnswer;
     const content = req.body.content;
-    await fs.writeFile('./server/util/code-training/test.js', content, (err) => {
+    let contenta = content + answer['call_user_answer'];
+    let formalAnswerContent = answer['formal_answer'] + answer['call_user_answer'];
+
+    await fs.writeFile('./server/util/code-training/answer.js', formalAnswerContent, (err) => {
         if (err) {
             console.error(err);
             return;
         }
-        //file written successfully
     });
 
-    await exec('./server/util/code-training/build-javascript.sh', (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            ans = `${error.message}`;
-            res.send(ans);
+    await fs.writeFile('./server/util/code-training/test.js', contenta, (err) => {
+        if (err) {
+            console.error(err);
             return;
         }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            ans = `${stderr}`;
-            res.send(ans);
-            return;
-        }
-        console.log(`${stdout}`);
-        ans = `${stdout}`;
-        console.log(`stdout: ${stdout}`);
-        console.log('ans');
-
-        console.log(ans);
-
-        res.status(200).send(ans);
     });
+
+    var { stdout, stderr } = await exec('./server/util/code-training/build-javascript-answer.sh');
+    formalAnswer = `${stdout}`;
+
+    var { stdout, userStderr } = await exec('./server/util/code-training/build-javascript.sh');
+
+    ans = `${stdout}`;
+
+    console.log('check', formalAnswer, ans);
+    if (formalAnswer == ans) {
+        let reply = {
+            answer_status: 1,
+            input: answer['test_answer'],
+            output: ans,
+            except: formalAnswer,
+        };
+        let codingAnswer = await Answer.insertCodeAnswer(req.body.user_id, req.body.question_id, reply, contenta);
+        console.log('codingAnswer', codingAnswer);
+        res.status(200).send(reply);
+    } else {
+        let reply = {
+            answer_status: -1,
+            input: answer['test_answer'],
+            output: ans,
+            except: formalAnswer,
+        };
+        let codingAnswer = await Answer.insertCodeAnswer(req.body.user_id, req.body.question_id, reply, contenta);
+        console.log('codingAnswer', codingAnswer);
+        res.status(200).send(reply);
+    }
 };
 
-const getJavascriptQuestion = async (req, res) => {
-    let questions = await Question.getQuestions('javascript');
-    return res.status(200).send(questions);
+const runCompile = async (req, res) => {
+    let answer = await Answer.getQuestionAnswer(req.body.question_id);
+    console.log('answer', answer);
+    let formalAnswer;
+    const content = req.body.content;
+    let contenta = content + `console.log(twoSum(${answer['run_code_question']}))`;
+    let formalAnswerContent = answer['formal_answer'] + `console.log(twoSum(${answer['run_code_question']}))`;
+
+    await fs.writeFile('./server/util/code-training/answer.js', formalAnswerContent, (err) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+    });
+
+    await fs.writeFile('./server/util/code-training/test.js', contenta, (err) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+    });
+
+    var { stdout, stderr } = await exec('./server/util/code-training/build-javascript-answer.sh');
+    formalAnswer = `${stdout}`;
+
+    var { stdout, userStderr } = await exec('./server/util/code-training/build-javascript.sh');
+
+    ans = `${stdout}`;
+
+    if (formalAnswer == ans) {
+        let reply = {
+            answer_status: 1,
+            input: answer['run_code_question'],
+            output: ans,
+            except: formalAnswer,
+        };
+
+        res.status(200).send(reply);
+    } else {
+        let reply = {
+            answer_status: -1,
+            input: answer['run_code_question'],
+            output: ans,
+            except: formalAnswer,
+        };
+        res.status(200).send(reply);
+    }
+};
+
+const getQuestionsByProfession = async (req, res) => {
+    let { profession } = req.query;
+    let questions = await Question.getQuestions(profession);
+    console.log('questions', questions);
+    let allQuestions = questions.questions[0];
+    let tmpNum = [];
+    for (let i = 0; i < 3; i++) {
+        tmpNum.push(allQuestions[getRandomInt(allQuestions.length)]);
+    }
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    console.log('tmpNum', tmpNum);
+
+    return res.status(200).send(tmpNum);
 };
 
 const storeVideoAnswer = async (req, res) => {
@@ -131,7 +212,8 @@ const storeVideoAnswer = async (req, res) => {
 module.exports = {
     goCompile,
     pythonCompile,
-    javascriptCompile,
-    getJavascriptQuestion,
+    getQuestionsByProfession,
     storeVideoAnswer,
+    submitCompile,
+    runCompile,
 };

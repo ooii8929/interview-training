@@ -57,10 +57,22 @@
             <option value="frontend">Frontend</option>
             <option value="data-science">Data Science</option>
         </select>
-        <button onClick="window.location.href='./test.html';">
+        <button id="next">
             Go!
         </button>
     </div>
+
+    <script>
+        const nextButton = document.getElementById('next');
+        const porfessionChoose = document.getElementById('professions').value;
+
+        nextButton.addEventListener('click', event => {
+            localStorage.setItem('professionChoose', porfessionChoose);
+            window.location.href = './technical.html'; //Will take you to Google.
+        });
+
+
+    </script>
 </body>
 
 </html>

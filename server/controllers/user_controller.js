@@ -118,9 +118,6 @@ const signIn = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     let { userID } = req.query;
-    console.log('userID');
-    console.log(userID);
-    console.log(typeof userID);
 
     // Get records
     const dbConnect = dbo.getDb();
@@ -128,6 +125,26 @@ const getUserProfile = async (req, res) => {
     dbConnect
         .collection('profile')
         .find({ user_id: userID })
+        .limit(50)
+        .toArray(function (err, result) {
+            if (err) {
+                res.status(400).send('Error fetching listings!');
+            } else {
+                console.log('result', result);
+                res.status(200).json(result);
+            }
+        });
+};
+
+const getUserCodeLog = async (req, res) => {
+    let { question_id, user_id } = req.query;
+
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    dbConnect
+        .collection('profile')
+        .find({ question_id: question_id, user_id: user_id })
         .limit(50)
         .toArray(function (err, result) {
             if (err) {
@@ -162,4 +179,5 @@ module.exports = {
     signIn,
     getUserProfile,
     insertUserProfile,
+    getUserCodeLog,
 };

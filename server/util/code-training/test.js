@@ -1,7 +1,8 @@
-var canWinNim = function (n) {
-
-    // 使用此function完成你的邏輯
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var twoSum = function(nums, target) {
     
-};
-
-console.log('4')
+};console.log(twoSum([3, 2, 3], 6))

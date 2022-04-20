@@ -11,73 +11,59 @@
     text-align: left;
 }
 
-        
-
-        .answer-area {
-            width: 100vw;
-            height: 30vh;
-            background-color: gray;
-        }
-
-      .codeeditor {
-    width: 50%;
-    margin: auto;
+label {
+    display: inline-block;
+    width: 8em;
 }
 
+h1 span {
+    background: yellow;
+    border: 2px solid #8e1515;
+    padding: 2px 8px;
+    margin: 2px 5px;
+    border-radius: 7px;
+    color: #8e1515;
+    display: inline-block;
+}
 
-        label {
-            display: inline-block;
-            width: 8em;
-        }
+.recordrtc button {
+    font-size: inherit;
+}
 
-        h1 span {
-            background: yellow;
-            border: 2px solid #8e1515;
-            padding: 2px 8px;
-            margin: 2px 5px;
-            border-radius: 7px;
-            color: #8e1515;
-            display: inline-block;
-        }
+.recordrtc button,
+.recordrtc select {
+    vertical-align: middle;
+    line-height: 1;
+    padding: 2px 5px;
+    height: auto;
+    font-size: inherit;
+    margin: 0;
+}
 
-        .recordrtc button {
-            font-size: inherit;
-        }
+.recordrtc,
+.recordrtc .header {
+    display: block;
+    text-align: center;
+    padding-top: 0;
+}
 
-        .recordrtc button,
-        .recordrtc select {
-            vertical-align: middle;
-            line-height: 1;
-            padding: 2px 5px;
-            height: auto;
-            font-size: inherit;
-            margin: 0;
-        }
+.recordrtc video,
+.recordrtc img {
+    max-width: 100% !important;
+    vertical-align: top;
+}
 
-        .recordrtc,
-        .recordrtc .header {
-            display: block;
-            text-align: center;
-            padding-top: 0;
-        }
+.recordrtc audio {
+    vertical-align: bottom;
+}
 
-        .recordrtc video,
-        .recordrtc img {
-            max-width: 100% !important;
-            vertical-align: top;
-        }
+.recordrtc option[disabled] {
+    display: none;
+}
 
-        .recordrtc audio {
-            vertical-align: bottom;
-        }
-
-        .recordrtc option[disabled] {
-            display: none;
-        }
-
-        .recordrtc select {
-            font-size: 17px;
-        }
+.recordrtc select {
+    font-size: 17px;
+}
 
 
         

@@ -63,7 +63,7 @@ function sendMsg(msg) {
     let data = {
         room: room,
         msg: msg,
-        sender: `${username} (${userEmail})`,
+        sender: `${userName} (${userEmail})`,
     };
 
     //emit chat message

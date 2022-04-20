@@ -192,15 +192,6 @@ const getFacebookProfile = async function (accessToken) {
     }
 };
 
-const getCouponByUser = async (user_id) => {
-    const [activitiesWithCoupon] = await pool.query(
-        'SELECT coupon.* FROM users_coupon INNER JOIN coupon ON coupon.id = user_coupon.coupon_id WHERE user_coupon.user_id = ?;s',
-        user_id
-    );
-
-    return activitiesWithCoupon;
-};
-
 module.exports = {
     signUp,
     nativeSignIn,
