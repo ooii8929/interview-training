@@ -1,1 +1,8 @@
-print('123456')
+class Solution(object):
+    def reverseString(self, s):
+        """
+        :type s: List[str]
+        :rtype: None Do not return anything, modify s in-place instead.
+        """
+        print('2323')
+print(Solution().reverseString('hello'))

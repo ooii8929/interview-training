@@ -25,7 +25,7 @@ app.use(
         saveUninitialized: false,
     })
 );
-morganBody(app);
+// morganBody(app);
 
 const server = require('http')
     .Server(app)

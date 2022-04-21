@@ -4,10 +4,12 @@ let codeNowTwo;
 let codeNowThree;
 let QuestionNow = 0;
 let language = 'javascript';
-let getAllQuestionsResponse;
+let getQuestionsArr;
 let allCodeQuestions;
 let nowQuestion;
 let hasVideo = false;
+let choosedQuestionID;
+let response = '';
 
 let prev = '';
 let nextOne = '';
@@ -20,7 +22,8 @@ let test = (async function getQuestions() {
             profession: 'backend',
         },
     });
-    getAllQuestionsResponse = response.data;
+    getQuestionsArr = response.data;
+
     let res = response.data;
 
     // filter code questions
@@ -89,26 +92,74 @@ let test = (async function getQuestions() {
                     </select>
                     <form id="question-${tmpVar}-form">
                         <div id="codeeditor-${tmpVarCodeArea}" class="codeeditor codeeditor-javascript"></div>
-                        <input type="button" value="跑看看" data-question="${res[i].id}" onclick="runAnswer(this)" />
+                        <input type="button" value="跑看看" data-question="${res[i].id}" class="run-answer" />
                         <input type="button" value="提交答案" data-question="${res[i].id}" onclick="submitAnswer(this)" />
                     </form>
                     <div class="answer-area">
                         <div id="answer-${tmpVarCode}"></div>
                     </div>
                     </div>
+                    <div class="code-history-log" data-log="${res[i].id}"></div>
                     <button id="next-${tmpVar}" class="next-btn">下一題</button>
                     </div>
-                    <div class="code-history-log" data-log="${res[i].id}"></div>
+                    
                     `;
         }
 
-        // code area
+        // show first dom
+        document.querySelector("[data-order = '0']").style.display = 'block';
+
+        // run event
+        var runBtns = document.querySelectorAll('.run-answer');
+
+        Array.from(runBtns).forEach((link) => {
+            link.addEventListener('click', async function (e) {
+                let runQuestionID = e.target.getAttribute('data-question');
+                let runLanguage = document.querySelector(`[data-language='${runQuestionID}']`).value;
+
+                let codeSend;
+                if (QuestionNow == 0) {
+                    codeSend = getQuestionsArr[0][runLanguage];
+                    QuestionNumString = 'codeNowOne';
+                }
+                if (QuestionNow == 1) {
+                    codeSend = getQuestionsArr[1][runLanguage];
+                    QuestionNumString = 'codeNowTwo';
+                }
+
+                if (QuestionNow == 2) {
+                    codeSend = getQuestionsArr[2][runLanguage];
+                    QuestionNumString = 'codeNowThree';
+                }
+
+                try {
+                    response = await axios.post('/api/1.0/training/run/compile', {
+                        question_id: runQuestionID,
+                        language: runLanguage,
+                        content: codeSend,
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+                // handle success
+                if (!response.data.answer_status) {
+                    console.log('response.data', response.data);
+                    document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
+                    <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
+                } else {
+                    document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
+                    <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.answer_status}</div></div>
+                    <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data.input}</div></div>
+                    <div class="answer-block"><div class="answer-title">output:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data.output}</div></div>
+                    <div class="answer-block"><div class="answer-title">except:</div><div id="answer-${QuestionNumString}-except" class="answer-reply">${response.data.except}</div></div>
+                    <div class="answer-block"><div class="answer-title">run time:</div><div id="answer-${QuestionNumString}-run_time" class="answer-reply">${response.data.run_time}</div></div>
+                    `;
+                }
+            });
+        });
     }
 
-    document.querySelector("[data-order = '0']").style.display = 'block';
-
     // handle success
-
     var tag = document.createElement('script');
     tag.src = '../codemirror/editor.bundle.js';
     document.getElementsByTagName('head')[0].appendChild(tag);
@@ -140,105 +191,51 @@ let test = (async function getQuestions() {
 
 async function submitAnswer(n) {
     let codeSend;
+    console.log('language in question.js', language);
+
     if (QuestionNow == 0) {
-        codeSend = codeNow[0];
+        codeSend = getQuestionsArr[0][language];
         QuestionNumString = 'codeNowOne';
     }
     if (QuestionNow == 1) {
-        codeSend = codeNow[1];
+        codeSend = getQuestionsArr[1][language];
         QuestionNumString = 'codeNowTwo';
     }
 
     if (QuestionNow == 2) {
-        codeSend = codeNow[2];
+        codeSend = getQuestionsArr[2][language];
         QuestionNumString = 'codeNowThree';
     }
 
     let questionID = n.getAttribute('data-question');
-    console.log(userID, questionID, codeSend);
-    let response = '';
+
     try {
         response = await axios.post('/api/1.0/training/submit/compile/', {
             user_id: userID,
             question_id: questionID,
             content: codeSend,
+            language: language,
         });
-        console.log(response);
     } catch (error) {
         console.error(error);
     }
 
-    document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
+    console.log('response.data', response.data);
+
+    if (!response.data.answer_status) {
+        document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
+    <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
+    } else {
+        document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
+    <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.answer_status}</div></div>
     <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data.input}</div></div>
     <div class="answer-block"><div class="answer-title">output:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data.output}</div></div>
     <div class="answer-block"><div class="answer-title">except:</div><div id="answer-${QuestionNumString}-except" class="answer-reply">${response.data.except}</div></div>
+    <div class="answer-block"><div class="answer-title">run time:</div><div id="answer-${QuestionNumString}-run_time" class="answer-reply">${response.data.run_time}</div></div>
     `;
 
-    await getUserCodeLog(questionID);
-}
-
-function runAnswer(n) {
-    console.log('test code', codeNow);
-    let codeSend;
-    if (QuestionNow == 0) {
-        codeSend = codeNow[0];
-        QuestionNumString = 'codeNowOne';
+        await getUserCodeLog(questionID);
     }
-    if (QuestionNow == 1) {
-        codeSend = codeNow[1];
-        QuestionNumString = 'codeNowTwo';
-    }
-
-    if (QuestionNow == 2) {
-        codeSend = codeNow[2];
-        QuestionNumString = 'codeNowThree';
-    }
-
-    let questionID = n.getAttribute('data-question');
-
-    let language = 'javascript';
-    axios
-        .post(`/api/1.0/training/run/compile`, {
-            question_id: questionID,
-            language: language,
-            content: codeSend,
-        })
-        .then(function (response) {
-            console.log('response', response);
-            // handle success
-            document.querySelector(`#answer-${QuestionNumString}`).innerHTML = `
-           
-            <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data.input}</div></div>
-            <div class="answer-block"><div class="answer-title">output:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data.output}</div></div>
-            <div class="answer-block"><div class="answer-title">except:</div><div id="answer-${QuestionNumString}-except" class="answer-reply">${response.data.except}</div></div>
-            `;
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
-}
-
-function sendGolangAnswer() {
-    axios
-        .post('/api/1.0/training/go', {
-            content: codeNowGolang,
-        })
-        .then(function (response) {
-            document.querySelector('#ans').textContent = response.data;
-            // handle success
-            console.log(response);
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
 }
 
 function getUserCodeLog(questionID) {
@@ -253,7 +250,7 @@ function getUserCodeLog(questionID) {
             console.log('getUserCodeLog response', response.data);
             for (let i = 0; i < response.data.length; i++) {
                 document.querySelector(`[data-log = '${questionID}']`).innerHTML += `
-           <div class="answer-block">${response.data[i].create_dt}</div>
+            <div class="answer-block">${response.data[i].create_dt}</div>
             <div class="answer-block"><div class="answer-history">content:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data[i].content}</div></div>
             <div class="answer-block"><div class="answer-history">answer_status:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data[i].code_answer.answer_status}</div></div>
             `;

@@ -14,7 +14,7 @@ button.next-btn {
 
 
 .answer-area {        
-    height: 30vh;
+
     box-shadow: 3px 3px red, -1em 0 .4em olive;
     margin-top: auto;
        display:flex;

@@ -19,51 +19,41 @@ let languageChoose = language;
 
 // Run codemirror
 for (let i = 0; i < allCodeQuestions.length; i++) {
+    console.log('run code question', i);
     const textarea = document.querySelector(`#codeeditor-${allCodeQuestions[i]['id']}`);
+    console.log('run code question textarea', textarea);
+    // codeNow[i] = allCodeQuestions[i][language];
 
-    codeNow[i] = allCodeQuestions[i][language];
-
-    editorFromTextArea(textarea, language, codeNow[i]);
+    editorFromTextArea(textarea, language, allCodeQuestions[i]['id']);
 }
 
-// language choose
+// language change
 let selectLanguageArr = document.querySelectorAll('.language-select');
-console.log('selectLanguageArr', selectLanguageArr);
 
 for (let i = 0; i < selectLanguageArr.length; i++) {
     selectLanguageArr[i].addEventListener('change', (e) => {
+        // get question ID
+        choosedQuestionID = e.target.getAttribute('data-language');
+
+        console.log('choosedQuestionID', choosedQuestionID);
+
+        // get text area
+        const textarea = document.querySelector(`#codeeditor-${choosedQuestionID}`);
+
+        // get choosed language
         language = e.target.value;
-        let languageQuestionID = e.target.getAttribute('data-language');
 
-        // filter code questions
-        function isCodeLanguage(x) {
-            return x.id == languageQuestionID;
-        }
-
-        let abc = getAllQuestionsResponse.filter(isCodeLanguage);
-
-        codeNow = abc[0][language];
-
-        console.log('languageQuestionID', languageQuestionID);
-
-        const textarea = document.querySelector(`#codeeditor-${languageQuestionID}`);
-
-        editorFromTextArea(textarea, language, codeNow);
+        editorFromTextArea(textarea, language, choosedQuestionID);
     });
 }
 
-// if (textareaOne) {
-//     editorFromTextArea(textareaOne, language);
-// }
+function editorFromTextArea(textareaBlockId, languageChoose, q_ID) {
+    if (!q_ID) {
+        // default question id
+        q_ID = getQuestionsArr[0]['id'];
+        console.log('choosedQuestionID', q_ID);
+    }
 
-// if (textareaTwo) {
-//     editorFromTextAreaTwo(textareaTwo, language);
-// }
-// if (textareaThree) {
-//     editorFromTextAreaThree(textareaThree, language);
-// }
-
-function editorFromTextArea(textareaBlockId, languageChoose, codeNow) {
     switch (language) {
         case 'python':
             languageChoose = python();
@@ -73,87 +63,30 @@ function editorFromTextArea(textareaBlockId, languageChoose, codeNow) {
             break;
     }
     textareaBlockId.innerHTML = ``;
+    let editor;
     // choose language
-
-    let editor = new EditorView({
-        state: EditorState.create({
-            extensions: [
-                basicSetup,
-                languageChoose,
-                EditorView.updateListener.of((v) => {
-                    if (v.docChanged) {
-                        codeNow = editor.state.doc.toString();
-                        return codeNow;
-                    }
+    for (let i = 0; i < getQuestionsArr.length; i++) {
+        console.log('getQuestionsArr', getQuestionsArr[i]);
+        if (getQuestionsArr[i].id == q_ID) {
+            editor = new EditorView({
+                state: EditorState.create({
+                    extensions: [
+                        basicSetup,
+                        languageChoose,
+                        EditorView.updateListener.of((v) => {
+                            if (v.docChanged) {
+                                getQuestionsArr[i][language] = editor.state.doc.toString();
+                                return getQuestionsArr[i][language];
+                            }
+                        }),
+                    ],
+                    doc: getQuestionsArr[i][language],
                 }),
-            ],
-            doc: codeNow,
-        }),
-        parent: textareaBlockId,
-    });
-
-    return editor;
-}
-
-function editorFromTextAreaOne(textareaBlockId) {
-    let editor = new EditorView({
-        state: EditorState.create({
-            extensions: [
-                basicSetup,
-                javascript(),
-                EditorView.updateListener.of((v) => {
-                    if (v.docChanged) {
-                        codeNowOne = editor.state.doc.toString();
-                        return codeNowOne;
-                    }
-                }),
-            ],
-            doc: codeNowOne,
-        }),
-        parent: textareaBlockId,
-    });
-
-    return editor;
-}
-
-function editorFromTextAreaTwo(textareaBlockId) {
-    let editor = new EditorView({
-        state: EditorState.create({
-            extensions: [
-                basicSetup,
-                javascript(),
-                EditorView.updateListener.of((v) => {
-                    if (v.docChanged) {
-                        codeNowTwo = editor.state.doc.toString();
-                        return codeNowTwo;
-                    }
-                }),
-            ],
-            doc: codeNowTwo,
-        }),
-        parent: textareaBlockId,
-    });
-
-    return editor;
-}
-
-function editorFromTextAreaThree(textareaBlockId) {
-    let editor = new EditorView({
-        state: EditorState.create({
-            extensions: [
-                basicSetup,
-                javascript(),
-                EditorView.updateListener.of((v) => {
-                    if (v.docChanged) {
-                        codeNowThree = editor.state.doc.toString();
-                        return codeNowThree;
-                    }
-                }),
-            ],
-            doc: codeNowThree,
-        }),
-        parent: textareaBlockId,
-    });
+                parent: textareaBlockId,
+            });
+            return;
+        }
+    }
 
     return editor;
 }
