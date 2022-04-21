@@ -4,5 +4,5 @@ class Solution(object):
         :type s: List[str]
         :rtype: None Do not return anything, modify s in-place instead.
         """
-        print('2323')
+        print '123'
 print(Solution().reverseString('hello'))

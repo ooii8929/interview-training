@@ -7,70 +7,42 @@ const _ = require('lodash');
 const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
 
-const getQuestionAnswer = async (questionID) => {
-    try {
-        const [answer] = await pool.query('SELECT * FROM questions WHERE id = ?', [questionID]);
-        return answer[0];
-    } catch (e) {
-        return null;
-    }
-};
-
-const getUserProfile = async (req, res) => {
-    let { userID } = req.query;
-
+const getAllArticle = async () => {
     // Get records
     const dbConnect = dbo.getDb();
 
     dbConnect
-        .collection('profile')
-        .find({ user_id: Number(userID) })
+        .collection('interview')
+        .find({})
         .limit(50)
         .toArray(function (err, result) {
             if (err) {
-                res.status(400).send('Error fetching listings!');
+                return err;
             } else {
-                console.log('result', result);
-                res.status(200).json(result);
+                return result;
             }
         });
 };
 
-const insertVideoAnswer = async (userID, question_id, video_answer) => {
+const insertCodeArticle = async (postData) => {
     // Get records
     const dbConnect = dbo.getDb();
-    try {
-        dbConnect.collection('profile').insertOne({
-            user_id: userID,
-            question_id: question_id,
-            video_answer: video_answer,
-        });
-        return { msg: 'success' };
-    } catch (err) {
-        res.status(400).send(err);
-    }
+
+    let insertResult = dbConnect.collection('article').insertOne(postData);
+
+    return insertResult;
 };
 
-const insertCodeAnswer = async (userID, question_id, code_answer, content) => {
+const updateArticleGood = async (article_id, user_id) => {
     // Get records
     const dbConnect = dbo.getDb();
-    try {
-        dbConnect.collection('profile').insertOne({
-            user_id: userID,
-            question_id: question_id,
-            create_dt: new Date(),
-            content: content,
-            code_answer: code_answer,
-        });
-        return { msg: 'success' };
-    } catch (err) {
-        res.status(400).send(err);
-    }
+
+    let insertResult = dbConnect.collection('article').update({ id: article_id }, { $inc: { goods: 1 } });
+    return insertResult;
 };
 
 module.exports = {
-    getQuestionAnswer,
-    getUserProfile,
-    insertVideoAnswer,
-    insertCodeAnswer,
+    insertCodeArticle,
+    getAllArticle,
+    updateArticleGood,
 };

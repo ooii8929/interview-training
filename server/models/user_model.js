@@ -172,7 +172,7 @@ const facebookSignIn = async (id, name, email) => {
     }
 };
 
-const getUserDetail = async (email) => {
+const getUserProfileByEmail = async (email) => {
     try {
         const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
         return users[0];
@@ -181,14 +181,19 @@ const getUserDetail = async (email) => {
     }
 };
 
-const getFacebookProfile = async function (accessToken) {
+const getUserProfileByUserID = async (userID) => {
+    const conn = await pool.getConnection();
     try {
-        let res = await axios.get('https://graph.facebook.com/me?fields=id,name,email&access_token=' + accessToken);
-        console.log('fb res', res);
-        return res.data;
-    } catch (e) {
-        console.log(e);
-        throw 'Permissions Error: facebook access token is wrong';
+        await conn.query('START TRANSACTION');
+        const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [userID]);
+        console.log('users', users);
+        await conn.query('COMMIT');
+        return users[0];
+    } catch (error) {
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
     }
 };
 
@@ -196,6 +201,6 @@ module.exports = {
     signUp,
     nativeSignIn,
     facebookSignIn,
-    getUserDetail,
-    getFacebookProfile,
+    getUserProfileByEmail,
+    getUserProfileByUserID,
 };

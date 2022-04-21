@@ -118,6 +118,14 @@ window.onbeforeunload = function () {
 };
 
 btnStartRecording.onclick = function (event) {
+    //   按下 start 後 id 為 timer 的 DIV 內容可以開始倒數到到 0。
+    var timer = document.querySelector('#timer');
+    var number = 30;
+    setInterval(function () {
+        number--;
+        if (number <= 0) number = 0;
+        timer.innerText = number + 0;
+    }, 1000);
     if (document.getElementById('success-send')) {
         document.getElementById('success-send').remove();
     }
@@ -679,6 +687,7 @@ function saveToDiskOrOpenNewTab(recordRTC) {
         console.log('request', request);
         console.log('request', request.params.Key);
         let questionID = document.getElementById('save-to-disk').getAttribute('data-question-id');
+        nowVideo = request.params.Key;
         axios
             .post('/api/1.0/training/video', {
                 data: {
