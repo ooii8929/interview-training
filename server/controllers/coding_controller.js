@@ -264,6 +264,15 @@ const getQuestionsByProfession = async (req, res) => {
     return res.status(200).send(allQuestions);
 };
 
+const getVideoQuestionsByProfession = async (req, res) => {
+    let { profession } = req.query;
+    let questions = await Question.getVideoQuestions(profession);
+
+    let allQuestions = questions.questions[0];
+
+    return res.status(200).send(allQuestions);
+};
+
 const storeVideoAnswer = async (req, res) => {
     let { userID, question_id, video_answer } = req.body.data;
     let answer = await Answer.insertVideoAnswer(userID, question_id, video_answer);
@@ -275,4 +284,5 @@ module.exports = {
     storeVideoAnswer,
     submitCompile,
     runCompile,
+    getVideoQuestionsByProfession,
 };

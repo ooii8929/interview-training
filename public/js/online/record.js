@@ -118,6 +118,9 @@ window.onbeforeunload = function () {
 };
 
 btnStartRecording.onclick = function (event) {
+    if (document.getElementById('success-send')) {
+        document.getElementById('success-send').remove();
+    }
     var button = btnStartRecording;
 
     if (button.innerHTML === 'Stop Recording') {
@@ -658,7 +661,7 @@ function saveToDiskOrOpenNewTab(recordRTC) {
     var fileName = getFileName(fileExtension);
 
     document.querySelector('#save-to-disk').parentNode.style.display = 'block';
-    document.querySelector('#save-to-disk').onclick = async function () {
+    document.querySelector('#save-to-disk').onclick = async function (e) {
         if (!recordRTC) return alert('No recording found.');
 
         var file = new File([recordRTC.getBlob()], fileName, {
@@ -690,20 +693,16 @@ function saveToDiskOrOpenNewTab(recordRTC) {
             .catch(function (error) {
                 console.log(error);
             });
+        let percentage = document.getElementById('save-to-disk');
 
         request
             .on('httpUploadProgress', function (progress) {
-                // percentage.innerHTML =
-                //   parseInt((progress.loaded * 100) / progress.total) + "%";
-                // console.log(
-                //   "Uploaded :: " +
-                //     parseInt((progress.loaded * 100) / progress.total) +
-                //     "%"
-                // );
-                // console.log(progress.loaded + " of " + progress.total + " bytes");
+                percentage.innerHTML = parseInt((progress.loaded * 100) / progress.total) + '%';
+                console.log('Uploaded :: ' + parseInt((progress.loaded * 100) / progress.total) + '%');
+                console.log(progress.loaded + ' of ' + progress.total + ' bytes');
             })
             .send(function (err, data) {
-                //percentage.innerHTML = "File has been uploaded successfully.";
+                percentage.parentNode.innerHTML = '<div id="success-send">File has been uploaded successfully.</div>';
                 //listObjs();
                 console.log(err, data);
             });
@@ -711,110 +710,110 @@ function saveToDiskOrOpenNewTab(recordRTC) {
         // invokeSaveAsDialog(file, file.name);
     };
 
-    document.querySelector('#open-new-tab').onclick = function () {
-        if (!recordRTC) return alert('No recording found.');
+    // document.querySelector('#open-new-tab').onclick = function () {
+    //     if (!recordRTC) return alert('No recording found.');
 
-        var file = new File([recordRTC.getBlob()], fileName, {
-            type: mimeType,
-        });
+    //     var file = new File([recordRTC.getBlob()], fileName, {
+    //         type: mimeType,
+    //     });
 
-        window.open(URL.createObjectURL(file));
-    };
+    //     window.open(URL.createObjectURL(file));
+    // };
 
     // upload to PHP server
-    if (isMyOwnDomain()) {
-        document.querySelector('#upload-to-php').disabled = true;
-        document.querySelector('#upload-to-php').style.display = 'none';
-    } else {
-        document.querySelector('#upload-to-php').disabled = false;
-    }
+    // if (isMyOwnDomain()) {
+    //     document.querySelector('#upload-to-php').disabled = true;
+    //     document.querySelector('#upload-to-php').style.display = 'none';
+    // } else {
+    //     document.querySelector('#upload-to-php').disabled = false;
+    // }
 
-    document.querySelector('#upload-to-php').onclick = function () {
-        if (isMyOwnDomain()) {
-            alert('PHP Upload is not available on this domain.');
-            return;
-        }
+    // document.querySelector('#upload-to-php').onclick = function () {
+    //     if (isMyOwnDomain()) {
+    //         alert('PHP Upload is not available on this domain.');
+    //         return;
+    //     }
 
-        if (!recordRTC) return alert('No recording found.');
-        this.disabled = true;
+    //     if (!recordRTC) return alert('No recording found.');
+    //     this.disabled = true;
 
-        var button = this;
-        uploadToPHPServer(fileName, recordRTC, function (progress, fileURL) {
-            if (progress === 'ended') {
-                button.disabled = false;
-                button.innerHTML = 'Click to download from server';
-                button.onclick = function () {
-                    SaveFileURLToDisk(fileURL, fileName);
-                };
+    //     var button = this;
+    //     uploadToPHPServer(fileName, recordRTC, function (progress, fileURL) {
+    //         if (progress === 'ended') {
+    //             button.disabled = false;
+    //             button.innerHTML = 'Click to download from server';
+    //             button.onclick = function () {
+    //                 SaveFileURLToDisk(fileURL, fileName);
+    //             };
 
-                setVideoURL(fileURL);
+    //             setVideoURL(fileURL);
 
-                var html = 'Uploaded to PHP.<br>Download using below link:<br>';
-                html += '<a href="' + fileURL + '" download="' + fileName + '" style="color: yellow; display: block; margin-top: 15px;">' + fileName + '</a>';
-                recordingPlayer.parentNode.parentNode.querySelector('h2').innerHTML = html;
-                return;
-            }
-            button.innerHTML = progress;
-            recordingPlayer.parentNode.parentNode.querySelector('h2').innerHTML = progress;
-        });
-    };
+    //             var html = 'Uploaded to PHP.<br>Download using below link:<br>';
+    //             html += '<a href="' + fileURL + '" download="' + fileName + '" style="color: yellow; display: block; margin-top: 15px;">' + fileName + '</a>';
+    //             recordingPlayer.parentNode.parentNode.querySelector('h2').innerHTML = html;
+    //             return;
+    //         }
+    //         button.innerHTML = progress;
+    //         recordingPlayer.parentNode.parentNode.querySelector('h2').innerHTML = progress;
+    //     });
+    // };
 
     // upload to YouTube!
-    document.querySelector('#upload-to-youtube').disabled = false;
-    document.querySelector('#upload-to-youtube').onclick = function () {
-        if (!recordRTC) return alert('No recording found.');
-        this.disabled = true;
+    // document.querySelector('#upload-to-youtube').disabled = false;
+    // document.querySelector('#upload-to-youtube').onclick = function () {
+    //     if (!recordRTC) return alert('No recording found.');
+    //     this.disabled = true;
 
-        if (isLocalHost()) {
-            alert('This feature is NOT available on localhost.');
-            return;
-        }
+    //     if (isLocalHost()) {
+    //         alert('This feature is NOT available on localhost.');
+    //         return;
+    //     }
 
-        if (isMyOwnDomain() === false) {
-            var url = 'https://github.com/muaz-khan/RecordRTC/wiki/Upload-to-YouTube';
-            alert(
-                'YouTube API key is configured to work only on webrtc-experiment.com. Please create your own YouTube key + oAuth client-id and use it instead.\n\nWiki page: ' + url
-            );
+    //     if (isMyOwnDomain() === false) {
+    //         var url = 'https://github.com/muaz-khan/RecordRTC/wiki/Upload-to-YouTube';
+    //         alert(
+    //             'YouTube API key is configured to work only on webrtc-experiment.com. Please create your own YouTube key + oAuth client-id and use it instead.\n\nWiki page: ' + url
+    //         );
 
-            // check instructions on the wiki page
-            location.href = url;
-            return;
-        }
+    //         // check instructions on the wiki page
+    //         location.href = url;
+    //         return;
+    //     }
 
-        var button = this;
-        uploadToYouTube(fileName, recordRTC, function (percentageComplete, fileURL) {
-            if (percentageComplete == 'uploaded') {
-                button.disabled = false;
-                button.innerHTML = 'Uploaded. However YouTube is still processing.';
-                button.onclick = function () {
-                    window.open(fileURL);
-                };
-                return;
-            }
-            if (percentageComplete == 'processed') {
-                button.disabled = false;
-                button.innerHTML = 'Uploaded & Processed. Click to open YouTube video.';
-                button.onclick = function () {
-                    window.open(fileURL);
-                };
+    // var button = this;
+    // uploadToYouTube(fileName, recordRTC, function (percentageComplete, fileURL) {
+    //     if (percentageComplete == 'uploaded') {
+    //         button.disabled = false;
+    //         button.innerHTML = 'Uploaded. However YouTube is still processing.';
+    //         button.onclick = function () {
+    //             window.open(fileURL);
+    //         };
+    //         return;
+    //     }
+    //     if (percentageComplete == 'processed') {
+    //         button.disabled = false;
+    //         button.innerHTML = 'Uploaded & Processed. Click to open YouTube video.';
+    //         button.onclick = function () {
+    //             window.open(fileURL);
+    //         };
 
-                document.querySelector('h1').innerHTML = 'Your video has been uploaded.';
-                window.scrollTo(0, 0);
+    //         document.querySelector('h1').innerHTML = 'Your video has been uploaded.';
+    //         window.scrollTo(0, 0);
 
-                alert('Your video has been uploaded.');
-                return;
-            }
-            if (percentageComplete == 'failed') {
-                button.disabled = false;
-                button.innerHTML = 'YouTube failed transcoding the video.';
-                button.onclick = function () {
-                    window.open(fileURL);
-                };
-                return;
-            }
-            button.innerHTML = percentageComplete + '% uploaded to YouTube.';
-        });
-    };
+    //         alert('Your video has been uploaded.');
+    //         return;
+    //     }
+    //     if (percentageComplete == 'failed') {
+    //         button.disabled = false;
+    //         button.innerHTML = 'YouTube failed transcoding the video.';
+    //         button.onclick = function () {
+    //             window.open(fileURL);
+    //         };
+    //         return;
+    //     }
+    //     button.innerHTML = percentageComplete + '% uploaded to YouTube.';
+    // });
+    // };
 }
 
 function uploadToPHPServer(fileName, recordRTC, callback) {

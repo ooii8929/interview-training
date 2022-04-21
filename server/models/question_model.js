@@ -25,6 +25,26 @@ const getQuestions = async (profession) => {
     }
 };
 
+const getVideoQuestions = async (profession) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        // get video questions by profesiion and column not null
+        const questions = await conn.query('SELECT * FROM questions WHERE profession = ? AND video IS NOT NULL', [profession]);
+
+        await conn.query('COMMIT');
+        return { questions };
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
 module.exports = {
     getQuestions,
+    getVideoQuestions,
 };

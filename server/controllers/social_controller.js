@@ -2,6 +2,7 @@ require('dotenv').config();
 var ObjectId = require('mongodb').ObjectID;
 // This will help us connect to the database
 const dbo = require('../models/mongodbcon');
+const Tutor = require('../models/social_model');
 
 const getAllArticle = async (req, res) => {
     // Get records
