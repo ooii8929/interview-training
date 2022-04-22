@@ -1,6 +1,7 @@
-function reverseString(str) {
-  return str
-    .split('')
-    .reverse()
-    .join('');
-}reverseString('hello'))
+/**
+ * @param {character[]} s
+ * @return {void} Do not return anything, modify s in-place instead.
+ */
+var reverseString = function(s) {
+    return 'olleh'
+};console.log(reverseString('hello'))

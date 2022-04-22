@@ -41,8 +41,6 @@ const getAllTeacherSchedule = async () => {
         await conn.query('START TRANSACTION');
 
         const teachers_schedule = await conn.query('SELECT * FROM teachers_time WHERE status = "0"');
-        console.log('teachers_schedule');
-        console.log(teachers_schedule[0]);
 
         await conn.query('COMMIT');
         return teachers_schedule[0];
@@ -85,12 +83,26 @@ const makeAppointment = async (teacher_time_id, user_id) => {
         await conn.query('START TRANSACTION');
 
         // check the course of teacher is existed and can be appointed
-        const teacher_schedule_check = await conn.query('SELECT status FROM teachers_time WHERE id = ?', [teacher_time_id]);
+        const teacher_schedule_check = await conn.query('SELECT status,available_time FROM teachers_time WHERE id = ?', [teacher_time_id]);
 
         if (teacher_schedule_check[0].length !== 1) {
             await conn.query('COMMIT');
             return { error: 'These class cannot be appointed' };
         }
+
+        // check user time if crashed
+        let tutorTime = teacher_schedule_check[0][0]['available_time'];
+        //add 30 minutes to date
+        var minutesToAdd = 60;
+        var currentDate = new Date(tutorTime);
+        var futureDate = new Date(currentDate.getTime() + minutesToAdd * 60000);
+        console.log('tutorTime', tutorTime);
+        console.log('tutorTime + 10000', futureDate);
+
+        const user_schedule_check = await conn.query(
+            'SELECT status FROM teachers_time INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.t_id WHERE user_id = ? && ',
+            [user_id]
+        );
 
         const appoint = {
             user_id: user_id,

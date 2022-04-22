@@ -23440,10 +23440,7 @@
 
     // Run codemirror
     for (let i = 0; i < allCodeQuestions.length; i++) {
-        console.log('run code question', i);
         const textarea = document.querySelector(`#codeeditor-${allCodeQuestions[i]['id']}`);
-        console.log('run code question textarea', textarea);
-        // codeNow[i] = allCodeQuestions[i][language];
 
         editorFromTextArea(textarea, language, allCodeQuestions[i]['id']);
     }
@@ -23472,7 +23469,6 @@
         if (!q_ID) {
             // default question id
             q_ID = getQuestionsArr[0]['id'];
-            console.log('choosedQuestionID', q_ID);
         }
 
         switch (language) {
@@ -23487,7 +23483,6 @@
         let editor;
         // choose language
         for (let i = 0; i < getQuestionsArr.length; i++) {
-            console.log('getQuestionsArr', getQuestionsArr[i]);
             if (getQuestionsArr[i].id == q_ID) {
                 editor = new EditorView({
                     state: EditorState.create({

@@ -6,25 +6,58 @@ const util = require('../util/util');
 const _ = require('lodash');
 const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
+var ObjectId = require('mongodb').ObjectID;
 
 const getAllArticle = async () => {
     // Get records
-    const dbConnect = dbo.getDb();
+    const dbConnect = await dbo.getDb();
+    try {
+        const cursor = await dbConnect.collection('article').find({}).toArray();
+        return cursor;
+    } catch (error) {
+        console.log('error', error);
+        return error;
+    }
+};
 
-    dbConnect
-        .collection('interview')
-        .find({})
-        .limit(50)
-        .toArray(function (err, result) {
-            if (err) {
-                return err;
-            } else {
-                return result;
-            }
-        });
+const getArticleByID = async (article_id) => {
+    // Get records
+    const dbConnect = await dbo.getDb();
+    try {
+        console.log('article_id', article_id);
+        const cursor = await dbConnect
+            .collection('article')
+            .find({ _id: ObjectId(article_id) })
+            .toArray();
+        console.log('cursor', cursor);
+        return cursor;
+    } catch (error) {
+        console.log('error', error);
+        return error;
+    }
 };
 
 const insertCodeArticle = async (postData) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    let insertResult = dbConnect.collection('article').insertOne(postData);
+
+    return insertResult;
+};
+
+const insertComment = async (user_id, article_id, summerNote) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+    console.log();
+    let insertResult = await dbConnect
+        .collection('article')
+        .update({ _id: ObjectId(article_id) }, { $push: { comments: { user_id: user_id, content: summerNote, create_dt: new Date() } } });
+
+    return insertResult;
+};
+
+const insertVideoArticle = async (postData) => {
     // Get records
     const dbConnect = dbo.getDb();
 
@@ -37,7 +70,17 @@ const updateArticleGood = async (article_id, user_id) => {
     // Get records
     const dbConnect = dbo.getDb();
 
-    let insertResult = dbConnect.collection('article').update({ id: article_id }, { $inc: { goods: 1 } });
+    let insertResult = await dbConnect.collection('article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+};
+
+const updateArticleBad = async (article_id, user_id) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    let insertResult = await dbConnect.collection('article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
+    console.log('insertResult', insertResult);
     return insertResult;
 };
 
@@ -45,4 +88,7 @@ module.exports = {
     insertCodeArticle,
     getAllArticle,
     updateArticleGood,
+    getArticleByID,
+    insertComment,
+    updateArticleBad,
 };

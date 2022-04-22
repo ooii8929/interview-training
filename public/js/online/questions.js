@@ -99,6 +99,7 @@ let test = (async function getQuestions() {
                         <div id="answer-${tmpVarCode}"></div>
                     </div>
                     </div>
+                    <button id="share-btn-${res[i].id}" data-question="${res[i].id}" onclick="shareAnswer(this)" style="display:none"/>我的答案真不錯！立刻分享</button>
                     <div class="code-history-log" data-log="${res[i].id}"></div>
                     <button id="next-${tmpVar}" class="next-btn">下一題</button>
                     </div>
@@ -224,14 +225,61 @@ async function submitAnswer(n) {
 
     if (!response.data.answer_status) {
         document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
-    <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
+        <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
     } else {
         document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
-    <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.answer_status}</div></div>
-    <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data.input}</div></div>
-    <div class="answer-block"><div class="answer-title">output:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data.output}</div></div>
-    <div class="answer-block"><div class="answer-title">except:</div><div id="answer-${QuestionNumString}-except" class="answer-reply">${response.data.except}</div></div>
-    <div class="answer-block"><div class="answer-title">run time:</div><div id="answer-${QuestionNumString}-run_time" class="answer-reply">${response.data.run_time}</div></div>
+        <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.answer_status}</div></div>
+        <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data.input}</div></div>
+        <div class="answer-block"><div class="answer-title">output:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data.output}</div></div>
+        <div class="answer-block"><div class="answer-title">except:</div><div id="answer-${QuestionNumString}-except" class="answer-reply">${response.data.except}</div></div>
+        <div class="answer-block"><div class="answer-title">run time:</div><div id="answer-${QuestionNumString}-run_time" class="answer-reply">${response.data.run_time}</div></div>
+        `;
+
+        document.getElementById(`share-btn-${questionID}`).style.display = 'block';
+
+        await getUserCodeLog(questionID);
+    }
+}
+
+async function shareAnswer(n) {
+    console.log('shareAnswer');
+    let codeSend;
+
+    if (QuestionNow == 0) {
+        codeSend = getQuestionsArr[0][language];
+        QuestionNumString = 'codeNowOne';
+    }
+    if (QuestionNow == 1) {
+        codeSend = getQuestionsArr[1][language];
+        QuestionNumString = 'codeNowTwo';
+    }
+
+    if (QuestionNow == 2) {
+        codeSend = getQuestionsArr[2][language];
+        QuestionNumString = 'codeNowThree';
+    }
+
+    let questionID = n.getAttribute('data-question');
+
+    try {
+        response = await axios.post('/api/1.0/article/code', {
+            user_id: userID,
+            question_id: questionID,
+            code: codeSend,
+            language: language,
+        });
+    } catch (error) {
+        console.error(error);
+    }
+
+    if (!response) {
+        console.log('share error');
+        //     document.querySelector(`#answer-${QuestionNumString}`).innerHTML = `
+        // <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
+    } else {
+        console.log('share reponse', response);
+        document.querySelector(`#answer-${QuestionNumString}`).innerHTML = `
+        <h1>分享成功</h1>
     `;
 
         await getUserCodeLog(questionID);

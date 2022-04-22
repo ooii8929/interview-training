@@ -30,7 +30,6 @@ const getUserProfile = async (req, res) => {
             if (err) {
                 res.status(400).send('Error fetching listings!');
             } else {
-                console.log('result', result);
                 res.status(200).json(result);
             }
         });

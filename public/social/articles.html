@@ -13,6 +13,19 @@
         .navbar-brand {
             width: 100px;
         }
+
+        #ans {
+            text-align: center;
+        }
+
+        .article {
+            display: inline-block;
+            border: 1px solid black;
+            text-align: center;
+            margin: auto;
+            margin-top: 2%;
+            width: 70%;
+        }
     </style>
 </head>
 
@@ -36,7 +49,7 @@
                     <a class="nav-link" href="/tutor/teacher/arrange.html">幫人面試</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="/social.html">面試社群</a>
+                    <a class="nav-link disabled" href="/social/articles.html">面試社群</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="/member/profile.html">個人資訊</a>
@@ -49,23 +62,22 @@
     </nav>
     <div id="ans"></div>
     <script>
-        function sendto() {
-            axios
-                .get("https://wooah.app/api/1.0/article")
-                .then(function (response) {
-                    document.querySelector("#ans").textContent = JSON.stringify(response);
-                    // handle success
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
+        async function getArticles() {
+            let res = await axios.get("/api/1.0/article");
+            console.log('res', res);
+            res.data.forEach(e => {
+                document.querySelector("#ans").innerHTML += `
+                <div class="article" onclick="location.href='/social/article.html?article-id=${e._id}';">
+                <div>${e.title}</div>
+                <div>${e.description}</div>
+                <div>${e.language}</div>
+                <code>${e.code}</code>
+                </div>
+                `
+            });
+
         }
-        sendto()
+        getArticles()
     </script>
 </body>
 

@@ -132,6 +132,7 @@ const submitCompile = async (req, res) => {
 };
 
 const runCompile = async (req, res) => {
+    console.log('runCompile');
     const { content, question_id, language } = req.body;
     let answer = await Answer.getQuestionAnswer(question_id);
 
@@ -250,16 +251,6 @@ const getQuestionsByProfession = async (req, res) => {
     let questions = await Question.getQuestions(profession);
 
     let allQuestions = questions.questions[0];
-    // let tmpNum = [];
-    // for (let i = 0; i < 3; i++) {
-    //     tmpNum.push(allQuestions[getRandomInt(allQuestions.length)]);
-    // }
-
-    // function getRandomInt(max) {
-    //     return Math.floor(Math.random() * max);
-    // }
-
-    // console.log('tmpNum', tmpNum);
 
     return res.status(200).send(allQuestions);
 };

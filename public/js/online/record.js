@@ -713,6 +713,7 @@ function saveToDiskOrOpenNewTab(recordRTC) {
             .send(function (err, data) {
                 percentage.parentNode.innerHTML = '<div id="success-send">File has been uploaded successfully.</div>';
                 //listObjs();
+
                 console.log(err, data);
             });
 

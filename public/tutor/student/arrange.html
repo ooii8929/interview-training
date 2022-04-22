@@ -69,28 +69,25 @@
 
         let main = document.getElementById('main')
 
-        function getAllCourse() {
-            axios.get('/api/1.0/tutor/teacher/schedule')
-                .then(function (response) {
-                    for (var i = 0; i < response.data.length; i++) {
-                        main.innerHTML += `<div class="box">
-                        <ol>
-                        <li>${response.data[i]['id']}</li>
-                        <li>${response.data[i]['t_id']}</li>
-                        <li>${response.data[i]['available_time']}</li>
-                        </ol>
-                        
-                        <button data-tutor-class-id="${response.data[i]['id']}" onclick="sendAppointment(this);">立即預約</button>
+        async function getAllCourse() {
+            let response = await axios.get('/api/1.0/tutor/teacher/schedule')
 
-                        </div>`;
-                    }
-                    // handle success
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
+
+            for (var i = 0; i < response.data.length; i++) {
+                main.innerHTML += `<div class="box">
+                <ol>
+                <li>${response.data[i]['id']}</li>
+                <li>${response.data[i]['t_id']}</li>
+                <li>${response.data[i]['available_time']}</li>
+                </ol>
+                
+                <button data-tutor-class-id="${response.data[i]['id']}" onclick="sendAppointment(this);">立即預約</button>
+
+                </div>`;
+            }
+            // handle success
+            console.log(response);
+
         }
         getAllCourse()
 
