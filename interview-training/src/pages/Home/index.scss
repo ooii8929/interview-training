@@ -1,0 +1,50 @@
+
+#home-herobar{
+        justify-content: center;
+  display: flex;
+   background: url('../../assets/images/bg-own.webp') center / cover no-repeat;
+   .row{
+    align-items: center;
+       width: 80%;
+      justify-content: center;
+   }
+}
+
+#go-to-training{
+    display: flex;
+    margin-top: 20px;
+     margin-left:5%;
+    .MuiInputBase-root-MuiOutlinedInput-root {
+    padding: 10px 10px;
+   
+}
+
+.MuiFormControl-root.css-1agwao2-MuiFormControl-root {
+    padding: 0px;
+    margin: 0px;
+    margin-right: 10px;
+  
+}
+}
+
+
+a.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButtonBase-root.css-1jpt7oq-MuiButtonBase-root-MuiButton-root{    color: #fff ;
+
+}
+
+.MuiOutlinedInput-root.MuiInputBase-root.MuiInputBase-colorPrimary.MuiInputBase-formControl.css-56s1s1-MuiInputBase-root-MuiOutlinedInput-root {
+    padding: 10px;
+}
+
+.MuiFormControl-root.css-1e7cuzv-MuiFormControl-root {
+    margin: 0;
+    margin-right: 15px;
+}
+
+div#lottie-icon {
+    height: 100vh;
+}
+
+#home-title{
+    margin-left:5%;
+}
