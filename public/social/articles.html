@@ -20,64 +20,101 @@
 
         .article {
             display: inline-block;
-            border: 1px solid black;
+            border-radius: 10px;
             text-align: center;
             margin: auto;
             margin-top: 2%;
             width: 70%;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+            background-color: #fff;
+        }
+
+        .badge {
+            font-size: 1.4em !important;
+            margin: 1%;
+            padding: 1% 2% !important;
+            cursor: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/9632/happy.png'), auto;
+        }
+
+        .badge:hover {
+            font-size: 1.4em !important;
+            margin: 1%;
+            padding: 1% 2% !important;
+            background-color: #1976d2 !important;
+
+        }
+
+
+        body {
+            background-color: #f8f8f8 !important;
         }
     </style>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="./main.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <img class="navbar-brand" src="/image/Group 2.png" alt="">
+    <div id="main-menu"></div>
+    <div class="badges-container"><span class="badge badge-pill badge-primary">Backend</span>
+        <span class="badge badge-pill badge-secondary">Frontend</span>
+        <span class="badge badge-pill badge-secondary">introduct</span>
+        <span class="badge badge-pill badge-secondary">experience</span>
+        <span class="badge badge-pill badge-secondary">tutor</span>
+    </div>
+    <div id="card-container">
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/training/online.html">模擬面試 <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tutor/student/arrange.html">真人面試</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tutor/teacher/arrange.html">幫人面試</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/social/articles.html">面試社群</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/member/profile.html">個人資訊</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="logout">登出</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <div id="ans"></div>
+    </div>
+
     <script>
         async function getArticles() {
             let res = await axios.get("/api/1.0/article");
             console.log('res', res);
             res.data.forEach(e => {
-                document.querySelector("#ans").innerHTML += `
-                <div class="article" onclick="location.href='/social/article.html?article-id=${e._id}';">
-                <div>${e.title}</div>
-                <div>${e.description}</div>
-                <div>${e.language}</div>
-                <code>${e.code}</code>
+                document.querySelector("#card-container").innerHTML += `
+            
+                <div class="card" onclick="location.href='/social/article.html?article-id=${e._id}';">
+            <div class="ovelay"> </div>
+            <header class="user">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                    alt="">
+                <div class="user-info">
+                    <h2 class="user-info-name">Dadda Hicham</h2>
+                    <p class="user-info-time">4 min ago</p>
                 </div>
+            </header>
+            <main>
+                <h2>${e.title}</h2>
+                <p>${e.description} </p>
+                <p>${e.language}</p>
+            </main>
+            <section>
+                <div class="users-avatars">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"
+                        alt="">
+                    <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                        alt="">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+                        alt="">
+                </div>
+                <p>40 Likes</p>
+                <p class="comment">10 comment</p>
+                <p>5 shared</p>
+            </section>
+        </div>
                 `
             });
 
         }
         getArticles()
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>$('#main-menu').load('/header/index.html');
+        function goTrain() {
+            sessionStorage.setItem('profession', $('#select-profession').val());
+            window.location.href = '/training/sense.html';
+
+        }
     </script>
 </body>
 

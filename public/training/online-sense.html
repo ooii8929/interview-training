@@ -39,10 +39,17 @@
 
         nextButton.addEventListener('click', event => {
             localStorage.setItem('professionChoose', porfessionChoose);
-            window.location.href = './technical.html'; //Will take you to Google.
+            window.location.href = './sense.html'; //Will take you to Google.
         });
 
 
+    </script>
+    <script>$('#main-menu').load('./header/index.html');
+        function goTrain() {
+            sessionStorage.setItem('profession', $('#select-profession').val());
+            window.location.href = '/training/online-sense.html';
+
+        }
     </script>
 </body>
 

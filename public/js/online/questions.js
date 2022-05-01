@@ -149,11 +149,13 @@ let test = (async function getQuestions() {
                     <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
                 } else {
                     document.querySelector(`#answer-${QuestionNumString}`).innerHTML = ` 
+              
                     <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.answer_status}</div></div>
                     <div class="answer-block"><div class="answer-title">input:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data.input}</div></div>
                     <div class="answer-block"><div class="answer-title">output:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data.output}</div></div>
                     <div class="answer-block"><div class="answer-title">except:</div><div id="answer-${QuestionNumString}-except" class="answer-reply">${response.data.except}</div></div>
-                    <div class="answer-block"><div class="answer-title">run time:</div><div id="answer-${QuestionNumString}-run_time" class="answer-reply">${response.data.run_time}</div></div>
+                 
+                
                     `;
                 }
             });
@@ -298,9 +300,11 @@ function getUserCodeLog(questionID) {
             console.log('getUserCodeLog response', response.data);
             for (let i = 0; i < response.data.length; i++) {
                 document.querySelector(`[data-log = '${questionID}']`).innerHTML += `
+                      <div class="history-answer">
             <div class="answer-block">${response.data[i].create_dt}</div>
-            <div class="answer-block"><div class="answer-history">content:</div><div id="answer-${QuestionNumString}-input" class="answer-reply">${response.data[i].content}</div></div>
+            <div class="answer-block"><div class="answer-history">content:</div><textarea id="answer-${QuestionNumString}-input" class="answer-reply">${response.data[i].content}</textarea></div>
             <div class="answer-block"><div class="answer-history">answer_status:</div><div id="answer-${QuestionNumString}-output" class="answer-reply">${response.data[i].code_answer.answer_status}</div></div>
+            </div>
             `;
             }
         })

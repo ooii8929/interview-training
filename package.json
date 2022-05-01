@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "argon2": "^0.28.5",
+    "aws-sdk": "^2.1125.0",
     "axios": "^0.26.1",
     "child_process": "^1.0.2",
     "cookie-parser": "^1.4.6",
@@ -28,6 +29,7 @@
     "multer": "^1.4.4",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
+    "node-sass": "^7.0.1",
     "nodemon": "^2.0.4",
     "recordrtc": "^5.6.2",
     "redis": "^4.0.6",

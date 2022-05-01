@@ -16,36 +16,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <img class="navbar-brand" src="/image/Group 2.png" alt="">
-
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/training/online.html">模擬面試 <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tutor/student/arrange.html">真人面試</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tutor/teacher/arrange.html">幫人面試</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/social.html">面試社群</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/member/profile.html">個人資訊</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="logout">登出</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <div id="main-menu"></div>
     <div>
         <label>切換麥克風:</label>
         <select id="audioSource"></select>
@@ -61,7 +32,8 @@
         <button id="leaveBtn">離開</button>
         <button name="audio" id="audioBtn">關閉麥克風</button>
         <button name="video" id="VideoBtn">關閉鏡頭</button>
-        <button id="share">share screen</button>
+        <button name="chat" id="ChatBtn">關閉聊天室</button>
+        <button name="video" id="shareScreen">關閉screen</button>
     </div>
 
     <div>
@@ -71,7 +43,7 @@
         <video width="320" autoplay playsinline id="remoteScreenVideo"></video>
     </div>
     <div class="container">
-        <div class="col-md-12 chat-col d-print-none mb-2 bg-info chat-opened" id='chat-pane'>
+        <div class="col-md-12 chat-col d-print-none mb-2 bg-info chat-opened" id='chat-pane' style="display:block">
             <div class="row">
                 <div class="col-12 text-center h2 mb-3">CHAT</div>
             </div>
@@ -93,7 +65,10 @@
     <!-- Check Login -->
     <script src="/js/member/check-login.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+        integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+        crossorigin="anonymous"></script>
+    <script>$('#main-menu').load('/header/index.html');</script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="/js/main.js"></script>
     <script src="/js/main-chat.js"></script>

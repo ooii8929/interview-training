@@ -112,6 +112,13 @@ var defaultWidth;
 var defaultHeight;
 
 var btnStartRecording = document.querySelector('#btn-start-recording');
+var timer = document.querySelector('#timer');
+var number = 30;
+function timeCount() {
+    number--;
+    if (number <= 0) number = 0;
+    timer.innerText = number + 0;
+}
 
 window.onbeforeunload = function () {
     btnStartRecording.disabled = false;
@@ -119,13 +126,8 @@ window.onbeforeunload = function () {
 
 btnStartRecording.onclick = function (event) {
     //   按下 start 後 id 為 timer 的 DIV 內容可以開始倒數到到 0。
-    var timer = document.querySelector('#timer');
-    var number = 30;
-    setInterval(function () {
-        number--;
-        if (number <= 0) number = 0;
-        timer.innerText = number + 0;
-    }, 1000);
+
+    startCounter = setInterval(timeCount, 1000);
     if (document.getElementById('success-send')) {
         document.getElementById('success-send').remove();
     }
@@ -686,6 +688,7 @@ function saveToDiskOrOpenNewTab(recordRTC) {
         var request = await bucket.putObject(params);
         console.log('request', request);
         console.log('request', request.params.Key);
+
         let questionID = document.getElementById('save-to-disk').getAttribute('data-question-id');
         nowVideo = request.params.Key;
         axios
@@ -719,141 +722,6 @@ function saveToDiskOrOpenNewTab(recordRTC) {
 
         // invokeSaveAsDialog(file, file.name);
     };
-
-    // document.querySelector('#open-new-tab').onclick = function () {
-    //     if (!recordRTC) return alert('No recording found.');
-
-    //     var file = new File([recordRTC.getBlob()], fileName, {
-    //         type: mimeType,
-    //     });
-
-    //     window.open(URL.createObjectURL(file));
-    // };
-
-    // upload to PHP server
-    // if (isMyOwnDomain()) {
-    //     document.querySelector('#upload-to-php').disabled = true;
-    //     document.querySelector('#upload-to-php').style.display = 'none';
-    // } else {
-    //     document.querySelector('#upload-to-php').disabled = false;
-    // }
-
-    // document.querySelector('#upload-to-php').onclick = function () {
-    //     if (isMyOwnDomain()) {
-    //         alert('PHP Upload is not available on this domain.');
-    //         return;
-    //     }
-
-    //     if (!recordRTC) return alert('No recording found.');
-    //     this.disabled = true;
-
-    //     var button = this;
-    //     uploadToPHPServer(fileName, recordRTC, function (progress, fileURL) {
-    //         if (progress === 'ended') {
-    //             button.disabled = false;
-    //             button.innerHTML = 'Click to download from server';
-    //             button.onclick = function () {
-    //                 SaveFileURLToDisk(fileURL, fileName);
-    //             };
-
-    //             setVideoURL(fileURL);
-
-    //             var html = 'Uploaded to PHP.<br>Download using below link:<br>';
-    //             html += '<a href="' + fileURL + '" download="' + fileName + '" style="color: yellow; display: block; margin-top: 15px;">' + fileName + '</a>';
-    //             recordingPlayer.parentNode.parentNode.querySelector('h2').innerHTML = html;
-    //             return;
-    //         }
-    //         button.innerHTML = progress;
-    //         recordingPlayer.parentNode.parentNode.querySelector('h2').innerHTML = progress;
-    //     });
-    // };
-
-    // upload to YouTube!
-    // document.querySelector('#upload-to-youtube').disabled = false;
-    // document.querySelector('#upload-to-youtube').onclick = function () {
-    //     if (!recordRTC) return alert('No recording found.');
-    //     this.disabled = true;
-
-    //     if (isLocalHost()) {
-    //         alert('This feature is NOT available on localhost.');
-    //         return;
-    //     }
-
-    //     if (isMyOwnDomain() === false) {
-    //         var url = 'https://github.com/muaz-khan/RecordRTC/wiki/Upload-to-YouTube';
-    //         alert(
-    //             'YouTube API key is configured to work only on webrtc-experiment.com. Please create your own YouTube key + oAuth client-id and use it instead.\n\nWiki page: ' + url
-    //         );
-
-    //         // check instructions on the wiki page
-    //         location.href = url;
-    //         return;
-    //     }
-
-    // var button = this;
-    // uploadToYouTube(fileName, recordRTC, function (percentageComplete, fileURL) {
-    //     if (percentageComplete == 'uploaded') {
-    //         button.disabled = false;
-    //         button.innerHTML = 'Uploaded. However YouTube is still processing.';
-    //         button.onclick = function () {
-    //             window.open(fileURL);
-    //         };
-    //         return;
-    //     }
-    //     if (percentageComplete == 'processed') {
-    //         button.disabled = false;
-    //         button.innerHTML = 'Uploaded & Processed. Click to open YouTube video.';
-    //         button.onclick = function () {
-    //             window.open(fileURL);
-    //         };
-
-    //         document.querySelector('h1').innerHTML = 'Your video has been uploaded.';
-    //         window.scrollTo(0, 0);
-
-    //         alert('Your video has been uploaded.');
-    //         return;
-    //     }
-    //     if (percentageComplete == 'failed') {
-    //         button.disabled = false;
-    //         button.innerHTML = 'YouTube failed transcoding the video.';
-    //         button.onclick = function () {
-    //             window.open(fileURL);
-    //         };
-    //         return;
-    //     }
-    //     button.innerHTML = percentageComplete + '% uploaded to YouTube.';
-    // });
-    // };
-}
-
-function uploadToPHPServer(fileName, recordRTC, callback) {
-    var blob = recordRTC instanceof Blob ? recordRTC : recordRTC.getBlob();
-
-    blob = new File([blob], getFileName(fileExtension), {
-        type: mimeType,
-    });
-
-    // create FormData
-    var formData = new FormData();
-    formData.append('video-filename', fileName);
-    formData.append('video-blob', blob);
-
-    callback('Uploading recorded-file to server.');
-
-    // var upload_url = 'https://your-domain.com/files-uploader/';
-    var upload_url = 'RecordRTC-to-PHP/save.php';
-
-    // var upload_directory = upload_url;
-    var upload_directory = 'RecordRTC-to-PHP/uploads/';
-
-    makeXMLHttpRequest(upload_url, formData, function (progress) {
-        if (progress !== 'upload-ended') {
-            callback(progress);
-            return;
-        }
-
-        callback('ended', upload_directory + fileName);
-    });
 }
 
 function makeXMLHttpRequest(url, data, callback) {

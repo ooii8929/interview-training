@@ -9,6 +9,15 @@ document.getElementById('chat-input-btn').addEventListener('click', (e) => {
     }
 });
 
+// control chat room display
+document.getElementById('ChatBtn').addEventListener('click', (e) => {
+    if (document.getElementById('chat-pane').style.display == 'none') {
+        document.getElementById('chat-pane').style.display = 'block';
+    } else if (document.getElementById('chat-pane').style.display == 'block') {
+        document.getElementById('chat-pane').style.display = 'none';
+    }
+});
+
 //Chat textarea
 document.getElementById('chat-input').addEventListener('keypress', (e) => {
     if (e.which === 13 && e.target.value.trim()) {

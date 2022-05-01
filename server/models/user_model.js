@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const _ = require('lodash');
 
-const signUp = async (identity, name, email, password, profession) => {
+const signUp = async (identity, name, email, password) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');

@@ -18,96 +18,74 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <img class="navbar-brand" src="/image/Group 2.png" alt="">
-
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/training/online.html">模擬面試 <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tutor/student/arrange.html">真人面試</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/tutor/teacher/arrange.html">幫人面試</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/social.html">面試社群</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="/member/profile.html">個人資訊</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="logout">登出</a>
-                </li>
-            </ul>
+    <div id="main-menu"></div>
+    <div class="row">
+        <div class="profile-container col-6">
+            <h2>真人面試培訓課程</h2>
+            <div id="tutor"></div>
         </div>
-    </nav>
-
-    <div id="main"></div>
-    <div id="tutor"></div>
+        <div class="profile-container col-6">
+            <h2>模擬面試歷史紀錄</h2>
+            <div id="main"></div>
+        </div>
+    </div>
     <script src="/js/member/check-login.js"></script>
 
     <script>
-        function getUserInfo() {
+        async function getUserInfo() {
             let main = document.getElementById('main');
             let tutor = document.getElementById('tutor');
-            axios.get('/api/1.0/user/profile', {
-                params: {
-                    userID: userID
-                }
-            })
-                .then(function (response) {
-                    console.log(response);
-                    for (var i = 0; i < response.data.length; i++) {
-                        main.innerHTML += `<div class="box">
-                        <ul>
-                        <li>${response.data[i]['user_id']}</li>
-                        <li>${response.data[i]['question_id']}</li>
-                        <li>${response.data[i]['video_answer']}</li>
-                        </ul>
-                        </div>`;
-                    }
-                    // handle success
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
 
-            axios.get('/api/1.0/tutor/user/appoint', {
+
+            let tmpAppoint = await axios.get('/api/1.0/tutor/user/appoint', {
                 params: {
                     userID: userID
                 }
             })
-                .then(function (response) {
-                    console.log('response', response);
-                    for (var i = 0; i < response.data.length; i++) {
-                        tutor.innerHTML += `<div class="box">
+
+            for (var i = 0; i < tmpAppoint.data.length; i++) {
+                tutor.innerHTML += `<div class="box">
                         <ul>
-                        <li>上課老師：${response.data[i]['t_id']}</li>
-                        <li>${response.data[i]['available_time']}</li>
-                        <li><a href="/stream.html?room=${response.data[i]['course_url']}">前往上課</a></li>
+                        <li>上課老師：${tmpAppoint.data[i]['t_id']}</li>
+                        <li>${tmpAppoint.data[i]['available_time']}</li>
+                        <li><a href="/stream.html?room=${tmpAppoint.data[i]['course_url']}">前往上課</a></li>
                         
                
                         </ul>
                         </div>`;
-                    }
-                    // handle success
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
+            }
+
+
+
+
+            let tmpProfile = await axios.get('/api/1.0/user/profile', {
+                params: {
+                    userID: userID
+                }
+            })
+
+            for (var i = 0; i < tmpProfile.data.length; i++) {
+                main.innerHTML += `<div class="box">
+                        <ul>
+                        
+                        <li>題目：${tmpProfile.data[i]['question_id']}</li>
+                        <li>做題紀錄：${tmpProfile.data[i]['video_answer'] ? tmpProfile.data[i]['video_answer'] : tmpProfile.data[i]['content']}</li>
+                        </ul>
+                        </div>`;
+
+            }
         }
         getUserInfo()
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>
+        $('#main-menu').load('../header/index.html');
+        function goTrain() {
+            sessionStorage.setItem('profession', $('#select-profession').val());
+            window.location.href = '/training/sense.html';
+
+        }
     </script>
 
 </body>

@@ -47,6 +47,7 @@ const getAllTeacherSchedule = async (req, res) => {
 const makeAppointment = async (req, res) => {
     let { user_id, course_id } = req.body;
     const result = await Tutor.makeAppointment(course_id, user_id);
+
     if (result.error) {
         res.status(403).send({ error: result.error });
         return;

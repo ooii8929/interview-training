@@ -54,7 +54,6 @@ const getAllTeacherSchedule = async () => {
 };
 
 const getAllAppointmentByID = async (userID) => {
-    console.log('userID', userID);
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
@@ -98,11 +97,13 @@ const makeAppointment = async (teacher_time_id, user_id) => {
         var futureDate = new Date(currentDate.getTime() + minutesToAdd * 60000);
         console.log('tutorTime', tutorTime);
         console.log('tutorTime + 10000', futureDate);
+        const checkQueryStr =
+            'SELECT a.* FROM appointments a INNER JOIN teachers_time tt ON  a.teacher_time_id = tt.id  WHERE a.user_id = ? AND tt.available_time >= ? AND tt.available_time <= ? ;';
 
-        const user_schedule_check = await conn.query(
-            'SELECT status FROM teachers_time INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.t_id WHERE user_id = ? && ',
-            [user_id]
-        );
+        const user_schedule_check = await conn.query(checkQueryStr, [user_id, currentDate, futureDate]);
+        if (user_schedule_check[0].length > 0) {
+            return { error: 'You have already appointed tutor in this time' };
+        }
 
         const appoint = {
             user_id: user_id,

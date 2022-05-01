@@ -69,7 +69,7 @@ const insertVideoArticle = async (postData) => {
 const updateArticleGood = async (article_id, user_id) => {
     // Get records
     const dbConnect = dbo.getDb();
-
+    console.log('good', article_id, user_id);
     let insertResult = await dbConnect.collection('article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
     console.log('insertResult', insertResult);
     return insertResult;

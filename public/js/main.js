@@ -12,6 +12,7 @@ const startBtn = document.querySelector('button#startBtn');
 const leaveBtn = document.querySelector('button#leaveBtn');
 const audioBtn = document.querySelector('button#audioBtn');
 const VideoBtn = document.querySelector('button#VideoBtn');
+const screenVideoBtn = document.querySelector('button#shareScreen');
 
 // 切換設備
 const audioInputSelect = document.querySelector('select#audioSource');
@@ -29,11 +30,12 @@ let socket;
  * 連線 socket.io
  */
 function connectIO() {
+    console.log('socket connect');
     // socket
-    socket = io('ws://0.0.0.0:3000');
+    socket = io('ws://0.0.0.0:3001');
 
     socket.on('ready', async (msg) => {
-        console.log(msg);
+        console.log('get ready');
         // 發送 offer
         console.log('發送 offer ');
         await sendSDP(true);
@@ -172,7 +174,7 @@ function initPeerConnection() {
     };
 
     // 監聽是否有流傳入，如果有的話就顯示影像
-    console.log('remoteVideo.srcObject', remoteVideo.srcObject);
+    console.log('remoteVideo.srcObject', peerConn);
     peerConn.ontrack = function (ev) {
         console.log('ev', ev);
         if (ev.track.kind !== 'video') {
@@ -227,6 +229,16 @@ function closeLocalMedia() {
     localStream = null;
 }
 
+// close screen share
+function closeScreenMedia() {
+    if (localScreenStream && localScreenStream.getTracks()) {
+        localScreenStream.getTracks().forEach((track) => {
+            track.stop();
+        });
+    }
+    localScreenStream = null;
+}
+
 /**
  * 掛掉電話
  */
@@ -248,6 +260,7 @@ async function init() {
     startBtn.disabled = true;
     leaveBtn.disabled = false;
 }
+
 async function initScreen() {
     await createStream();
     await createScreenStream();
@@ -326,15 +339,24 @@ async function switchDevice(isAudio) {
 }
 
 // ===================== 關閉鏡頭或麥克風 =====================
-// 串流開關狀態
+// local串流開關狀態
 let streamOutput = { audio: true, video: true };
+
+// screen串流開關狀態
+let screenStreamOutput = { video: true };
 
 /**
  *  設定按鈕文字
  */
 function setBtnText() {
+    console.log('before streamOutput', streamOutput);
     audioBtn.textContent = streamOutput.audio ? '關閉麥克風' : '開啟麥克風';
     VideoBtn.textContent = streamOutput.video ? '關閉鏡頭' : '開啟鏡頭';
+    console.log('after streamOutput', streamOutput);
+}
+
+function setScreenBtnText() {
+    screenVideoBtn.textContent = screenStreamOutput.video ? '關閉screen' : '開啟screen';
 }
 
 /**
@@ -344,8 +366,16 @@ function setSelfStream() {
     localStream.getAudioTracks().forEach((item) => {
         item.enabled = streamOutput.audio;
     });
+
     localStream.getVideoTracks().forEach((item) => {
         item.enabled = streamOutput.video;
+    });
+    console.log('after disable localStream', localStream);
+}
+
+function setSelfScreenStream() {
+    localScreenStream.getVideoTracks().forEach((item) => {
+        item.enabled = screenStreamOutput.video;
     });
 }
 
@@ -355,13 +385,24 @@ function setSelfStream() {
  */
 function handleStreamOutput(e) {
     const { name } = e.target;
-
     streamOutput = {
         ...streamOutput,
         [name]: !streamOutput[name],
     };
     setBtnText();
     setSelfStream();
+}
+
+function handleScreenStreamOutput(e) {
+    const { name } = e.target;
+    console.log('click disable screen', name);
+    screenStreamOutput = {
+        ...screenStreamOutput,
+        [name]: !screenStreamOutput[name],
+    };
+    console.log('!!!', screenStreamOutput);
+    setScreenBtnText();
+    setSelfScreenStream();
 }
 
 // ===================== 監聽事件 =====================
@@ -376,6 +417,8 @@ window.addEventListener('load', (event) => {
  */
 audioBtn.onclick = handleStreamOutput;
 VideoBtn.onclick = handleStreamOutput;
+screenVideoBtn.onclick = handleScreenStreamOutput;
+
 startBtn.onclick = init;
 
 leaveBtn.onclick = () => {
@@ -405,7 +448,35 @@ document.querySelector('#logout').addEventListener('click', () => {
 
 function getUrlQuery(url = '') {
     let queryStrings = decodeURIComponent(url).split('?');
-
     queryStrings = String(queryStrings[1]).replace('room=', '');
     return queryStrings;
 }
+
+// // control share screen
+// document.getElementById('shareScreen').addEventListener('click', (e) => {
+//     e.preventDefault();
+
+//     if (localScreenStream && localScreenStream.getVideoTracks().length && localScreenStream.getVideoTracks()[0].readyState != 'ended') {
+//         console.log('stop');
+//         stopSharingScreen();
+//     } else {
+//         console.log('share now');
+//         createScreenStream();
+//     }
+// });
+
+// // stop share screen
+// function stopSharingScreen() {
+//     return new Promise((res, rej) => {
+//         console.log('localScreenStream', localScreenStream);
+//         localScreenStream.getTracks().length ? localScreenStream.getTracks().forEach((track) => track.stop()) : '';
+//         console.log('localScreenStream', localScreenStream);
+//         res();
+//     })
+//         .then(() => {
+//             // broadcastNewTracks(myStream, 'video');
+//         })
+//         .catch((e) => {
+//             console.error(e);
+//         });
+// }

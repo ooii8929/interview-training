@@ -9,16 +9,16 @@ const dbo = require('../models/mongodbcon');
 
 const signUp = async (req, res) => {
     // set profession format
-    if (!req.body.profession) {
-        req.body.profession = [];
-    }
+    // if (!req.body.profession) {
+    //     req.body.profession = [];
+    // }
 
-    if (!Array.isArray(req.body.profession)) {
-        req.body.profession = [req.body.profession];
-    }
+    // if (!Array.isArray(req.body.profession)) {
+    //     req.body.profession = [req.body.profession];
+    // }
 
-    const { identity, name, email, password, profession } = req.body;
-
+    const { identity, name, email, password } = req.body.data;
+    console.log('register', identity, name, email, password);
     if (!name || !email || !password) {
         res.status(400).send({ error: 'Request Error: name, email and password are required.' });
         return;
@@ -29,7 +29,7 @@ const signUp = async (req, res) => {
         return;
     }
 
-    const result = await User.signUp(identity, name, email, password, profession);
+    const result = await User.signUp(identity, name, email, password);
     if (result.error) {
         res.status(403).send({ error: result.error });
         return;
@@ -146,11 +146,11 @@ const getUserCodeLog = async (req, res) => {
         .collection('profile')
         .find({ question_id: question_id, user_id: user_id })
         .limit(50)
+        .sort({ create_dt: -1 })
         .toArray(function (err, result) {
             if (err) {
                 res.status(400).send('Error fetching listings!');
             } else {
-                console.log('result', result);
                 res.status(200).json(result);
             }
         });

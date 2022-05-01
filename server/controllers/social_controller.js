@@ -5,6 +5,9 @@ const QUESTION = require('../models/question_model');
 
 const getAllArticle = async (req, res) => {
     let articles = await SOCIAL.getAllArticle();
+    console.log('====================================');
+    console.log('articles', articles);
+    console.log('====================================');
     res.status(200).send(articles);
 };
 
@@ -60,6 +63,12 @@ const insertComments = async (req, res) => {
 const updateArticleGood = async (req, res) => {
     // insert code post
     const { article_id, user_id } = req.body;
+    console.log('user_id', user_id);
+
+    if (!user_id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
 
     let updateResult = await SOCIAL.updateArticleGood(article_id, user_id);
     console.log('updateResult', updateResult);
@@ -70,6 +79,11 @@ const updateArticleGood = async (req, res) => {
 const updateArticleBad = async (req, res) => {
     // insert code post
     const { article_id, user_id } = req.body;
+    console.log('user_id', user_id);
+    if (!user_id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
 
     let updateResult = await SOCIAL.updateArticleBad(article_id, user_id);
     console.log('updateResult', updateResult);
