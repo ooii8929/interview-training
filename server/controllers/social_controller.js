@@ -5,9 +5,7 @@ const QUESTION = require('../models/question_model');
 
 const getAllArticle = async (req, res) => {
     let articles = await SOCIAL.getAllArticle();
-    console.log('====================================');
-    console.log('articles', articles);
-    console.log('====================================');
+
     res.status(200).send(articles);
 };
 
