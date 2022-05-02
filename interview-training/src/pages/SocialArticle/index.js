@@ -22,8 +22,8 @@ export default function SocialArticle() {
     const [articles, setArticles] = React.useState(null);
     const [articleInfo, setArticleInfo] = React.useState(null);
     const baseURL = `${Constant}/article/id`;
-    const jobType = sessionStorage.getItem('jobType');
-    const userId = sessionStorage.getItem('userid');
+    const jobType = localStorage.getItem('jobType');
+    const userId = localStorage.getItem('userid');
     const [goods, setGoods] = React.useState(null);
     const [language, setLanguage] = React.useState(null);
     const [isGood, setIsGood] = React.useState(false);
@@ -43,7 +43,7 @@ export default function SocialArticle() {
         } catch (error) {
             console.log(error);
             alert('你需要先登入');
-            sessionStorage.setItem('returnPage', location.pathname);
+            localStorage.setItem('returnPage', location.pathname);
             // window.location.assign("/login");
         }
     }
@@ -65,7 +65,7 @@ export default function SocialArticle() {
         } catch (error) {
             console.log(error);
             alert('你需要先登入');
-            sessionStorage.setItem('returnPage', location.pathname);
+            localStorage.setItem('returnPage', location.pathname);
             // window.location.assign("/login");
         }
     }

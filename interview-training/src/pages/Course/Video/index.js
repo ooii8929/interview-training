@@ -23,8 +23,8 @@ export default function Video(props) {
     const [nowQuestionNumber, setNowQuestionNumber] = React.useState(null);
     const display = useRef(null);
     const recorderRef = useRef(null);
-    let nowUserId = sessionStorage.getItem('userid');
-    let jobType = sessionStorage.getItem('jobType');
+    let nowUserId = localStorage.getItem('userid');
+    let jobType = localStorage.getItem('jobType');
     let tmpProfile;
     const [seconds, setSeconds] = React.useState(null);
     const [changeStatus, setChangeStatus] = React.useState('');
@@ -123,8 +123,8 @@ export default function Video(props) {
         console.log('1. profileQuestion', profileQuestion);
 
         async function getVideoQuestions() {
-            nowUserId = sessionStorage.getItem('userid');
-            jobType = sessionStorage.getItem('jobType');
+            nowUserId = localStorage.getItem('userid');
+            jobType = localStorage.getItem('jobType');
 
             let response = await axios.get(`${Constant}/training/profile/questions`, {
                 params: {
@@ -190,6 +190,9 @@ export default function Video(props) {
                 return e.status == 0;
             });
             console.log('4. 找到尚未完成題目', notFinishedQuestion);
+            if (notFinishedQuestion.length == 0) {
+                window.location.href = '/course/code';
+            }
             // 4. 如果有，設定題號
             if (notFinishedQuestion) setNowQuestionNumber(notFinishedQuestion[0]['qid']);
         }
@@ -204,22 +207,35 @@ export default function Video(props) {
             setQuestion(nowQuestion);
         }
     }
+    // <Grid item xs={6}>
+    //     {answerStatus ? (
+    //         <VideoCheck
+    //             check={question[0].check}
+    //             setChangeStatus={setChangeStatus}
+    //             profileQuestion={profileQuestion}
+    //             nowQuestionNumber={nowQuestionNumber}
+    //             setAnswerStatus={setAnswerStatus}
+    //         />
+    //     ) : (
+    //         <video type="video/webm" controls preload src={question[0].video_url} />
+    //     )}
+    // </Grid>;
 
     return (
         <>
-            <div>
-                <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} />
-            </div>
             <div ref={timeWarning}></div>
             {question ? (
                 <div className="video_container">
                     <div className="video_title">
                         <h1>{question[0].title}</h1>
                     </div>
+                    <div>
+                        <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} className="countTime" />
+                    </div>
 
-                    <Grid container spacing={2} col={{ xs: 12 }}>
-                        <Grid item xs={6}>
-                            {answerStatus ? (
+                    <Grid container spacing={2} col={{ xs: 12 }} className="display-video">
+                        {answerStatus ? (
+                            <Grid item xs={6}>
                                 <VideoCheck
                                     check={question[0].check}
                                     setChangeStatus={setChangeStatus}
@@ -227,10 +243,8 @@ export default function Video(props) {
                                     nowQuestionNumber={nowQuestionNumber}
                                     setAnswerStatus={setAnswerStatus}
                                 />
-                            ) : (
-                                <video type="video/webm" controls preload src={question[0].video_url} />
-                            )}
-                        </Grid>
+                            </Grid>
+                        ) : null}
                         <Grid item xs={6}>
                             <video type="video/webm" controls preload autoPlay ref={display} />
                         </Grid>

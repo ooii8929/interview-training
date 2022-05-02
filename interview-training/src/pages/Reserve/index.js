@@ -16,7 +16,7 @@ function Tutor() {
     const [tutors, setTutors] = React.useState(null);
     const [appointment, setAppointment] = React.useState(null);
     const baseURL = `${Constant}/tutor/teacher/schedule`;
-    const userID = sessionStorage.getItem('userid');
+    const userID = localStorage.getItem('userid');
 
     async function getTutors() {
         try {

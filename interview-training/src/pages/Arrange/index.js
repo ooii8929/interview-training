@@ -40,8 +40,8 @@ const names = ['Backend', 'Frontend', 'SRE', 'Full-Stack', 'DevOps', 'Architect'
 export default function Arrange() {
     const { Constant } = useContext(AppContext);
 
-    let userId = sessionStorage.getItem('userid');
-    let userName = sessionStorage.getItem('username');
+    let userId = localStorage.getItem('userid');
+    let userName = localStorage.getItem('username');
     const [personName, setPersonName] = React.useState([]);
 
     const handleMultiSelectChange = (event) => {

@@ -12,7 +12,7 @@ export default function Article(props) {
     const { Constant } = useContext(AppContext);
 
     const baseURL = `${Constant}/article`;
-    const jobType = sessionStorage.getItem('jobType');
+    const jobType = localStorage.getItem('jobType');
     const [articles, setArticles] = React.useState(null);
 
     React.useEffect(() => {

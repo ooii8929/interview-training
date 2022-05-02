@@ -19,7 +19,7 @@ function Tutor() {
 
     const [profiles, setProfiles] = React.useState(null);
     const [appointments, setAppointments] = React.useState(null);
-    const userID = sessionStorage.getItem('userid');
+    const userID = localStorage.getItem('userid');
 
     async function getProfile() {
         try {

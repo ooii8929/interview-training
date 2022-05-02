@@ -45,9 +45,9 @@ export default function SignUp() {
                 },
             });
 
-            sessionStorage.setItem('userid', signInResponse.data.data.user.id);
-            sessionStorage.setItem('username', signInResponse.data.data.user.name);
-            sessionStorage.setItem('useremail', signInResponse.data.data.user.email);
+            localStorage.setItem('userid', signInResponse.data.data.user.id);
+            localStorage.setItem('username', signInResponse.data.data.user.name);
+            localStorage.setItem('useremail', signInResponse.data.data.user.email);
             setUserId(signInResponse.data.data.user.id);
             alert('success login');
             // setIsLogin(true);
@@ -59,9 +59,9 @@ export default function SignUp() {
         (e) => {
             console.log('userId', userId);
             if (userId) {
-                if (sessionStorage.getItem('returnPage')) {
-                    let returnPageURL = sessionStorage.getItem('returnPage');
-                    sessionStorage.removeItem('returnPage');
+                if (localStorage.getItem('returnPage')) {
+                    let returnPageURL = localStorage.getItem('returnPage');
+                    localStorage.removeItem('returnPage');
                     return navigate(returnPageURL);
                 }
             }
@@ -87,13 +87,13 @@ export default function SignUp() {
                 updateResult = await axios.post(`${Constant}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);
-            sessionStorage.setItem('userid', updateResult.data.data.user.id);
-            sessionStorage.setItem('username', updateResult.data.data.user.name);
-            sessionStorage.setItem('useremail', updateResult.data.data.user.email);
+            localStorage.setItem('userid', updateResult.data.data.user.id);
+            localStorage.setItem('username', updateResult.data.data.user.name);
+            localStorage.setItem('useremail', updateResult.data.data.user.email);
             alert('success register');
-            if (sessionStorage.getItem('returnPage')) {
-                let returnPageURL = sessionStorage.getItem('returnPage');
-                sessionStorage.removeItem('returnPage');
+            if (localStorage.getItem('returnPage')) {
+                let returnPageURL = localStorage.getItem('returnPage');
+                localStorage.removeItem('returnPage');
                 window.location.href = returnPageURL;
             }
         } catch (error) {
@@ -114,14 +114,14 @@ export default function SignUp() {
             });
             console.log(name, identity, registerEmail, registerPassword);
 
-            sessionStorage.setItem('userid', signInResponse.data.data.user.id);
-            sessionStorage.setItem('username', signInResponse.data.data.user.name);
-            sessionStorage.setItem('useremail', signInResponse.data.data.user.email);
+            localStorage.setItem('userid', signInResponse.data.data.user.id);
+            localStorage.setItem('username', signInResponse.data.data.user.name);
+            localStorage.setItem('useremail', signInResponse.data.data.user.email);
 
             alert('success register');
-            if (sessionStorage.getItem('returnPage')) {
-                let returnPageURL = sessionStorage.getItem('returnPage');
-                sessionStorage.removeItem('returnPage');
+            if (localStorage.getItem('returnPage')) {
+                let returnPageURL = localStorage.getItem('returnPage');
+                localStorage.removeItem('returnPage');
                 window.location.href = returnPageURL;
             }
         } catch (error) {

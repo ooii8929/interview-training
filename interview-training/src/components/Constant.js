@@ -4,10 +4,10 @@ const API = {
     VER2: '2.0',
 };
 const URL = {
-    LOCAL: 'http://localhost:3001',
+    LOCAL: 'http://localhost:3000',
     EC2: 'https://wooah.app',
 };
 
-const urlPrefix = URL.EC2 + '/api/' + API.VER1;
+const urlPrefix = URL.LOCAL + '/api/' + API.VER1;
 
 export default urlPrefix;

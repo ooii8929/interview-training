@@ -1,14 +1,12 @@
 import './index.scss';
 import React, { useContext } from 'react';
 import { AppContext } from '../../App';
-
 import axios from 'axios';
 import Card from './Card';
 import Article from './Article';
 import BasicChips from './Tags';
 import { useLocation, useParams } from 'react-router-dom';
 import { useRef } from 'react';
-
 import './index.scss';
 
 let allArticles;
@@ -21,7 +19,7 @@ function Social() {
     const [article, setArticle] = React.useState(null);
     const [articles, setArticles] = React.useState(null);
     const baseURL = `${Constant}/article`;
-    const jobType = sessionStorage.getItem('jobType');
+    const jobType = localStorage.getItem('jobType');
     const [isArticle, setIsArticle] = React.useState(false);
     const { cardContainer } = React.useRef();
 
@@ -48,24 +46,34 @@ function Social() {
     }, [isArticle]);
 
     return (
-        <>
-            <div>
-                {id ? (
-                    <Article />
-                ) : (
-                    <>
-                        <BasicChips />
-                        <div id="card-container" ref={cardContainer}>
-                            {articles
-                                ? articles.map((article, index) => {
-                                      return <Card key={index} title={article['title']} description={article['description']} href={article['_id']} isArticle={setIsArticle} />;
-                                  })
-                                : null}
-                        </div>
-                    </>
-                )}
-            </div>
-        </>
+        <div>
+            {id ? (
+                <Article />
+            ) : (
+                <>
+                    <BasicChips />
+                    <div id="card-container" ref={cardContainer}>
+                        {articles
+                            ? articles.map((article, index) => {
+                                  return (
+                                      <Card
+                                          key={index}
+                                          reply={article['reply']}
+                                          liked={article['goods']}
+                                          postTime={article['post_time']}
+                                          authorName={article['author_name']}
+                                          title={article['title']}
+                                          description={article['description']}
+                                          href={article['_id']}
+                                          isArticle={setIsArticle}
+                                      />
+                                  );
+                              })
+                            : null}
+                    </div>
+                </>
+            )}
+        </div>
     );
 }
 

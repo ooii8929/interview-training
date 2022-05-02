@@ -7,8 +7,8 @@ import axios from 'axios';
 export default function SocialArticle() {
     const { Constant } = useContext(AppContext);
 
-    const jobType = sessionStorage.getItem('jobType');
-    const userId = sessionStorage.getItem('userid');
+    const jobType = localStorage.getItem('jobType');
+    const userId = localStorage.getItem('userid');
     const { id } = useParams();
     const tringleGood = useRef(null);
 

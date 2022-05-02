@@ -7,6 +7,14 @@
     margin: 1%;
     
 }
+.social-desc{
+   overflow: hidden;
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2; /*行數*/
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
 
 .card {
   width: 70%;

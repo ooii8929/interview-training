@@ -16,7 +16,7 @@ function Code() {
     }
 
     useEffect(() => {
-        sessionStorage.setItem('jobType', jobType);
+        localStorage.setItem('jobType', jobType);
     }, [jobType]);
     return (
         <>

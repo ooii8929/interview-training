@@ -16,7 +16,7 @@ function Home() {
     }
 
     useEffect(() => {
-        sessionStorage.setItem('jobType', jobType);
+        localStorage.setItem('jobType', jobType);
     }, [jobType]);
     return (
         <>
@@ -27,8 +27,8 @@ function Home() {
                     </Col>
                     <Col xs="6">
                         <div id="home-title">
-                            <h1>『面試10分鐘，私下10年功』</h1>
-                            <h1>為優秀面試者而生，面面培訓系統</h1>
+                            <h2>『為優秀面試者而生』</h2>
+                            <h1>面面培訓系統</h1>
                         </div>
                         <div id="go-to-training">
                             <SelectAutoWidth onJobChange={changeJobType} jobType={jobType} />

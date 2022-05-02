@@ -52,8 +52,8 @@ export default function Question() {
     const [runCodeResponseExpect, setRunCodeResponseExpect] = React.useState(null);
     const [userCodeLogs, setUserCodeLogs] = React.useState(null);
 
-    const jobType = sessionStorage.getItem('jobType');
-    const userId = sessionStorage.getItem('userid');
+    const jobType = localStorage.getItem('jobType');
+    const userId = localStorage.getItem('userid');
 
     const [answer, setAnswer] = React.useState(null);
     const baseURL = `${Constant}/training/questions`;

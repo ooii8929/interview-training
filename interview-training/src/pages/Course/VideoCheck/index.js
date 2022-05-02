@@ -7,13 +7,13 @@ import { Grid, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import './main.scss';
 export default function VideoCheck(props) {
     const { Constant } = useContext(AppContext);
 
     let navigate = useNavigate();
     const [checked, setChecked] = React.useState([true, false, false]);
-    let nowUserId = sessionStorage.getItem('userid');
+    let nowUserId = localStorage.getItem('userid');
     async function storeChecked(params) {
         console.log('checked', checked);
         let tmpChecked = [];
@@ -69,7 +69,7 @@ export default function VideoCheck(props) {
     );
 
     return (
-        <div>
+        <div className="check-video-box">
             <FormControlLabel
                 label="我超棒，都做到了"
                 control={

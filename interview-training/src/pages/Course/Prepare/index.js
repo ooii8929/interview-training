@@ -51,7 +51,11 @@ export default function Prepare() {
 
             <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row" className="course-percent">
                 <Grid item xs={4} className="course-percent-grid">
-                    <div>
+                    <div
+                        onClick={() => {
+                            window.location.href = '/course/video';
+                        }}
+                    >
                         <Stack direction="row" spacing={2} className="course-percent-container">
                             <div>
                                 <AutoAwesomeIcon />
@@ -62,7 +66,11 @@ export default function Prepare() {
                     </div>
                 </Grid>
                 <Grid item xs={4} className="course-percent-grid">
-                    <div>
+                    <div
+                        onClick={() => {
+                            window.location.href = '/course/code';
+                        }}
+                    >
                         <Stack direction="row" spacing={2} className="course-percent-container">
                             <div>
                                 <AutoFixHighIcon />

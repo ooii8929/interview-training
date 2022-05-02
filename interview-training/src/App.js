@@ -21,7 +21,7 @@ export const AppContext = createContext();
 function App() {
     console.log('Constant', Constant);
     const [profileQuestion, setProfileQuestion] = React.useState('');
-    const jobType = sessionStorage.getItem('jobType');
+    const jobType = localStorage.getItem('jobType');
     const [userId, setUserId] = React.useState('');
 
     const appContextValue = {
@@ -36,8 +36,8 @@ function App() {
 
     React.useEffect((e) => {
         console.log('0. get user id by session storage');
-        if (!userId && sessionStorage.getItem('userid')) console.log('0. get user id by session storage run');
-        setUserId(sessionStorage.getItem('userid'));
+        if (!userId && localStorage.getItem('userid')) console.log('0. get user id by session storage run');
+        setUserId(localStorage.getItem('userid'));
     }, []);
 
     React.useEffect(
@@ -57,10 +57,10 @@ function App() {
     function RequireAuth({ Component }) {
         // <Route path="/course/" element={<RequireAuth Component={Course} />} />
         let location = useLocation();
-        let nowUserId = sessionStorage.getItem('userid');
+        let nowUserId = localStorage.getItem('userid');
         if (!nowUserId) {
             alert('你需要先登入');
-            sessionStorage.setItem('returnPage', location.pathname);
+            localStorage.setItem('returnPage', location.pathname);
             return <Navigate to="/login" />;
         }
         console.log('Auth');

@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 export default function Introduce(props) {
     let navigate = useNavigate();
 
-    let userName = sessionStorage.getItem('username');
-    let jobType = sessionStorage.getItem('jobtype');
+    let userName = localStorage.getItem('username');
+    let jobType = localStorage.getItem('jobtype');
     return (
         <Row>
             <Col xs="5">

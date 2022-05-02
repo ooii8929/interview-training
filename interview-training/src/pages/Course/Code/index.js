@@ -17,11 +17,11 @@ export default function Video(props) {
     const { Constant } = useContext(AppContext);
 
     let navigate = useNavigate();
-    let userId = sessionStorage.getItem('userid');
+    let userId = localStorage.getItem('userid');
     const [userCodeLogs, setUserCodeLogs] = React.useState(null);
     const [questionID, setQuestionID] = React.useState(null);
 
-    let jobType = sessionStorage.getItem('jobType');
+    let jobType = localStorage.getItem('jobType');
     const [profileQuestion, setProfileQuestion] = React.useState('');
     let languages = ['javascript', 'python'];
     const [answerStatus, setAnswerStatus] = useState(false);
@@ -45,8 +45,8 @@ export default function Video(props) {
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
     React.useEffect((e) => {
         async function getCodeQuestions() {
-            userId = sessionStorage.getItem('userid');
-            jobType = sessionStorage.getItem('jobType');
+            userId = localStorage.getItem('userid');
+            jobType = localStorage.getItem('jobType');
 
             let response = await axios.get(`${Constant}/training/profile/questions`, {
                 params: {
@@ -335,8 +335,12 @@ export default function Video(props) {
                         />
                     ) : null}
                     <div className="user-log-container">
-                        <h3>過往答題紀錄</h3>
-                        {userCodeLogs ? <Accordion userLogs={userCodeLogs} /> : null}
+                        {userCodeLogs ? (
+                            <>
+                                <h3>過往答題紀錄</h3>
+                                <Accordion userLogs={userCodeLogs} />
+                            </>
+                        ) : null}
                     </div>
                 </div>
             ) : null}
