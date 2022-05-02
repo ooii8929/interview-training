@@ -40,8 +40,10 @@ const getAllTeacherSchedule = async () => {
     try {
         await conn.query('START TRANSACTION');
 
-        const teachers_schedule = await conn.query('SELECT * FROM teachers_time WHERE status = "0"');
-
+        const teachers_schedule = await conn.query(
+            'SELECT tt.id,tt.t_id,tt.available_time,tt.course_url,ts.experience1,ts.experience2,ts.experience3,ts.introduce,ts.profession,ts.name,ts.picture FROM teachers_time AS tt INNER JOIN teachers AS ts ON ts.id = tt.t_id WHERE tt.status = "0"'
+        );
+        console.log('teachers_schedule', teachers_schedule);
         await conn.query('COMMIT');
         return teachers_schedule[0];
     } catch (error) {
@@ -76,6 +78,62 @@ const getAllAppointmentByID = async (userID) => {
     }
 };
 
+const setTeacherInfomation = async (experience1, experience2, experience3, user_id, introduce, profession) => {
+    console.log('setTeacherInfomation', experience1, experience2, experience3, user_id, introduce, profession);
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        let teacherInfo = {
+            experience1: experience1,
+            experience2: experience2,
+            experience3: experience3,
+            introduce: introduce,
+            profession: profession,
+        };
+
+        const queryStr = 'UPDATE teachers  SET ? WHERE id = ?';
+
+        const [result] = await conn.query(queryStr, [teacherInfo, user_id]);
+
+        console.log('update result', result);
+
+        await conn.query('COMMIT');
+
+        return { result };
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
+const getTeacherInfomation = async (user_id) => {
+    console.log('getTeacherInfomation', user_id);
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        const queryStr = 'SELECT * FROM teachers  WHERE id = ?';
+
+        const [result] = await conn.query(queryStr, [user_id]);
+
+        console.log('update result', result);
+
+        await conn.query('COMMIT');
+
+        return { result };
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
 const makeAppointment = async (teacher_time_id, user_id) => {
     const conn = await pool.getConnection();
     try {
@@ -87,6 +145,13 @@ const makeAppointment = async (teacher_time_id, user_id) => {
         if (teacher_schedule_check[0].length !== 1) {
             await conn.query('COMMIT');
             return { error: 'These class cannot be appointed' };
+        }
+
+        const user_check = await conn.query('SELECT id,email FROM users WHERE id = ?', [user_id]);
+
+        if (user_check[0].length !== 1) {
+            await conn.query('COMMIT');
+            return { error: '你必須為學生身份才可以預約課程' };
         }
 
         // check user time if crashed
@@ -134,4 +199,6 @@ module.exports = {
     getAllTeacherSchedule,
     makeAppointment,
     getAllAppointmentByID,
+    setTeacherInfomation,
+    getTeacherInfomation,
 };

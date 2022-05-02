@@ -36,6 +36,21 @@ const createRoom = async (req, res) => {
 
 const getAllTeacherSchedule = async (req, res) => {
     const result = await Tutor.getAllTeacherSchedule();
+
+    let groupByResult = _.groupBy(result, 't_id');
+    if (result.error) {
+        res.status(403).send({ error: result.error });
+        return;
+    }
+
+    res.status(200).send(groupByResult);
+};
+
+const makeAppointment = async (req, res) => {
+    let { user_id, course_id } = req.body;
+    console.log('make appointment', user_id, course_id);
+    const result = await Tutor.makeAppointment(course_id, user_id);
+
     if (result.error) {
         res.status(403).send({ error: result.error });
         return;
@@ -44,9 +59,21 @@ const getAllTeacherSchedule = async (req, res) => {
     res.status(200).send(result);
 };
 
-const makeAppointment = async (req, res) => {
-    let { user_id, course_id } = req.body;
-    const result = await Tutor.makeAppointment(course_id, user_id);
+const setTeacherInfomation = async (req, res) => {
+    let { experience1, experience2, experience3, user_id, introduce, profession } = req.body;
+    const result = await Tutor.setTeacherInfomation(experience1, experience2, experience3, user_id, introduce, profession);
+
+    if (result.error) {
+        res.status(403).send({ error: result.error });
+        return;
+    }
+
+    res.status(200).send(result);
+};
+
+const getTeacherInfomation = async (req, res) => {
+    let { user_id } = req.query;
+    const result = await Tutor.getTeacherInfomation(user_id);
 
     if (result.error) {
         res.status(403).send({ error: result.error });
@@ -72,4 +99,6 @@ module.exports = {
     getAllTeacherSchedule,
     makeAppointment,
     getAppointmentURL,
+    setTeacherInfomation,
+    getTeacherInfomation,
 };

@@ -1,7 +1,8 @@
 /**
- * @param {character[]} s
- * @return {void} Do not return anything, modify s in-place instead.
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
  */
-var reverseString = function(s) {
+var twoSum = function(nums, target) {
     return '123'
-};console.log(reverseString('hello'))
+};console.log(twoSum([3,2,3],6))

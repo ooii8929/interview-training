@@ -8,15 +8,6 @@ const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
 
 const signUp = async (req, res) => {
-    // set profession format
-    // if (!req.body.profession) {
-    //     req.body.profession = [];
-    // }
-
-    // if (!Array.isArray(req.body.profession)) {
-    //     req.body.profession = [req.body.profession];
-    // }
-
     const { identity, name, email, password } = req.body.data;
     console.log('register', identity, name, email, password);
     if (!name || !email || !password) {
@@ -42,6 +33,44 @@ const signUp = async (req, res) => {
     }
     req.session.isLoggedIn = true;
 
+    res.status(200).send({
+        data: {
+            user: {
+                id: user.id,
+                provider: user.provider,
+                name: user.name,
+                email: user.email,
+            },
+        },
+    });
+};
+
+const teacherSignUp = async (req, res) => {
+    const { identity, name, email, password } = req.body;
+    console.log('register', identity, name, email, password);
+    if (!name || !email || !password) {
+        res.status(400).send({ error: 'Request Error: name, email and password are required.' });
+        return;
+    }
+
+    if (!validator.isEmail(email)) {
+        res.status(400).send({ error: 'Request Error: Invalid email format' });
+        return;
+    }
+
+    const result = await User.teacherSignUp(identity, name, email, password);
+    if (result.error) {
+        res.status(403).send({ error: result.error });
+        return;
+    }
+
+    const user = result.user;
+    if (!user) {
+        res.status(500).send({ error: 'Database Query Error' });
+        return;
+    }
+    req.session.isLoggedIn = true;
+    console.log('sent user info', user);
     res.status(200).send({
         data: {
             user: {
@@ -180,4 +209,5 @@ module.exports = {
     getUserProfile,
     insertUserProfile,
     getUserCodeLog,
+    teacherSignUp,
 };

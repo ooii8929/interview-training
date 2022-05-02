@@ -2,9 +2,10 @@ const router = require('express').Router();
 
 const { wrapAsync, authentication } = require('../util/util');
 
-const { signUp, signIn, getUserProfile, insertUserProfile, getUserCodeLog } = require('../controllers/user_controller');
+const { signUp, signIn, getUserProfile, insertUserProfile, getUserCodeLog, teacherSignUp } = require('../controllers/user_controller');
 
 router.route('/user/signup').post(wrapAsync(signUp));
+router.route('/teacher/signup').post(wrapAsync(teacherSignUp));
 
 router.route('/user/login').post(wrapAsync(signIn));
 

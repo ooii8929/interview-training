@@ -4,3 +4,25 @@
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
     border-radius: 5px;
 }
+textarea.full_height_Width {
+    width: 100%;
+    background-color: #D3D3D3;
+}
+
+.submit-teacher-arrange{
+    width: 70vw;
+    display: flex;
+    justify-content: space-around;
+}
+
+.flex-items{
+    background-color: #d8d8d8;
+    border-radius: 5px;
+    padding: 3%;
+    margin: 5%;
+    width: 50%;
+}
+
+.datetime-items{
+    width: 100%;
+}

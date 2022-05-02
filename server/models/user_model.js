@@ -7,6 +7,52 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const _ = require('lodash');
 
+const teacherSignUp = async (identity, name, email, password) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        let emails;
+
+        // if teacher
+        if (identity == 'teacher') {
+            emails = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
+        }
+
+        console.log('emails', emails);
+
+        // check user exist
+        if (emails[0].length > 0) {
+            await conn.query('COMMIT');
+            return { error: 'Email Already Exists' };
+        }
+
+        const loginAt = new Date();
+        const hash = await argon2.hash(password);
+
+        const user = {
+            provider: 'native',
+            email: email,
+            password: hash,
+            name: name,
+            picture: null,
+        };
+
+        const queryStr = 'INSERT INTO teachers SET ?';
+        const [teacherResult] = await conn.query(queryStr, user);
+        console.log('teacherResult', teacherResult);
+        user.id = teacherResult.insertId;
+        await conn.query('COMMIT');
+        return { user };
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
 const signUp = async (identity, name, email, password) => {
     const conn = await pool.getConnection();
     try {
@@ -201,6 +247,7 @@ module.exports = {
     signUp,
     nativeSignIn,
     facebookSignIn,
+    teacherSignUp,
     getUserProfileByEmail,
     getUserProfileByUserID,
 };
