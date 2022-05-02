@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+
+
+    <!-- import RecordRTC -->
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+
+
+    <!-- web streams API polyfill to support Firefox -->
+    <script src="https://unpkg.com/@mattiasbuelens/web-streams-polyfill/dist/polyfill.min.js"></script>
+
+
+    <!-- for Edge/FF/Chrome/Opera/etc. getUserMedia support -->
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://www.webrtc-experiment.com/DetectRTC.js"></script>
+    <link href="https://www.webrtc-experiment.com/getHTMLMediaElement.css" rel="stylesheet" />
+    <script src="https://www.webrtc-experiment.com/getHTMLMediaElement.js"></script>
+
+    <!-- s3 upload -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+
+    <!-- codemirror 5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet" />
+
+
+
+</head>
+
+
+
+<body>
+    <div id="main-menu"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 content-block">
+                <ol id="content"></ol>
+            </div>
+            <div id="test-area" class="col-md-10"></div>
+        </div>
+    </div>
+
+    <!-- Get questions -->
+    <script src="/js/online/sense.js"></script>
+
+    <!-- Check Login -->
+    <script src="/js/member/check-login.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script>$('#main-menu').load('/header/index.html');</script>
+</body>
+
+</html>

@@ -10,4 +10,4 @@ const URL = {
 
 const urlPrefix = URL.EC2 + '/api/' + API.VER1;
 
-export { urlPrefix };
+export default urlPrefix;

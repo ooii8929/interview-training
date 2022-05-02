@@ -15,11 +15,11 @@ import CourseCode from './pages/Course/Code';
 import Account from './pages/Account';
 import SocialArticle from './pages/SocialArticle';
 import React, { createContext } from 'react';
-import Constants from './components/Constants';
+import Constant from './components/Constant.js';
 export const AppContext = createContext();
 
 function App() {
-    console.log('Constants', Constants);
+    console.log('Constant', Constant);
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const jobType = sessionStorage.getItem('jobType');
     const [userId, setUserId] = React.useState('');
@@ -31,6 +31,7 @@ function App() {
         setProfileQuestion,
         setUserId,
         jobType,
+        Constant,
     };
 
     React.useEffect((e) => {

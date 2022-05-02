@@ -1,5 +1,6 @@
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, { useContext, useCallback, useState, useRef, useEffect } from 'react';
 import { AppContext } from '../../../App';
+
 import { getFileName } from './utils/index';
 import axios from 'axios';
 import './main.scss';
@@ -11,6 +12,8 @@ import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
 export default function Video(props) {
+    const { Constant } = useContext(AppContext);
+
     const [stream, setStream] = useState(null);
     const [answerStatus, setAnswerStatus] = useState(false);
     const [question, setQuestion] = React.useState('');
@@ -68,7 +71,7 @@ export default function Video(props) {
         });
 
         try {
-            let presignedUrl = await axios.get('http://localhost:3001/api/1.0/training/video/answer/url', {
+            let presignedUrl = await axios.get(`${Constant}/training/video/answer/url`, {
                 params: {
                     filename: file.name,
                 },
@@ -89,7 +92,7 @@ export default function Video(props) {
                 answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
             };
             console.log('data', data);
-            let submitAnswer = await axios.post('http://localhost:3001/api/1.0/training/video/answer', data);
+            let submitAnswer = await axios.post(`${Constant}/training/video/answer`, data);
             // tmpProfile.data.video.filter((e) => {
             //   console.log("e", e);
             //   if (e.qid == nowQuestionNumber) {
@@ -123,7 +126,7 @@ export default function Video(props) {
             nowUserId = sessionStorage.getItem('userid');
             jobType = sessionStorage.getItem('jobType');
 
-            let response = await axios.get('http://localhost:3001/api/1.0/training/profile/questions', {
+            let response = await axios.get(`${Constant}/training/profile/questions`, {
                 params: {
                     profession: jobType || 'backend',
                     userID: nowUserId,

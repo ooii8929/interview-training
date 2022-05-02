@@ -12,7 +12,7 @@ const dbo = require('./server/models/mongodbcon');
 
 const fs = require('fs');
 
-app.use(express.static('public'));
+app.use(express.static('interview-training/build'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Session
@@ -137,10 +137,10 @@ dbo.connectToServer(function (err) {
 // });
 
 // SWAGGER generate API doc
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./public/src/swagger.json');
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./public/src/swagger.json');
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // CORS allow all
 app.use(cors());

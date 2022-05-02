@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
+import { AppContext } from '../../App';
 
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -37,6 +38,8 @@ const MenuProps = {
 };
 const names = ['Backend', 'Frontend', 'SRE', 'Full-Stack', 'DevOps', 'Architect'];
 export default function Arrange() {
+    const { Constant } = useContext(AppContext);
+
     let userId = sessionStorage.getItem('userid');
     let userName = sessionStorage.getItem('username');
     const [personName, setPersonName] = React.useState([]);
@@ -69,7 +72,7 @@ export default function Arrange() {
             profession: data.get('profession'),
         };
         try {
-            let updateResult = await axios.post('http://localhost:3001/api/1.0/tutor/teacher/information', teacherInfo);
+            let updateResult = await axios.post(`${Constant}/tutor/teacher/information`, teacherInfo);
             console.log('update result', updateResult);
         } catch (error) {
             console.log('update error', error);
@@ -102,7 +105,7 @@ export default function Arrange() {
         }
 
         try {
-            let updateResult = await axios.post('http://localhost:3001/api/1.0/tutor/teacher/schedule', scheduleInfo);
+            let updateResult = await axios.post(`${Constant}/tutor/teacher/schedule`, scheduleInfo);
             console.log('update result', updateResult);
         } catch (error) {
             console.log('update error', error);

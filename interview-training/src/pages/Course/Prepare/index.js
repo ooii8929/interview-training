@@ -9,7 +9,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BalanceIcon from '@mui/icons-material/Balance';
 
 export default function Prepare() {
-    const { jobType, userId } = useContext(AppContext);
+    const { jobType, userId, Constant } = useContext(AppContext);
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const [codeFinishedPercent, setCodeFinishedPercent] = React.useState('');
     const [senseFinishedPercent, setSenseFinishedPercent] = React.useState('');
@@ -19,7 +19,7 @@ export default function Prepare() {
         if (!profileQuestion) {
             async function getVideoQuestions() {
                 console.log('user info', jobType, userId);
-                let response = await axios.get('http://localhost:3001/api/1.0/training/profile/questions', {
+                let response = await axios.get(`${Constant}/training/profile/questions`, {
                     params: {
                         profession: jobType || 'backend',
                         userID: userId,

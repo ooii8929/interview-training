@@ -1,5 +1,6 @@
 import './index.scss';
-import React from 'react';
+import React, { useContext } from 'react';
+import { AppContext } from '../../App';
 import axios from 'axios';
 import Card from './Card';
 import { useParams } from 'react-router-dom';
@@ -8,11 +9,13 @@ import './index.scss';
 let allTutors;
 
 function Tutor() {
+    const { Constant } = useContext(AppContext);
+
     let { id } = useParams();
     const [display, setDisplay] = React.useState(false);
     const [tutors, setTutors] = React.useState(null);
     const [appointment, setAppointment] = React.useState(null);
-    const baseURL = 'http://localhost:3001/api/1.0/tutor/teacher/schedule';
+    const baseURL = `${Constant}/tutor/teacher/schedule`;
     const userID = sessionStorage.getItem('userid');
 
     async function getTutors() {
@@ -37,7 +40,7 @@ function Tutor() {
         } else {
             async function sendAppointment(course_id) {
                 try {
-                    let response = await axios.post('http://localhost:3001/api/1.0/tutor/user/appoint', {
+                    let response = await axios.post(`${Constant}/tutor/user/appoint`, {
                         user_id: userID,
                         course_id: course_id,
                     });

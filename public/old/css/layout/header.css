@@ -1,0 +1,26 @@
+
+#header{
+    background-color: #1976d2 !important;
+    display: flex;
+     flex-direction: row !important;
+      justify-content:space-between  !important;
+      height: 10vh;
+      
+}
+
+
+.navbar-brand{
+    width: 50px !important;
+}
+
+#header a {
+   color: #fff !important;
+}
+
+
+#header  .avator{
+   border-radius: 50% !important;
+   width: 20px;
+   height: 20px;
+}
+

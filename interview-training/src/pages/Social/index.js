@@ -1,76 +1,72 @@
-import "./index.scss";
-import React from "react";
-import axios from "axios";
-import Card from "./Card";
-import Article from "./Article";
-import BasicChips from "./Tags";
-import { useLocation, useParams } from "react-router-dom";
-import { useRef } from "react";
+import './index.scss';
+import React, { useContext } from 'react';
+import { AppContext } from '../../App';
 
-import "./index.scss";
+import axios from 'axios';
+import Card from './Card';
+import Article from './Article';
+import BasicChips from './Tags';
+import { useLocation, useParams } from 'react-router-dom';
+import { useRef } from 'react';
+
+import './index.scss';
 
 let allArticles;
 
 function Social() {
-  const { id } = useParams();
-  const [display, setDisplay] = React.useState(false);
-  const [article, setArticle] = React.useState(null);
-  const [articles, setArticles] = React.useState(null);
-  const baseURL = "http://localhost:3001/api/1.0/article";
-  const jobType = sessionStorage.getItem("jobType");
-  const [isArticle, setIsArticle] = React.useState(false);
-  const { cardContainer } = React.useRef();
+    const { Constant } = useContext(AppContext);
 
-  React.useEffect(() => {
-    async function getArticles() {
-      try {
-        allArticles = await axios.get(baseURL, {
-          params: {
-            profession: jobType,
-          },
-        });
+    const { id } = useParams();
+    const [display, setDisplay] = React.useState(false);
+    const [article, setArticle] = React.useState(null);
+    const [articles, setArticles] = React.useState(null);
+    const baseURL = `${Constant}/article`;
+    const jobType = sessionStorage.getItem('jobType');
+    const [isArticle, setIsArticle] = React.useState(false);
+    const { cardContainer } = React.useRef();
 
-        setArticles(allArticles["data"]);
-        console.log("allArticles", allArticles);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    getArticles();
-  }, []);
+    React.useEffect(() => {
+        async function getArticles() {
+            try {
+                allArticles = await axios.get(baseURL, {
+                    params: {
+                        profession: jobType,
+                    },
+                });
 
-  React.useEffect(() => {
-    console.log("isArticle", isArticle);
-  }, [isArticle]);
+                setArticles(allArticles['data']);
+                console.log('allArticles', allArticles);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getArticles();
+    }, []);
 
-  return (
-    <>
-      <div>
-        {id ? (
-          <Article />
-        ) : (
-          <>
-            <BasicChips />
-            <div id="card-container" ref={cardContainer}>
-              {articles
-                ? articles.map((article, index) => {
-                    return (
-                      <Card
-                        key={index}
-                        title={article["title"]}
-                        description={article["description"]}
-                        href={article["_id"]}
-                        isArticle={setIsArticle}
-                      />
-                    );
-                  })
-                : null}
+    React.useEffect(() => {
+        console.log('isArticle', isArticle);
+    }, [isArticle]);
+
+    return (
+        <>
+            <div>
+                {id ? (
+                    <Article />
+                ) : (
+                    <>
+                        <BasicChips />
+                        <div id="card-container" ref={cardContainer}>
+                            {articles
+                                ? articles.map((article, index) => {
+                                      return <Card key={index} title={article['title']} description={article['description']} href={article['_id']} isArticle={setIsArticle} />;
+                                  })
+                                : null}
+                        </div>
+                    </>
+                )}
             </div>
-          </>
-        )}
-      </div>
-    </>
-  );
+        </>
+    );
 }
 
 export default Social;

@@ -20,6 +20,8 @@ import { useNavigate } from 'react-router-dom';
 const theme = createTheme();
 
 export default function SignUp() {
+    const { Constant } = useContext(AppContext);
+
     let navigate = useNavigate();
     const { setProfileQuestion, profileQuestion, jobType, userId, setUserId } = useContext(AppContext);
     const [email, setEmail] = React.useState('');
@@ -35,7 +37,7 @@ export default function SignUp() {
 
     async function signIn(e) {
         try {
-            let signInResponse = await axios.post('http://localhost:3001/api/1.0/user/login', {
+            let signInResponse = await axios.post(`${Constant}/user/login`, {
                 data: {
                     email: email,
                     password: password,
@@ -80,9 +82,9 @@ export default function SignUp() {
         try {
             let updateResult;
             if (data.get('identity') == 'teacher') {
-                updateResult = await axios.post('http://localhost:3001/api/1.0/teacher/signup', registerInfo);
+                updateResult = await axios.post(`${Constant}/teacher/signup`, registerInfo);
             } else if (data.get('identity') == 'student') {
-                updateResult = await axios.post('http://localhost:3001/api/1.0/user/signup', registerInfo);
+                updateResult = await axios.post(`${Constant}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);
             sessionStorage.setItem('userid', updateResult.data.data.user.id);
@@ -101,7 +103,7 @@ export default function SignUp() {
 
     async function register(e) {
         try {
-            let signInResponse = await axios.post('http://localhost:3001/api/1.0/user/signup', {
+            let signInResponse = await axios.post(`${Constant}/user/signup`, {
                 data: {
                     name: name,
                     identity: identity,
