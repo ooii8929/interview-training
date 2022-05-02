@@ -8,6 +8,6 @@ const URL = {
     EC2: 'https://wooah.app',
 };
 
-const urlPrefix = URL.LOCAL + '/api/' + API.VER1;
+const urlPrefix = URL.EC2 + '/api/' + API.VER1;
 
 export default urlPrefix;
