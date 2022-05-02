@@ -55,6 +55,7 @@ function App() {
     );
 
     function RequireAuth({ Component }) {
+        // <Route path="/course/" element={<RequireAuth Component={Course} />} />
         let location = useLocation();
         let nowUserId = sessionStorage.getItem('userid');
         if (!nowUserId) {
@@ -78,10 +79,10 @@ function App() {
                     <Route path="/social/" element={<Social />} />
                     <Route path="/social/:id" element={<SocialArticle />} />
                     <Route path="/logout" element={<Logout />} />
-                    <Route path="/course/" element={<RequireAuth Component={Course} />} />
-                    <Route path="/course/video" element={<RequireAuth Component={CourseVideo} />} />
-                    <Route path="/course/code" element={<RequireAuth Component={CourseCode} />} />
-                    <Route path="/arrange" element={<RequireAuth Component={Arrange} />} />
+                    <Route path="/course/" element={<Course />} />
+                    <Route path="/course/video" element={<CourseVideo />} />
+                    <Route path="/course/code" element={<CourseCode />} />
+                    <Route path="/arrange" element={<Arrange />} />
                     <Route path="/account/" element={<Account />} />
                     <Route path="/admin/" element={<Admin />} />
                     <Route path="*" element={<NotFound />} />
