@@ -1,11 +1,11 @@
 // get room and user infomation
 const room = getUrlQuery(location.href);
-const username = sessionStorage.getItem('username');
-const userEmail = sessionStorage.getItem('useremail');
+const username = localStorage.getItem('username');
+const userEmail = localStorage.getItem('useremail');
 // auth
 if (!username) {
     alert('You need login first');
-    sessionStorage.setItem('returnPage', location.href);
+    localStorage.setItem('returnPage', location.href);
     window.location.href = './member.html';
 }
 
@@ -488,12 +488,12 @@ document.getElementById('share').addEventListener('click', async () => {
 
 // get room and user infomation
 const room = getUrlQuery(location.href);
-const username = sessionStorage.getItem('username');
-const userEmail = sessionStorage.getItem('useremail');
+const username = localStorage.getItem('username');
+const userEmail = localStorage.getItem('useremail');
 // auth
 if (!username) {
     alert('You need login first');
-    sessionStorage.setItem('returnPage', location.href);
+    localStorage.setItem('returnPage', location.href);
     window.location.href = './member.html';
 }
 

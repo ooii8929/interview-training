@@ -116,7 +116,7 @@ async function next(e) {
         console.log('nowVideo', nowVideo);
         if (nowVideo) {
             document.getElementById('review-video-0').src = `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/${nowVideo}`;
-            sessionStorage.setItem('video-answer-0', `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/${nowVideo}`);
+            localStorage.setItem('video-answer-0', `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/${nowVideo}`);
         }
     }
     if (nowID == 'next-0-1') {
@@ -129,7 +129,7 @@ async function next(e) {
         });
         console.log('checked', output);
         sendAnswer = await axios.post('/api/1.0/training/video/submit/compile', {
-            videoAnswer: sessionStorage.getItem('video-answer-0'),
+            videoAnswer: localStorage.getItem('video-answer-0'),
             checked: output,
         });
     }
@@ -138,7 +138,7 @@ async function next(e) {
         document.querySelector("[data-order = '1-1']").style.display = 'block';
         if (nowVideo) {
             document.getElementById('review-video-1').src = `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/${nowVideo}`;
-            sessionStorage.setItem('video-answer-1', `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/${nowVideo}`);
+            localStorage.setItem('video-answer-1', `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/${nowVideo}`);
         }
     }
 }

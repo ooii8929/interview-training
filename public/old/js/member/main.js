@@ -14,12 +14,12 @@ signIn.addEventListener('click', (event) => {
             },
         })
         .then(function (response) {
-            sessionStorage.setItem('userid', response.data.data.user.id);
-            sessionStorage.setItem('username', response.data.data.user.name);
-            sessionStorage.setItem('useremail', response.data.data.user.email);
-            if (sessionStorage.getItem('returnPage')) {
-                let returnPageURL = sessionStorage.getItem('returnPage');
-                sessionStorage.removeItem('returnPage');
+            localStorage.setItem('userid', response.data.data.user.id);
+            localStorage.setItem('username', response.data.data.user.name);
+            localStorage.setItem('useremail', response.data.data.user.email);
+            if (localStorage.getItem('returnPage')) {
+                let returnPageURL = localStorage.getItem('returnPage');
+                localStorage.removeItem('returnPage');
                 window.location.href = returnPageURL;
             }
             alert('登入成功');

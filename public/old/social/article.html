@@ -55,7 +55,7 @@
 
 
     <script>
-        let userId = sessionStorage.getItem('userid');
+        let userId = localStorage.getItem('userid');
         let articleID;
         $(document).ready(function () {
             $('#summernote').summernote();
@@ -134,7 +134,7 @@
 
     <script>$('#main-menu').load('/header/index.html');
         function goTrain() {
-            sessionStorage.setItem('profession', $('#select-profession').val());
+            localStorage.setItem('profession', $('#select-profession').val());
             window.location.href = '/training/sense.html';
 
         }

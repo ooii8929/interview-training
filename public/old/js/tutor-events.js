@@ -60,8 +60,8 @@ window.addEventListener('load', () => {
     });
 
     document.querySelector('#logout').addEventListener('click', () => {
-        sessionStorage.removeItem('userid');
-        sessionStorage.removeItem('username');
+        localStorage.removeItem('userid');
+        localStorage.removeItem('username');
         location.reload();
     });
 });
