@@ -214,7 +214,7 @@ const runCompile = async (req, res) => {
             if (formalAnswer == ans) {
                 let reply = {
                     answer_status: 1,
-                    input: answer['run_code_question'],
+                    input: answer['test_answer'],
                     output: ans,
                     except: formalAnswer,
                 };
@@ -223,7 +223,7 @@ const runCompile = async (req, res) => {
             } else {
                 let reply = {
                     answer_status: -1,
-                    input: answer['run_code_question'],
+                    input: answer['test_answer'],
                     output: ans,
                     except: formalAnswer,
                 };
@@ -268,7 +268,7 @@ const runCompile = async (req, res) => {
             if (formalAnswer == ans) {
                 let reply = {
                     answer_status: 1,
-                    input: answer['run_code_question'],
+                    input: answer['test_answer'],
                     output: ans,
                     except: formalAnswer,
                 };
@@ -277,7 +277,7 @@ const runCompile = async (req, res) => {
             } else {
                 let reply = {
                     answer_status: -1,
-                    input: answer['run_code_question'],
+                    input: answer['test_answer'],
                     output: ans,
                     except: formalAnswer,
                 };
