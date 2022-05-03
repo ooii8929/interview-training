@@ -240,6 +240,37 @@ const nativeSignIn = async (email, password) => {
     }
 };
 
+const nativeTeacherSignIn = async (email, password) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        const [users] = await conn.query('SELECT * FROM teachers WHERE email = ?', [email]);
+        const user = users[0];
+
+        const auth = await argon2.verify(user.password, password);
+        console.log(auth);
+        if (!auth) {
+            await conn.query('COMMIT');
+            return { error: 'Password is wrong' };
+        }
+
+        const loginAt = new Date();
+
+        const queryStr = 'UPDATE users SET last_login_dt = ? WHERE id = ?';
+        await conn.query(queryStr, [loginAt, user.id]);
+
+        await conn.query('COMMIT');
+
+        return { user };
+    } catch (error) {
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
 const facebookSignIn = async (id, name, email) => {
     const conn = await pool.getConnection();
     try {
@@ -343,5 +374,6 @@ module.exports = {
     getUsersProfileByUserID,
     updateAvator,
     getUserPureProfile,
+    nativeTeacherSignIn,
     getTeacherProfile,
 };

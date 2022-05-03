@@ -111,7 +111,14 @@ const signIn = async (req, res) => {
     let result;
     switch (data.provider) {
         case 'native':
-            result = await User.nativeSignIn(data.email, data.password);
+            if (data.identity == 'student') {
+                result = await User.nativeSignIn(data.email, data.password);
+            }
+
+            if (data.identity == 'teacher') {
+                result = await User.nativeTeacherSignIn(data.email, data.password);
+            }
+
             break;
         case 'facebook':
             result = await facebookSignIn(data.access_token);
