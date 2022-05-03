@@ -27,6 +27,7 @@ export default function SocialArticle() {
     const [goods, setGoods] = React.useState(null);
     const [language, setLanguage] = React.useState(null);
     const [isGood, setIsGood] = React.useState(false);
+    const [authorPicture, setAuthorPicture] = React.useState('');
     const location = useLocation();
     console.log(location.pathname);
     async function postGood(e) {
@@ -79,10 +80,11 @@ export default function SocialArticle() {
                     },
                 });
                 setGoods(tmpArticleInfo['data'][0]['goods'].length);
-                let a = tmpArticleInfo['data'][0]['goods'].filter(function (e) {
+                let goodsClickedUser = tmpArticleInfo['data'][0]['goods'].filter(function (e) {
                     return e == userId;
                 });
-                if (a) {
+                console.log('goodsClickedUser', goodsClickedUser);
+                if (goodsClickedUser.length > 0) {
                     tringleGood.current.classList.add('good-clicked');
                     tringleGood.current.disable = true;
                 }
@@ -95,6 +97,7 @@ export default function SocialArticle() {
         }
         getSpecificArticle();
     }, []);
+
     useEffect(
         (e) => {
             async function getArticles() {
@@ -116,6 +119,19 @@ export default function SocialArticle() {
         },
         [language]
     );
+    useEffect(
+        (e) => {
+            if (articles)
+                if (Array.isArray(articles['authors'])) {
+                    let tmpAuthor = articles['authors'].filter((e) => (e.id = articles['authors'].authorID));
+                    setAuthorPicture(tmpAuthor);
+                } else {
+                    let tmpAuthor = articles['authors']['picture'];
+                    setAuthorPicture(tmpAuthor);
+                }
+        },
+        [articles]
+    );
 
     return (
         <>
@@ -123,28 +139,32 @@ export default function SocialArticle() {
                 <Grid item xs={8} className="article-container article-container-left">
                     <div>
                         <Grid container spacing={4}>
-                            {' '}
                             <Grid item xs={2} className="article-main-left">
-                                <Box
-                                    component="img"
-                                    className="avator"
-                                    sx={{
-                                        height: 50,
-                                        width: 50,
-                                    }}
-                                    alt="The house from the offer."
-                                    src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
-                                />
-                                <div className="tringle good" onClick={postGood} ref={tringleGood}></div>
-                                {articles ? <div>{goods}</div> : null}
-                                <div className="tringle-bad good" onClick={postBad} ref={tringleBad}></div>
+                                {articles ? (
+                                    <Box
+                                        component="img"
+                                        className="avator"
+                                        sx={{
+                                            height: 50,
+                                            width: 50,
+                                        }}
+                                        alt="The house from the offer."
+                                        src={authorPicture}
+                                    />
+                                ) : null}
+                                <div className="goods-container">
+                                    <div className="tringle good" onClick={postGood} ref={tringleGood}></div>
+                                    {articles ? <div className="now-goods">{goods}</div> : null}
+                                    <div className="tringle-bad good" onClick={postBad} ref={tringleBad}></div>
+                                </div>
                             </Grid>
                             <Grid item xs={10} className="article-main-right">
                                 {articleInfo ? (
                                     <div className="allcard">
-                                        {articleInfo.title}
-                                        <br />
-                                        {articleInfo.description}
+                                        <h1>{articleInfo.title}</h1>
+                                        <hr />
+                                        <div dangerouslySetInnerHTML={{ __html: articleInfo.description }}></div>
+
                                         <SyntaxHighlighter language={language} style={docco}>
                                             {articleInfo.code}
                                         </SyntaxHighlighter>
@@ -175,7 +195,7 @@ export default function SocialArticle() {
                     <div className="article-side">
                         Related Question
                         {articles
-                            ? articles.map((e, index) => {
+                            ? articles['articles'].map((e, index) => {
                                   return (
                                       <div key={index}>
                                           <h3>{e.title}</h3>

@@ -2,11 +2,19 @@ require('dotenv').config();
 const SOCIAL = require('../models/social_model');
 const USER = require('../models/user_model');
 const QUESTION = require('../models/question_model');
+const _ = require('lodash');
 
 const getAllArticle = async (req, res) => {
     let articles = await SOCIAL.getAllArticle();
+    let groupAuthorArticle = _.groupBy(articles, 'author_id');
 
-    res.status(200).send(articles);
+    let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
+    console.log('authors', authors);
+    let articlesAndAuthors = {
+        authors: authors,
+        articles: articles,
+    };
+    res.status(200).send(articlesAndAuthors);
 };
 
 const getArticleByID = async (req, res) => {
@@ -20,6 +28,7 @@ const insertCodeArticle = async (req, res) => {
     const { question_id, user_id, code, language } = req.body;
     const userProfile = await USER.getUserProfileByUserID(user_id);
     const questionProfile = await QUESTION.getQuestionsByID(question_id);
+    console.log('questionProfile', questionProfile);
     const { title, description, profession } = questionProfile['questions'][0][0];
     if (!userProfile) {
         res.status(500).send({ error: 'Database Query Error' });
@@ -29,10 +38,12 @@ const insertCodeArticle = async (req, res) => {
         res.status(500).send({ error: 'Database Query Error' });
         return;
     }
+
     const postData = {
         question_id: question_id,
         title: title,
         description: description,
+        author_id: userProfile.id,
         author_name: userProfile.name,
         code: code,
         goods: [],

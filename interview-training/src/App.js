@@ -16,6 +16,8 @@ import Account from './pages/Account';
 import SocialArticle from './pages/SocialArticle';
 import React, { createContext } from 'react';
 import Constant from './components/Constant.js';
+import axios from 'axios';
+
 export const AppContext = createContext();
 
 function App() {
@@ -23,6 +25,7 @@ function App() {
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const jobType = localStorage.getItem('jobType');
     const [userId, setUserId] = React.useState('');
+    const [avatorURL, setAvatorURL] = React.useState('');
 
     const appContextValue = {
         userId,
@@ -36,6 +39,21 @@ function App() {
 
     React.useEffect((e) => {
         console.log('0. get user id by session storage');
+        async function getAvator() {
+            let getAvatorResult = await axios.get(`${Constant[0]}/user/profile`, {
+                params: {
+                    userID: localStorage.getItem('userid'),
+                    userEmail: localStorage.getItem('useremail'),
+                },
+            });
+            console.log('getAvatorResult', getAvatorResult);
+            setAvatorURL(getAvatorResult['data']['userProfile']['picture']);
+        }
+
+        if (localStorage.getItem('userid')) {
+            getAvator();
+        }
+
         if (!userId && localStorage.getItem('userid')) console.log('0. get user id by session storage run');
         setUserId(localStorage.getItem('userid'));
     }, []);
@@ -70,7 +88,7 @@ function App() {
     return (
         <BrowserRouter>
             <AppContext.Provider value={appContextValue}>
-                <Header />
+                <Header avator={avatorURL} />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
@@ -83,7 +101,7 @@ function App() {
                     <Route path="/course/video" element={<RequireAuth Component={CourseVideo} />} />
                     <Route path="/course/code" element={<RequireAuth Component={CourseCode} />} />
                     <Route path="/arrange" element={<RequireAuth Component={Arrange} />} />
-                    <Route path="/account" element={<Account />} />
+                    <Route path="/account" element={<RequireAuth Component={Account} />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

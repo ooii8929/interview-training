@@ -30,17 +30,29 @@ export default function SignUp() {
     const [registerEmail, setRegisterEmail] = React.useState('');
     const [registerPassword, setRegisterPassword] = React.useState('');
     const [identity, setIdentify] = React.useState('');
+    const [signIdentity, setSignIdentify] = React.useState('');
+
     const [name, setName] = React.useState('');
+
     const handleChange = (event: SelectChangeEvent) => {
         setIdentify(event.target.value);
     };
 
+    const handleSignChange = (event: SelectChangeEvent) => {
+        setSignIdentify(event.target.value);
+    };
+
     async function signIn(e) {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+
+        console.log('user sign in', data.get('signIdentity'));
         try {
             let signInResponse = await axios.post(`${Constant[0]}/user/login`, {
                 data: {
-                    email: email,
-                    password: password,
+                    identity: data.get('signIdentity'),
+                    email: data.get('signEmail'),
+                    password: data.get('signPassword'),
                     provider: 'native',
                 },
             });
@@ -48,9 +60,16 @@ export default function SignUp() {
             localStorage.setItem('userid', signInResponse.data.data.user.id);
             localStorage.setItem('username', signInResponse.data.data.user.name);
             localStorage.setItem('useremail', signInResponse.data.data.user.email);
+            localStorage.setItem('identity', signIdentity);
             setUserId(signInResponse.data.data.user.id);
             alert('success login');
-            // setIsLogin(true);
+            if (localStorage.getItem('returnPage')) {
+                let returnPageURL = localStorage.getItem('returnPage');
+                localStorage.removeItem('returnPage');
+                window.location.href = returnPageURL;
+            } else {
+                window.location.href = '/account';
+            }
         } catch (error) {
             alert('wrong password');
         }
@@ -90,11 +109,14 @@ export default function SignUp() {
             localStorage.setItem('userid', updateResult.data.data.user.id);
             localStorage.setItem('username', updateResult.data.data.user.name);
             localStorage.setItem('useremail', updateResult.data.data.user.email);
+            localStorage.setItem('identity', identity);
             alert('success register');
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
                 localStorage.removeItem('returnPage');
                 window.location.href = returnPageURL;
+            } else {
+                window.location.href = '/account';
             }
         } catch (error) {
             console.log('update error', error);
@@ -124,6 +146,8 @@ export default function SignUp() {
                 let returnPageURL = localStorage.getItem('returnPage');
                 localStorage.removeItem('returnPage');
                 window.location.href = returnPageURL;
+            } else {
+                window.location.href = '/account';
             }
         } catch (error) {
             console.log('error', error.response);
@@ -219,7 +243,7 @@ export default function SignUp() {
                                 </Box>
                             </Box>
                         </Container>
-                    </Grid>{' '}
+                    </Grid>
                     <Grid item xs={5}>
                         <Container component="main" maxWidth="xs">
                             <CssBaseline />
@@ -237,15 +261,31 @@ export default function SignUp() {
                                 <Typography component="h1" variant="h5">
                                     Log in
                                 </Typography>
-                                <Box component="form" noValidate sx={{ mt: 3 }}>
+
+                                <Box component="form" onSubmit={signIn} noValidate sx={{ mt: 3 }}>
                                     <Grid container spacing={2}>
+                                        <FormControl className="role-form">
+                                            <InputLabel id="demo-simple-select-autowidth-label-login">Role</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-autowidth-label"
+                                                id="demo-simple-select-autowidth"
+                                                value={signIdentity}
+                                                onChange={handleSignChange}
+                                                autoWidth
+                                                name="signIdentity"
+                                                label="identity"
+                                            >
+                                                <MenuItem value={'student'}>學生</MenuItem>
+                                                <MenuItem value={'teacher'}>老師</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                         <Grid item xs={12}>
                                             <TextField
                                                 required
                                                 fullWidth
                                                 id="email"
                                                 label="Email Address"
-                                                name="email"
+                                                name="signEmail"
                                                 value={email}
                                                 autoComplete="email"
                                                 onInput={(e) => {
@@ -257,7 +297,7 @@ export default function SignUp() {
                                             <TextField
                                                 required
                                                 fullWidth
-                                                name="password"
+                                                name="signPassword"
                                                 label="Password"
                                                 type="password"
                                                 value={password}
@@ -269,7 +309,7 @@ export default function SignUp() {
                                             />
                                         </Grid>
                                     </Grid>
-                                    <Button type="button" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} onClick={signIn}>
+                                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                                         Sign in
                                     </Button>
                                 </Box>

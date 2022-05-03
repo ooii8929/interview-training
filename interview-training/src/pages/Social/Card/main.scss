@@ -41,12 +41,14 @@
   object-fit: cover;
 }
 .card header .user-info-name {
+   margin-top: -5px;
   letter-spacing: 0.4px;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 500;
   color: #191a1d;
 }
 .card header .user-info-time {
+  margin-top: -10px;
   font-size: 12px;
   color: #191a1d;
 }
@@ -84,3 +86,14 @@
 }
 
 
+
+.articles-goods{
+padding-top: 3%;
+}
+.now-goods{
+  margin: auto;
+ margin-left: 15%;
+}
+.goods-container{
+   margin-left: 3%;
+}

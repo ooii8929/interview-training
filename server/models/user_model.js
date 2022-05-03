@@ -289,6 +289,22 @@ const getUserProfileByUserID = async (userID) => {
     }
 };
 
+const getUsersProfileByUserID = async (userID) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+        const [users] = await pool.query('SELECT * FROM users WHERE id IN (?)', [userID]);
+        console.log('users', users);
+        await conn.query('COMMIT');
+        return users[0];
+    } catch (error) {
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
 module.exports = {
     signUp,
     nativeSignIn,
@@ -297,5 +313,6 @@ module.exports = {
     getUserProfile,
     getUserProfileByEmail,
     getUserProfileByUserID,
+    getUsersProfileByUserID,
     updateAvator,
 };

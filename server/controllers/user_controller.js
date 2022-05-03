@@ -107,7 +107,7 @@ const facebookSignIn = async (accessToken) => {
 
 const signIn = async (req, res) => {
     const { data } = req.body;
-
+    console.log('data', data);
     let result;
     switch (data.provider) {
         case 'native':

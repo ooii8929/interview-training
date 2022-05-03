@@ -46,6 +46,7 @@ body{
 
 .avator{
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .article-side{
@@ -67,6 +68,7 @@ body{
 .tringle{
   width: 0;
   height:0;
+  margin-top: 10px;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-bottom: 20px solid #ddd;

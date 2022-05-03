@@ -18,6 +18,8 @@ function Social() {
     const [display, setDisplay] = React.useState(false);
     const [article, setArticle] = React.useState(null);
     const [articles, setArticles] = React.useState(null);
+    const [authors, setAuthors] = React.useState(null);
+
     const baseURL = `${Constant[0]}/article`;
     const jobType = localStorage.getItem('jobType');
     const [isArticle, setIsArticle] = React.useState(false);
@@ -32,8 +34,8 @@ function Social() {
                     },
                 });
 
-                setArticles(allArticles['data']);
-                console.log('allArticles', allArticles);
+                setArticles(allArticles['data']['articles']);
+                setAuthors(allArticles['data']['authors']);
             } catch (error) {
                 console.log(error);
             }
@@ -58,6 +60,8 @@ function Social() {
                                   return (
                                       <Card
                                           key={index}
+                                          authorID={article['author_id']}
+                                          authors={authors}
                                           reply={article['reply']}
                                           liked={article['goods']}
                                           postTime={article['post_time']}

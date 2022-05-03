@@ -14,6 +14,7 @@ router.route('/user/profile/tmp').get(wrapAsync(getUserProfile));
 
 router.route('/user/profile').get(wrapAsync(getUserProfile));
 
+// get upload url
 router.route('/user/avator').get(wrapAsync(getAvatorURL));
 
 router.route('/user/avator').post(wrapAsync(updateAvator));

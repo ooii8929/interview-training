@@ -13,6 +13,7 @@ const getAllArticle = async () => {
     const dbConnect = await dbo.getDb();
     try {
         const cursor = await dbConnect.collection('article').find({}).toArray();
+
         return cursor;
     } catch (error) {
         console.log('error', error);

@@ -131,7 +131,7 @@ function Tutor() {
                         {appointments
                             ? appointments.map((appointment, index) => {
                                   return (
-                                      <Grid item xs={4} key={index}>
+                                      <Grid item xs={4} key={index} className="account-box-grid-self">
                                           <TutorCard
                                               key={index}
                                               tID={appointment['question_id']}

@@ -32,7 +32,7 @@ const getQuestionsByID = async (q_id) => {
         await conn.query('START TRANSACTION');
 
         // test no random
-        const questions = await conn.query('SELECT * FROM questions  WHERE id = ? ', [q_id]);
+        const questions = await conn.query('SELECT * FROM questions WHERE id = ? ', [q_id]);
 
         await conn.query('COMMIT');
         return { questions };
