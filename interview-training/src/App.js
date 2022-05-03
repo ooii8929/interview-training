@@ -76,15 +76,15 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/code" element={<Code />} />
                     <Route path="/reserve" element={<Reserve />} />
-                    <Route path="/social/" element={<Social />} />
+                    <Route path="/social" element={<Social />} />
                     <Route path="/social/:id" element={<SocialArticle />} />
                     <Route path="/logout" element={<Logout />} />
-                    <Route path="/course/" element={<RequireAuth Component={Course} />} />
+                    <Route path="/course" element={<RequireAuth Component={Course} />} />
                     <Route path="/course/video" element={<RequireAuth Component={CourseVideo} />} />
                     <Route path="/course/code" element={<RequireAuth Component={CourseCode} />} />
                     <Route path="/arrange" element={<RequireAuth Component={Arrange} />} />
-                    <Route path="/account/" element={<Account />} />
-                    <Route path="/admin/" element={<Admin />} />
+                    <Route path="/account" element={<Account />} />
+                    <Route path="/admin" element={<Admin />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </AppContext.Provider>
