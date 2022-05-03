@@ -79,7 +79,7 @@ const Header = (props) => {
                                 <>
                                     <Tooltip title="Open settings">
                                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                            <Avatar alt="Remy Sharp" src={props.avator} />
+                                            <Avatar alt="Remy Sharp" src={props.avator} className="header-avator" />
                                         </IconButton>
                                     </Tooltip>
                                     <Menu

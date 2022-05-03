@@ -289,6 +289,14 @@ const runCompile = async (req, res) => {
     }
 };
 
+const getTraining = async (req, res) => {
+    let { user_id } = req.query;
+    let allTraining = await Answer.getAllTraining(user_id);
+
+    console.log('allTraining', allTraining);
+    return res.status(200).send(allTraining);
+};
+
 const getQuestionsByProfession = async (req, res) => {
     let { profession } = req.query;
     let questions = await Question.getCodeQuestions(profession);
@@ -413,6 +421,7 @@ module.exports = {
     getQuestionsByProfession,
     storeVideoAnswer,
     submitCompile,
+    getTraining,
     runCompile,
     getVideoQuestionsByProfession,
     submitVideo,

@@ -17,6 +17,7 @@ const {
     submitVideoAnswerCheck,
     storeVideoAnswerUrl,
     submitCodeAnswer,
+    getTraining,
 } = require('../controllers/coding_controller');
 
 router.route('/training/video/answer').post(wrapAsync(submitVideoAnswer));
@@ -32,6 +33,8 @@ router.route('/training/run/compile').post(wrapAsync(runCompile));
 router.route('/training/question/logic').post(wrapAsync(addLogicQuestion));
 
 router.route('/training/go').post(wrapAsync(goCompile));
+
+router.route('/training').get(wrapAsync(getTraining));
 
 router.route('/training/profile/questions').get(wrapAsync(getProfileQuestions));
 

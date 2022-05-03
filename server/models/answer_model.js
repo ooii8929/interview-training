@@ -36,6 +36,14 @@ const getUserProfile = async (req, res) => {
         });
 };
 
+const getAllTraining = async (user_id) => {
+    // Get records
+    const dbConnect = await dbo.getDb();
+
+    let allTrainingResult = dbConnect.collection('training').find({ user_id: user_id }).limit(50).toArray();
+    return allTrainingResult;
+};
+
 const insertVideoAnswer = async (user_id, question_id, videoAnswer, checked) => {
     // Get records
     const dbConnect = dbo.getDb();
@@ -204,6 +212,7 @@ module.exports = {
     getQuestionAnswer,
     getUserProfile,
     insertVideoAnswer,
+    getAllTraining,
     insertCodeAnswer,
     submitVideoAnswer,
     submitVideoAnswerCheck,

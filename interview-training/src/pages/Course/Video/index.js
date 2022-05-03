@@ -60,11 +60,19 @@ export default function Video(props) {
             console.log('recorderRef.current.getBlob()', recorderRef.current.getBlob());
             setBlob(recorderRef.current.getBlob());
         });
+
         display.current.srcObject = false;
         isPause = true;
         clearInterval(seconds);
         handleTimeup();
     };
+
+    useEffect(() => {
+        if (blob) {
+            display.current.src = URL.createObjectURL(blob);
+        }
+    }, [blob]);
+
     const handleSave = async () => {
         var file = new File([blob], getFileName('webm'), {
             type: 'video/webm',
@@ -246,7 +254,7 @@ export default function Video(props) {
                             </Grid>
                         ) : null}
                         <Grid item xs={6}>
-                            <video type="video/webm" controls preload autoPlay ref={display} />
+                            <video type="video/webm" autoPlay ref={display} />
                         </Grid>
                     </Grid>
                     <Button variant="contained" endIcon={<PlayCircleFilledIcon />} onClick={handleRecording} className="video-btn" size="large">

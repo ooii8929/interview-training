@@ -160,8 +160,11 @@ const updateAvator = async (req, res) => {
     let { identity, userID, picture } = req.body;
     console.log('updateAvator', updateAvator);
     try {
-        let userUpdateAvator = await User.updateAvator(identity, userID, picture);
+        let userUpdateAvator;
+
+        userUpdateAvator = await User.updateAvator(identity, userID, picture);
         console.log('userUpdateAvator', userUpdateAvator);
+
         return res.status(200).send({ userUpdateAvator });
     } catch (error) {
         console.log('userUpdateAvator error', error);
@@ -170,13 +173,35 @@ const updateAvator = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-    let { userID, userEmail } = req.query;
+    let { userID, userEmail, identity } = req.query;
     try {
-        let userProfile = await User.getUserProfile(userID, userEmail);
+        let userProfile;
+        if (identity == 'teacher') {
+            userProfile = await User.getTeacherProfile(userID, userEmail);
+        }
+        if (identity == 'student') {
+            userProfile = await User.getUserProfile(userID, userEmail);
+        }
 
         return res.status(200).send(userProfile);
     } catch (error) {
         console.log('getUserProfile error', error);
+        return res.status(400).send({ error: error });
+    }
+};
+
+const getUserPureProfile = async (req, res) => {
+    let { user_id, user_email, identity } = req.query;
+    try {
+        let userProfile;
+        if (identity == 'teacher') {
+            userProfile = await User.getTeacherProfile(user_id, user_email);
+        }
+        if (identity == 'student') {
+            userProfile = await User.getUserPureProfile(user_id, user_email);
+        }
+        return res.status(200).send(userProfile);
+    } catch (error) {
         return res.status(400).send({ error: error });
     }
 };
@@ -228,4 +253,5 @@ module.exports = {
     teacherSignUp,
     getAvatorURL,
     updateAvator,
+    getUserPureProfile,
 };

@@ -5,6 +5,7 @@ import axios from 'axios';
 import Card from './Card';
 import { useParams } from 'react-router-dom';
 import './index.scss';
+import Grid from '@mui/material/Grid';
 
 let allTutors;
 
@@ -57,23 +58,28 @@ function Tutor() {
 
     return (
         <>
-            <div>
+            <h1 className="tutor-main-title">本日推薦導師</h1>
+
+            <Grid container spacing={2}>
                 {tutors
                     ? Object.keys(tutors).map((tutor, index) => {
                           //<p key={index}>{tutors[tutor][0]['password']}</p>;
                           return (
-                              <Card
-                                  key={index}
-                                  name={tutors[tutor][0]['name']}
-                                  profession={tutors[tutor][0]['profession']}
-                                  introduce={tutors[tutor][0]['introduce']}
-                                  tutorContent={tutors[tutor]}
-                                  sendAppointment={setAppointment}
-                              />
+                              <Grid item xs={4}>
+                                  <Card
+                                      key={index}
+                                      avator={tutors[tutor][0]['picture']}
+                                      name={tutors[tutor][0]['name']}
+                                      profession={tutors[tutor][0]['profession']}
+                                      introduce={tutors[tutor][0]['introduce']}
+                                      tutorContent={tutors[tutor]}
+                                      sendAppointment={setAppointment}
+                                  />
+                              </Grid>
                           );
                       })
                     : null}
-            </div>
+            </Grid>
         </>
     );
 }

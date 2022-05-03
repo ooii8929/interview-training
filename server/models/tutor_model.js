@@ -61,11 +61,9 @@ const getAllAppointmentByID = async (userID) => {
         await conn.query('START TRANSACTION');
 
         const userAppointments = await conn.query(
-            'SELECT * FROM appointments INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id WHERE appointments.status = "0" AND appointments.user_id = ?',
+            'SELECT * FROM appointments INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id  INNER JOIN teachers ON teachers_time.t_id = teachers.id  WHERE appointments.status = "0" AND appointments.user_id = ?',
             [userID]
         );
-        console.log('userAppointments');
-        console.log(userAppointments[0]);
 
         await conn.query('COMMIT');
         return userAppointments[0];

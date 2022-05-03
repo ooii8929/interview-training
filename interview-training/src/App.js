@@ -10,6 +10,7 @@ import Arrange from './pages/Arrange';
 import Reserve from './pages/Reserve';
 import Course from './pages/Course';
 import Logout from './pages/Logout';
+import Tutor from './pages/Tutor';
 import CourseVideo from './pages/Course/Video';
 import CourseCode from './pages/Course/Code';
 import Account from './pages/Account';
@@ -38,16 +39,19 @@ function App() {
     };
 
     React.useEffect((e) => {
-        console.log('0. get user id by session storage');
+        console.log('0. get user id by session storage', localStorage.getItem('userid'), localStorage.getItem('useremail'));
+
         async function getAvator() {
-            let getAvatorResult = await axios.get(`${Constant[0]}/user/profile`, {
+            let getAvatorResult = await axios.get(`${Constant[0]}/user/profile/avator`, {
                 params: {
-                    userID: localStorage.getItem('userid'),
-                    userEmail: localStorage.getItem('useremail'),
+                    user_id: localStorage.getItem('userid'),
+                    user_email: localStorage.getItem('useremail'),
+                    identity: localStorage.getItem('identity'),
                 },
             });
-            console.log('getAvatorResult', getAvatorResult);
-            setAvatorURL(getAvatorResult['data']['userProfile']['picture']);
+            if (localStorage.getItem('identity') == 'student') {
+                setAvatorURL(getAvatorResult['data'][0][0]['picture']);
+            }
         }
 
         if (localStorage.getItem('userid')) {
@@ -97,6 +101,7 @@ function App() {
                     <Route path="/social" element={<Social />} />
                     <Route path="/social/:id" element={<SocialArticle />} />
                     <Route path="/logout" element={<Logout />} />
+                    <Route path="/tutor" element={<Tutor />} />
                     <Route path="/course" element={<RequireAuth Component={Course} />} />
                     <Route path="/course/video" element={<RequireAuth Component={CourseVideo} />} />
                     <Route path="/course/code" element={<RequireAuth Component={CourseCode} />} />

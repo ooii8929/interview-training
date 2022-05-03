@@ -1,5 +1,4 @@
 import Fragment from 'react';
-import Header from '../../layouts/sections/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
@@ -18,7 +17,6 @@ export default function Course() {
     }, [jobType]);
     return (
         <div>
-            <Header />
             <RCT />
         </div>
     );

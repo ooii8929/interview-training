@@ -80,17 +80,6 @@ export default function Prepare() {
                         </Stack>
                     </div>
                 </Grid>
-                <Grid item xs={4} className="course-percent-grid">
-                    <div>
-                        <Stack direction="row" spacing={2} className="course-percent-container">
-                            <div>
-                                <BalanceIcon />
-                            </div>
-                            <div>邏輯題</div>
-                            {profileQuestion ? <div>{profileQuestion.data.percent.logic}</div> : 0}
-                        </Stack>
-                    </div>
-                </Grid>
             </Grid>
         </>
     );

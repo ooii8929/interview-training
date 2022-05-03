@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect, useContext } from 'react';
 import ReactDom from 'react-dom';
-import { AppContext } from '../../App';
+import { AppContext } from '../../../../App';
 import webSocket from 'socket.io-client';
 import Moment from 'react-moment';
 import { Card, CardContent, Typography } from '@mui/material';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import moment from 'moment';
+import { useSearchParams } from 'react-router-dom';
 
 let peerConn;
 let peerConn2;
 let id2content = {};
 let peerScreenConn;
-let room = '222';
+
 let devices;
 let localStream;
 
@@ -21,6 +22,8 @@ const Main = () => {
     const { Constant } = useContext(AppContext);
     let userName = localStorage.getItem('username');
     let userEmail = localStorage.getItem('useremail');
+    const [searchParams] = useSearchParams();
+    let room = searchParams.get('room');
     const [ws, setWs] = useState(null);
     const [newMessage, setNewMessage] = useState('');
     const [chatArray, setChatArray] = useState([]);
@@ -56,7 +59,6 @@ const Main = () => {
     //TODO: 1. first render
     useEffect(() => {
         // console.log("Site render");
-        // // ws = webSocket("http://localhost:3001");
         if (!ws) {
             console.log('1. connect');
             console.log('(1.) connect');
@@ -65,8 +67,8 @@ const Main = () => {
         createStream();
         // // get device
         // setDevice((device) => true);
-        // // createStream
-        // createStream();
+        // createStream
+        createStream();
     }, []);
 
     useEffect(() => {
@@ -93,12 +95,12 @@ const Main = () => {
         }
     }, [device]);
 
-    // useEffect(() => {
-    //   //TODO: 3. init peer connection
-    //   if (localStream) {
-    //     initPeerConnection();
-    //   }
-    // }, [localStream]);
+    useEffect(() => {
+        //TODO: 3. init peer connection
+        if (localStream) {
+            initPeerConnection();
+        }
+    }, [localStream]);
 
     useEffect(() => {
         //TODO: 4. find ice and send to server
@@ -147,6 +149,7 @@ const Main = () => {
         if (peerConn) {
             //連線成功在 console 中打印訊息
             console.log('success connect!');
+            initWebSocket();
         }
     }, [ws]);
 
@@ -165,6 +168,7 @@ const Main = () => {
 
         ws.emit('join', room);
         ws.on('ice_candidate', async (data) => {
+            console.log('');
             handleCandidate(data);
         });
 
@@ -192,7 +196,6 @@ const Main = () => {
             }
         });
 
-        //
         ws.on('offer', async (desc) => {
             console.log('(2.) 收到 offer', desc);
 
@@ -267,6 +270,7 @@ const Main = () => {
     }
 
     async function handleCandidate(candidate) {
+        console.log('handleCandidate 收到ice');
         if (!peerConn) {
             console.error('no peerconnection');
             return;
@@ -331,7 +335,7 @@ const Main = () => {
         };
         peerConn = new RTCPeerConnection(configuration);
         peerConn2 = new RTCPeerConnection(configuration);
-        console.log('生成 peerConn');
+        console.log('2. 生成 peerConn');
         peerConn.onicecandidate = (e) => {
             const message = {
                 type: 'candidate',
@@ -348,6 +352,8 @@ const Main = () => {
 
         peerConn.ontrack = (e) => (remoteVideo.current.srcObject = e.streams[0]);
 
+        console.log('3. 匯入Stream');
+
         localStream.getTracks().forEach((track) => peerConn.addTrack(track, localStream));
     }
 
@@ -363,10 +369,10 @@ const Main = () => {
 
         console.log('2. peerConn', peerConn);
 
-        // // 增加本地串流
-        // localStream.getTracks().forEach((track) => {
-        //   peerConn.addTrack(track, localStream);
-        // });
+        // 增加本地串流
+        localStream.getTracks().forEach((track) => {
+            peerConn.addTrack(track, localStream);
+        });
 
         console.log('3. peerConn add track(local stream)', peerConn);
 
@@ -391,17 +397,17 @@ const Main = () => {
         }
     }, [audioSourceArray]);
 
-    // useEffect(() => {
-    //   async function reinit() {
-    //     // await createScreenStream();
-    //     await initPeerConnection();
-    //     await initWebSocket();
-    //   }
-    //   if (init) {
-    //     console.log("run screen stream");
-    //     reinit();
-    //   }
-    // }, [init]);
+    useEffect(() => {
+        async function reinit() {
+            // await createScreenStream();
+            await initPeerConnection();
+            await initWebSocket();
+        }
+        if (init) {
+            console.log('run screen stream');
+            reinit();
+        }
+    }, [init]);
 
     function handleChange(event) {
         setNewMessage(event.target.value);
@@ -508,9 +514,9 @@ const Main = () => {
     return (
         <div>
             <div>
-                <video ref={localVideo} autoPlay playsInline className="video-screen"></video>
+                <video ref={localVideo} autoPlay playsInline className="video-screen localVideo"></video>
                 <video ref={localScreenVideo} autoPlay playsInline className="video-screen"></video>
-                <video ref={remoteVideo} autoPlay playsInline className="video-screen"></video>
+                <video ref={remoteVideo} autoPlay playsInline className="video-screen remoteVideo"></video>
                 <video ref={remoteScreenVideo} autoPlay playsInline className="video-screen"></video>
             </div>
             <div className="select-device">
@@ -563,21 +569,21 @@ const Main = () => {
                     </FormControl>
                 </div>
             </div>
-            <div className="container">
-                <div className="col-md-12 chat-col d-print-none mb-2 bg-info chat-opened" id="chat-pane" style={{ display: 'block' }}>
-                    <div className="row">
-                        <div className="col-12 text-center h2 mb-3">CHAT</div>
+            <div id="note-container">
+                <div className=" chat-col d-print-none  bg-info chat-opened" id="chat-pane" style={{ display: 'block' }}>
+                    <div>
+                        <div className="chat-title">備忘錄</div>
                     </div>
 
                     <div id="chat-messages">
                         {chatArray
                             ? chatArray.map((e, index) => {
                                   return (
-                                      <Card key={index}>
+                                      <Card key={index} className="chat-block">
                                           <CardContent>
-                                              <Typography variant="h3">{e.msg}</Typography>
-                                              <Typography variant="h3">{e.time}</Typography>
-                                              <Typography variant="h3">{e.sender}</Typography>
+                                              <Typography variant="h5">{e.msg}</Typography>
+                                              <Typography variant="h5">{e.time}</Typography>
+                                              <Typography variant="h5">{e.sender}</Typography>
                                           </CardContent>
                                       </Card>
                                   );
@@ -585,13 +591,12 @@ const Main = () => {
                             : null}
                     </div>
 
-                    <form>
-                        <div className="input-group mb-3">
+                    <form className="chat-input">
+                        <div className="input-group">
                             <input
                                 type="text"
                                 id="chat-input"
                                 className="form-control rounded-0 chat-box border-info"
-                                rows="3"
                                 placeholder="Type here..."
                                 value={newMessage}
                                 onChange={handleChange}

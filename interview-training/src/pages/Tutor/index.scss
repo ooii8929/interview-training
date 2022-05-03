@@ -1,0 +1,65 @@
+.social-card{
+    width: 90%;
+    margin:5%;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border-radius: 5px;
+}
+.localVideo{
+    position: absolute;
+    top:95px;
+    height: auto !important;
+    width: 300px !important;
+}
+
+.css-1bped5o-MuiBottomNavigation-root{
+box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+}
+
+#chat-messages{
+height: 300px !important;
+
+margin: 3%;
+
+}
+.chat-title{
+    text-align: center;
+font-size: 20px !important;
+padding-top: 3%;}
+
+.select-device{
+    width: 40%;
+}
+
+.video-screen{
+    width: 30%;
+}
+
+.chat-input{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.chat-block{
+    
+    margin: 3%;
+}
+.chat-block h5{
+    font-size: 16px !important;
+   
+}
+#note-container{
+    position: absolute;
+    right: 0;
+    top:95px;
+   
+   width: 300px;
+      display: flex;
+     float:right;                         
+     overflow:auto;                    
+     height:88vh; 
+    }
+
+    .bg-info{
+ background-color: rgb(234, 234, 234) !important;
+  width: 300px;
+    }

@@ -19,6 +19,8 @@ function Tutor() {
 
     const [profiles, setProfiles] = React.useState(null);
     const [appointments, setAppointments] = React.useState(null);
+    const [allTraining, setAllTraining] = React.useState(null);
+
     const [time, setTime] = React.useState(null);
     const userID = localStorage.getItem('userid');
     const userEmail = localStorage.getItem('useremail');
@@ -77,28 +79,57 @@ function Tutor() {
                     userID: userID,
                 },
             });
+
             // console.log('responseProfile', responseProfile);
             let profile = await axios.get(`${Constant[0]}/user/profile`, {
                 params: {
                     userID: userID,
                     userEmail: userEmail,
+                    identity: userIdentity,
                 },
             });
-            console.log('profile', profile);
-            let now = new Date();
-            let createDT = new Date(profile['data']['userProfile']['create_dt']);
-            const diffTime = Math.abs(now - createDT);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            setTime(diffDays);
-            setFile(profile['data']['userProfile']['picture']);
-            setProfiles(profile['data']);
-            setAppointments(responseAppoint['data']);
+            if (profile) {
+                console.log('profile', profile);
+                let now = new Date();
+                let createDT = new Date(profile['data']['userProfile']['create_dt']);
+                const diffTime = Math.abs(now - createDT);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                setTime(diffDays);
+                setFile(profile['data']['userProfile']['picture']);
+                setProfiles(profile['data']);
+                console.log('responseAppoint', responseAppoint['data']);
+                setAppointments(responseAppoint['data']);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function getTraining() {
+        try {
+            // let responseProfile = await axios.get(`${Constant[0]}/user/profile`, {
+            //     params: {
+            //         userID: userID,
+            //     },
+            // });
+
+            let responseAllTraining = await axios.get(`${Constant[0]}/training`, {
+                params: {
+                    user_id: userID,
+                },
+            });
+
+            if (responseAllTraining) {
+                console.log('responseAllTraining', responseAllTraining);
+                setAllTraining(responseAllTraining);
+            }
         } catch (error) {
             console.log(error);
         }
     }
     React.useEffect(() => {
         getProfile();
+        getTraining();
     }, []);
 
     return (
@@ -134,9 +165,11 @@ function Tutor() {
                                       <Grid item xs={4} key={index} className="account-box-grid-self">
                                           <TutorCard
                                               key={index}
+                                              teacher={appointment['name']}
+                                              profession={appointment['profession']}
+                                              picture={appointment['picture']}
                                               tID={appointment['question_id']}
-                                              availableTime={appointment['course_url']}
-                                              createDT={appointment['create_dt']}
+                                              createDT={appointment['create_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
                                               href={appointment['course_url']}
                                           />
                                       </Grid>
@@ -149,16 +182,16 @@ function Tutor() {
                     <Typography variant="h4" component="h2">
                         歷屆模擬題
                     </Typography>
-                    <Grid container columns={12} className="account-box-grid">
-                        {/* {profiles
-                            ? profiles['userProfile'].map((profile, index) => {
+                    <Grid container columns={12} className="account-box-grid-self">
+                        {allTraining
+                            ? allTraining['data'].map((training, index) => {
                                   return (
                                       <Grid item xs={4} key={index}>
-                                          <Card key={index} tID={profile['question_id']} availableTime={profile['content']} createDT={profile['create_dt']} />
+                                          <Card key={index} tID={training['video']['title']} availableTime={training['profesiion']} createDT={training['create_dt']} />
                                       </Grid>
                                   );
                               })
-                            : null} */}
+                            : null}
                     </Grid>
                 </Container>
             </div>

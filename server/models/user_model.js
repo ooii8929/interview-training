@@ -94,9 +94,36 @@ const getUserProfile = async (userID, userEmail) => {
 
     userProfileCombine.appointments = userProfileResultAppointments;
 
-    console.log('userProfileCombine', userProfileCombine);
-
     return userProfileCombine;
+};
+
+const getUserPureProfile = async (userID, userEmail) => {
+    const conn = await pool.getConnection();
+
+    // get all professions
+    const queryUserProfile = 'SELECT * FROM users WHERE email = ?';
+    const userProfileResult = await conn.query(queryUserProfile, [userEmail]);
+
+    return userProfileResult;
+};
+
+const getTeacherProfile = async (teacherID, userEmail) => {
+    const conn = await pool.getConnection();
+
+    // get all professions
+    const queryTeacherProfile = 'SELECT * FROM teachers WHERE email = ?';
+    const [teacherProfileResult] = await conn.query(queryTeacherProfile, [userEmail]);
+    let teacherProfileCombine = { userProfile: teacherProfileResult[0] };
+
+    // get all professions
+    const queryUserAppointments = 'SELECT * FROM appointments WHERE teacher_time_id = ?';
+    const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [teacherID]);
+
+    teacherProfileCombine.appointments = userProfileResultAppointments;
+
+    console.log('teacherProfileCombine', teacherProfileCombine);
+
+    return teacherProfileCombine;
 };
 
 const signUp = async (identity, name, email, password) => {
@@ -315,4 +342,6 @@ module.exports = {
     getUserProfileByUserID,
     getUsersProfileByUserID,
     updateAvator,
+    getUserPureProfile,
+    getTeacherProfile,
 };
