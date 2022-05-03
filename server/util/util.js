@@ -9,6 +9,7 @@ const { TOKEN_SECRET } = process.env; // 30 days by seconds
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util'); // util from native nodejs library
 const mailgun = require('mailgun-js');
+const AWS = require('aws-sdk');
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -91,6 +92,25 @@ const sendFailMail = (mail, content) => {
     });
 };
 
+// get s3 upload url
+const storeAvatorURL = async (avatorFileName, avatorFileType) => {
+    AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_ACCESS_PASSWORD, region: 'ap-northeast-1', signatureVersion: 'v4' });
+
+    const s3 = new AWS.S3();
+
+    console.log('avatorFileName', avatorFileName);
+    const myBucket = 'interview-appworks';
+    const myKey = 'avator/filename';
+    const signedUrlExpireSeconds = 600 * 5;
+    let avaStorageUrl = await s3.getSignedUrl('putObject', {
+        Bucket: myBucket,
+        Key: `avator/${avatorFileName}`,
+        Expires: signedUrlExpireSeconds,
+        ContentType: avatorFileType,
+    });
+    return avaStorageUrl;
+};
+
 module.exports = {
     upload,
     getImagePath,
@@ -98,4 +118,5 @@ module.exports = {
     authentication,
     sendMail,
     sendFailMail,
+    storeAvatorURL,
 };

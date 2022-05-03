@@ -117,6 +117,7 @@ export default function SignUp() {
             localStorage.setItem('userid', signInResponse.data.data.user.id);
             localStorage.setItem('username', signInResponse.data.data.user.name);
             localStorage.setItem('useremail', signInResponse.data.data.user.email);
+            localStorage.setItem('identity', identity);
 
             alert('success register');
             if (localStorage.getItem('returnPage')) {

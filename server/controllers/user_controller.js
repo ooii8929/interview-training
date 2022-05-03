@@ -145,24 +145,40 @@ const signIn = async (req, res) => {
     });
 };
 
+const getAvatorURL = async (req, res) => {
+    let { file_name, file_type } = req.query;
+    try {
+        let avatorURL = await util.storeAvatorURL(file_name, file_type);
+        return res.status(200).send({ avatorURL });
+    } catch (error) {
+        console.log('avatorURL error', error);
+        return res.status(400).send({ error: error });
+    }
+};
+
+const updateAvator = async (req, res) => {
+    let { identity, userID, picture } = req.body;
+    console.log('updateAvator', updateAvator);
+    try {
+        let userUpdateAvator = await User.updateAvator(identity, userID, picture);
+        console.log('userUpdateAvator', userUpdateAvator);
+        return res.status(200).send({ userUpdateAvator });
+    } catch (error) {
+        console.log('userUpdateAvator error', error);
+        return res.status(400).send({ error });
+    }
+};
+
 const getUserProfile = async (req, res) => {
-    let { userID } = req.query;
+    let { userID, userEmail } = req.query;
+    try {
+        let userProfile = await User.getUserProfile(userID, userEmail);
 
-    // Get records
-    const dbConnect = dbo.getDb();
-
-    dbConnect
-        .collection('profile')
-        .find({ user_id: userID })
-        .limit(50)
-        .toArray(function (err, result) {
-            if (err) {
-                res.status(400).send('Error fetching listings!');
-            } else {
-                console.log('result', result);
-                res.status(200).json(result);
-            }
-        });
+        return res.status(200).send(userProfile);
+    } catch (error) {
+        console.log('getUserProfile error', error);
+        return res.status(400).send({ error: error });
+    }
 };
 
 const getUserCodeLog = async (req, res) => {
@@ -210,4 +226,6 @@ module.exports = {
     insertUserProfile,
     getUserCodeLog,
     teacherSignUp,
+    getAvatorURL,
+    updateAvator,
 };

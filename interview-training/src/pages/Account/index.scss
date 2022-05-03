@@ -8,3 +8,35 @@
 .tutor-avator{
     border-radius: 50%;
 }
+
+.account-avator-container{
+    display: flex;
+        position: relative;
+}
+.account-avator{
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    margin: auto;
+    object-fit: cover;
+    margin-top: 5%;
+}
+
+.upload_avator{
+    position: absolute;
+    left: 60%;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    .upload_avator_check{
+        margin-top: 5%;
+        width: 64%;
+        border: 1px solid gray;
+    }
+}
+
+.account-info{
+    padding-top: 2%;
+    margin: auto;
+    text-align: center;
+}

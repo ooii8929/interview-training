@@ -7,6 +7,32 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const _ = require('lodash');
 
+const updateAvator = async (identity, userID, picture) => {
+    console.log('info', identity, userID, picture);
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+        let updateAvatorResult;
+        if (identity == 'teacher') {
+            updateAvatorResult = await conn.query('UPDATE teachers SET picture = ? WHERE id = ?', [picture, userID]);
+        }
+        if (identity == 'student') {
+            updateAvatorResult = await conn.query('UPDATE users SET picture = ? WHERE id = ?', [picture, userID]);
+        }
+        console.log('updateAvator', updateAvatorResult);
+
+        await conn.query('COMMIT');
+        return updateAvatorResult;
+    } catch (error) {
+        await conn.query('ROLLBACK');
+
+        console.log('updateAvator error', error);
+        return error;
+    } finally {
+        await conn.release();
+    }
+};
+
 const teacherSignUp = async (identity, name, email, password) => {
     const conn = await pool.getConnection();
     try {
@@ -51,6 +77,26 @@ const teacherSignUp = async (identity, name, email, password) => {
     } finally {
         await conn.release();
     }
+};
+
+const getUserProfile = async (userID, userEmail) => {
+    const conn = await pool.getConnection();
+
+    // get all professions
+    const queryUserProfile = 'SELECT * FROM users WHERE email = ?';
+    const [userProfileResult] = await conn.query(queryUserProfile, [userEmail]);
+    let userProfileCombine = { userProfile: userProfileResult[0] };
+
+    // get all professions
+    const queryUserAppointments =
+        'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id INNER JOIN teachers ON teachers_time.t_id = teachers.id  WHERE users.email = ?';
+    const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [userEmail]);
+
+    userProfileCombine.appointments = userProfileResultAppointments;
+
+    console.log('userProfileCombine', userProfileCombine);
+
+    return userProfileCombine;
 };
 
 const signUp = async (identity, name, email, password) => {
@@ -248,6 +294,8 @@ module.exports = {
     nativeSignIn,
     facebookSignIn,
     teacherSignUp,
+    getUserProfile,
     getUserProfileByEmail,
     getUserProfileByUserID,
+    updateAvator,
 };
