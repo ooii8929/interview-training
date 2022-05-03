@@ -12,7 +12,9 @@ const dbo = require('./server/models/mongodbcon');
 
 const fs = require('fs');
 
-app.use(express.static('interview-training/build'));
+// app.use(express.static('interview-training/build'));
+const root = require('path').join(__dirname, 'interview-training/build');
+app.use(express.static(root));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Session
@@ -50,7 +52,6 @@ io.on('connection', (socket) => {
         socket.to(room).emit('ready', '準備通話');
     });
     socket.on('getMessage', (message) => {
-        console.log('232323');
         console.log(message);
     });
 
