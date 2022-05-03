@@ -15,7 +15,7 @@ function Tutor() {
     const [display, setDisplay] = React.useState(false);
     const [tutors, setTutors] = React.useState(null);
     const [appointment, setAppointment] = React.useState(null);
-    const baseURL = `${Constant}/tutor/teacher/schedule`;
+    const baseURL = `${Constant[0]}/tutor/teacher/schedule`;
     const userID = localStorage.getItem('userid');
 
     async function getTutors() {
@@ -40,7 +40,7 @@ function Tutor() {
         } else {
             async function sendAppointment(course_id) {
                 try {
-                    let response = await axios.post(`${Constant}/tutor/user/appoint`, {
+                    let response = await axios.post(`${Constant[0]}/tutor/user/appoint`, {
                         user_id: userID,
                         course_id: course_id,
                     });

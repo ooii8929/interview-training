@@ -11,7 +11,7 @@ export default function Article(props) {
     const { id } = useParams();
     const { Constant } = useContext(AppContext);
 
-    const baseURL = `${Constant}/article`;
+    const baseURL = `${Constant[0]}/article`;
     const jobType = localStorage.getItem('jobType');
     const [articles, setArticles] = React.useState(null);
 

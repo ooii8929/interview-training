@@ -19,7 +19,7 @@ export default function Prepare() {
         if (!profileQuestion) {
             async function getVideoQuestions() {
                 console.log('user info', jobType, userId);
-                let response = await axios.get(`${Constant}/training/profile/questions`, {
+                let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
                     params: {
                         profession: jobType || 'backend',
                         userID: userId,

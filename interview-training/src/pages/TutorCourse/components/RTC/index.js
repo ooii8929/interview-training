@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect, useContext } from 'react';
 import ReactDom from 'react-dom';
+import { AppContext } from '../../App';
 import webSocket from 'socket.io-client';
 import Moment from 'react-moment';
 import { Card, CardContent, Typography } from '@mui/material';
@@ -17,6 +18,7 @@ let localStream;
 // let ws;
 
 const Main = () => {
+    const { Constant } = useContext(AppContext);
     let userName = localStorage.getItem('username');
     let userEmail = localStorage.getItem('useremail');
     const [ws, setWs] = useState(null);
@@ -58,7 +60,7 @@ const Main = () => {
         if (!ws) {
             console.log('1. connect');
             console.log('(1.) connect');
-            setWs(webSocket('http://localhost:3001'));
+            setWs(webSocket(`${Constant[1]}`));
         }
         createStream();
         // // get device

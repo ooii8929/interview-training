@@ -23,13 +23,13 @@ function Tutor() {
 
     async function getProfile() {
         try {
-            let responseProfile = await axios.get(`${Constant}/user/profile`, {
+            let responseProfile = await axios.get(`${Constant[0]}/user/profile`, {
                 params: {
                     userID: userID,
                 },
             });
 
-            let responseAppoint = await axios.get(`${Constant}/tutor/user/appoint`, {
+            let responseAppoint = await axios.get(`${Constant[0]}/tutor/user/appoint`, {
                 params: {
                     userID: userID,
                 },

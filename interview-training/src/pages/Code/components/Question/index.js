@@ -56,11 +56,11 @@ export default function Question() {
     const userId = localStorage.getItem('userid');
 
     const [answer, setAnswer] = React.useState(null);
-    const baseURL = `${Constant}/training/questions`;
+    const baseURL = `${Constant[0]}/training/questions`;
 
     async function runCode() {
         try {
-            response = await axios.post(`${Constant}/training/run/compile`, {
+            response = await axios.post(`${Constant[0]}/training/run/compile`, {
                 question_id: questionID,
                 language: language,
                 content: code,
@@ -117,7 +117,7 @@ export default function Question() {
 
     // submit answer
     async function submitAnswer(e) {
-        response = await axios.post(`${Constant}/training/submit/compile/`, {
+        response = await axios.post(`${Constant[0]}/training/submit/compile/`, {
             user_id: userId,
             question_id: questionID,
             content: code,
@@ -136,7 +136,7 @@ export default function Question() {
     }
 
     async function getUserCodeLog(questionID) {
-        let codeLog = await axios.get(`${Constant}/user/code/log`, {
+        let codeLog = await axios.get(`${Constant[0]}/user/code/log`, {
             params: {
                 question_id: questionID,
                 user_id: userId,

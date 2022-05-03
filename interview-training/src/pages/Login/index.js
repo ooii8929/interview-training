@@ -37,7 +37,7 @@ export default function SignUp() {
 
     async function signIn(e) {
         try {
-            let signInResponse = await axios.post(`${Constant}/user/login`, {
+            let signInResponse = await axios.post(`${Constant[0]}/user/login`, {
                 data: {
                     email: email,
                     password: password,
@@ -82,9 +82,9 @@ export default function SignUp() {
         try {
             let updateResult;
             if (data.get('identity') == 'teacher') {
-                updateResult = await axios.post(`${Constant}/teacher/signup`, registerInfo);
+                updateResult = await axios.post(`${Constant[0]}/teacher/signup`, registerInfo);
             } else if (data.get('identity') == 'student') {
-                updateResult = await axios.post(`${Constant}/user/signup`, registerInfo);
+                updateResult = await axios.post(`${Constant[0]}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);
             localStorage.setItem('userid', updateResult.data.data.user.id);
@@ -103,7 +103,7 @@ export default function SignUp() {
 
     async function register(e) {
         try {
-            let signInResponse = await axios.post(`${Constant}/user/signup`, {
+            let signInResponse = await axios.post(`${Constant[0]}/user/signup`, {
                 data: {
                     name: name,
                     identity: identity,

@@ -21,7 +21,7 @@ export default function SocialArticle() {
     const tringleBad = useRef(null);
     const [articles, setArticles] = React.useState(null);
     const [articleInfo, setArticleInfo] = React.useState(null);
-    const baseURL = `${Constant}/article/id`;
+    const baseURL = `${Constant[0]}/article/id`;
     const jobType = localStorage.getItem('jobType');
     const userId = localStorage.getItem('userid');
     const [goods, setGoods] = React.useState(null);
@@ -36,7 +36,7 @@ export default function SocialArticle() {
         };
 
         try {
-            let res = await axios.post(`${Constant}/article/good`, postDetail);
+            let res = await axios.post(`${Constant[0]}/article/good`, postDetail);
             e.target.classList.add('good-clicked');
             tringleBad.current.classList.remove('good-clicked');
             setGoods((prev) => prev + 1);
@@ -54,7 +54,7 @@ export default function SocialArticle() {
             article_id: id,
         };
         try {
-            let res = await axios.post(`${Constant}/article/bad`, postDetail);
+            let res = await axios.post(`${Constant[0]}/article/bad`, postDetail);
             console.log('e', e.target);
             e.target.classList.remove('good-clicked');
             tringleGood.current.classList.remove('good-clicked');
@@ -99,7 +99,7 @@ export default function SocialArticle() {
         (e) => {
             async function getArticles() {
                 try {
-                    let tmpAllArticles = await axios.get(`${Constant}/article`, {
+                    let tmpAllArticles = await axios.get(`${Constant[0]}/article`, {
                         params: {
                             profession: language,
                         },

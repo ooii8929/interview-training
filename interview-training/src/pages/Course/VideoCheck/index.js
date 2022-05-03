@@ -24,7 +24,7 @@ export default function VideoCheck(props) {
         }
         console.log(tmpChecked);
         let tmpProfile = props.profileQuestion;
-        await axios.post(`${Constant}/training/video/answer/check`, {
+        await axios.post(`${Constant[0]}/training/video/answer/check`, {
             user_id: nowUserId,
             question_id: tmpProfile.data._id,
             qid: props.nowQuestionNumber,

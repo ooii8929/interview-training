@@ -17,7 +17,7 @@ export default function SocialArticle() {
 
     React.useEffect((e) => {
         async function getVideoQuestions() {
-            let response = await axios.get(`${Constant}/training/video/questions`, {
+            let response = await axios.get(`${Constant[0]}/training/video/questions`, {
                 params: {
                     profession: 'backend',
                 },

@@ -18,7 +18,7 @@ function Social() {
     const [display, setDisplay] = React.useState(false);
     const [article, setArticle] = React.useState(null);
     const [articles, setArticles] = React.useState(null);
-    const baseURL = `${Constant}/article`;
+    const baseURL = `${Constant[0]}/article`;
     const jobType = localStorage.getItem('jobType');
     const [isArticle, setIsArticle] = React.useState(false);
     const { cardContainer } = React.useRef();

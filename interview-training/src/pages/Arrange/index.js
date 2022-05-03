@@ -72,7 +72,7 @@ export default function Arrange() {
             profession: data.get('profession'),
         };
         try {
-            let updateResult = await axios.post(`${Constant}/tutor/teacher/information`, teacherInfo);
+            let updateResult = await axios.post(`${Constant[0]}/tutor/teacher/information`, teacherInfo);
             console.log('update result', updateResult);
         } catch (error) {
             console.log('update error', error);
@@ -105,7 +105,7 @@ export default function Arrange() {
         }
 
         try {
-            let updateResult = await axios.post(`${Constant}/tutor/teacher/schedule`, scheduleInfo);
+            let updateResult = await axios.post(`${Constant[0]}/tutor/teacher/schedule`, scheduleInfo);
             console.log('update result', updateResult);
         } catch (error) {
             console.log('update error', error);

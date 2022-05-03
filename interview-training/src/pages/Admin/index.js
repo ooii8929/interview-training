@@ -33,7 +33,7 @@ function Admin() {
 
         // send logic question
         async function insertLogicQuestion() {
-            let response = await axios.post(`${Constant}/training/question/logic`, {
+            let response = await axios.post(`${Constant[0]}/training/question/logic`, {
                 data: {
                     title: data.get('title'),
                     description: data.get('description'),

@@ -71,7 +71,7 @@ export default function Video(props) {
         });
 
         try {
-            let presignedUrl = await axios.get(`${Constant}/training/video/answer/url`, {
+            let presignedUrl = await axios.get(`${Constant[0]}/training/video/answer/url`, {
                 params: {
                     filename: file.name,
                 },
@@ -92,7 +92,7 @@ export default function Video(props) {
                 answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
             };
             console.log('data', data);
-            let submitAnswer = await axios.post(`${Constant}/training/video/answer`, data);
+            let submitAnswer = await axios.post(`${Constant[0]}/training/video/answer`, data);
             // tmpProfile.data.video.filter((e) => {
             //   console.log("e", e);
             //   if (e.qid == nowQuestionNumber) {
@@ -126,7 +126,7 @@ export default function Video(props) {
             nowUserId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
 
-            let response = await axios.get(`${Constant}/training/profile/questions`, {
+            let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
                 params: {
                     profession: jobType || 'backend',
                     userID: nowUserId,

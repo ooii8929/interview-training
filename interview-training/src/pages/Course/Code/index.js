@@ -48,7 +48,7 @@ export default function Video(props) {
             userId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
 
-            let response = await axios.get(`${Constant}/training/profile/questions`, {
+            let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
                 params: {
                     profession: jobType || 'backend',
                     userID: userId,
@@ -84,7 +84,7 @@ export default function Video(props) {
     }, [language]);
 
     async function getUserCodeLog(questionID) {
-        let codeLog = await axios.get(`${Constant}/user/code/log`, {
+        let codeLog = await axios.get(`${Constant[0]}/user/code/log`, {
             params: {
                 question_id: questionID,
                 user_id: userId,
@@ -94,7 +94,7 @@ export default function Video(props) {
     }
     // submit answer
     async function submitAnswer(e) {
-        response = await axios.post(`${Constant}/training/submit/compile/`, {
+        response = await axios.post(`${Constant[0]}/training/submit/compile/`, {
             user_id: userId,
             question_id: profileQuestion.data._id,
             qid: nowQuestionNumber,
@@ -120,7 +120,7 @@ export default function Video(props) {
 
     async function runCode() {
         try {
-            response = await axios.post(`${Constant}/training/run/compile`, {
+            response = await axios.post(`${Constant[0]}/training/run/compile`, {
                 question_id: questionID,
                 language: language,
                 content: code,
@@ -199,7 +199,7 @@ export default function Video(props) {
 
     async function shareAnswer(n) {
         try {
-            response = await axios.post(`${Constant}/article/code`, {
+            response = await axios.post(`${Constant[0]}/article/code`, {
                 user_id: userId,
                 question_id: questionID,
                 code: code,
