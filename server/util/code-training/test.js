@@ -4,5 +4,5 @@
  * @return {number[]}
  */
 var twoSum = function(nums, target) {
-    return '123'
+    return [ 0, 2 ]
 };console.log(twoSum([3,2,3],6))
