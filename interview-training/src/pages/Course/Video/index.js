@@ -61,7 +61,7 @@ export default function Video(props) {
             setBlob(recorderRef.current.getBlob());
         });
 
-        display.current.srcObject = false;
+        // display.current.srcObject = false;
         isPause = true;
         clearInterval(seconds);
         handleTimeup();
