@@ -24,6 +24,7 @@ const Main = () => {
     let userEmail = localStorage.getItem('useremail');
     const [searchParams] = useSearchParams();
     let room = searchParams.get('room');
+    console.log('room', room);
     const [ws, setWs] = useState(null);
     const [newMessage, setNewMessage] = useState('');
     const [chatArray, setChatArray] = useState([]);
@@ -52,6 +53,7 @@ const Main = () => {
 
     useEffect(() => {
         if (ws) {
+            console.log('connect and run web socker');
             initWebSocket();
         }
     }, [connect]);
@@ -67,8 +69,6 @@ const Main = () => {
         createStream();
         // // get device
         // setDevice((device) => true);
-        // createStream
-        createStream();
     }, []);
 
     useEffect(() => {
@@ -124,6 +124,7 @@ const Main = () => {
             peerConn.oniceconnectionstatechange = (e) => {
                 if (e.target.iceConnectionState === 'disconnected') {
                     localVideo.current.srcObject = null;
+
                     remoteScreenVideo.current.srcObject = null;
                 }
             };
@@ -198,7 +199,6 @@ const Main = () => {
 
         ws.on('offer', async (desc) => {
             console.log('(2.) 收到 offer', desc);
-
             handleOffer(desc);
         });
 
@@ -252,7 +252,7 @@ const Main = () => {
 
         const offer = await peerConn.createOffer();
         console.log('offer', offer);
-        ws.emit('offer', { sdp: offer.sdp });
+        ws.emit('offer', room, { sdp: offer.sdp });
         await peerConn.setLocalDescription(offer);
     }
 
@@ -334,7 +334,7 @@ const Main = () => {
             ],
         };
         peerConn = new RTCPeerConnection(configuration);
-        peerConn2 = new RTCPeerConnection(configuration);
+        // peerConn2 = new RTCPeerConnection(configuration);
         console.log('2. 生成 peerConn');
         peerConn.onicecandidate = (e) => {
             const message = {
@@ -400,13 +400,13 @@ const Main = () => {
     useEffect(() => {
         async function reinit() {
             // await createScreenStream();
-            await initPeerConnection();
-            await initWebSocket();
+            // await initPeerConnection();
+            // await initWebSocket();
         }
-        if (init) {
-            console.log('run screen stream');
-            reinit();
-        }
+        // if (init) {
+        //     console.log('run screen stream');
+        //     reinit();
+        // }
     }, [init]);
 
     function handleChange(event) {
@@ -516,7 +516,7 @@ const Main = () => {
             <div>
                 <video ref={localVideo} autoPlay playsInline className="video-screen localVideo"></video>
                 <video ref={localScreenVideo} autoPlay playsInline className="video-screen"></video>
-                <video ref={remoteVideo} autoPlay playsInline className="video-screen remoteVideo"></video>
+                <video ref={localVideo} autoPlay playsInline className="video-screen remoteVideo"></video>
                 <video ref={remoteScreenVideo} autoPlay playsInline className="video-screen"></video>
             </div>
             <div className="select-device">

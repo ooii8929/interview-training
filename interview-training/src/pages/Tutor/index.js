@@ -7,14 +7,6 @@ import { useParams } from 'react-router-dom';
 import './index.scss';
 
 export default function Course() {
-    const [jobType, setJobType] = useState('');
-    function changeJobType(event) {
-        setJobType(event.target.value);
-    }
-
-    useEffect(() => {
-        localStorage.setItem('jobType', jobType);
-    }, [jobType]);
     return (
         <div>
             <RCT />

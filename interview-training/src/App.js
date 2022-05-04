@@ -34,7 +34,6 @@ function App() {
         profileQuestion,
         setProfileQuestion,
         setUserId,
-        jobType,
         Constant,
     };
 

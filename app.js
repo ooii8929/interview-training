@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
 
     // 轉傳 Offer
     socket.on('offer', (room, desc) => {
-        console.log('收到 offer');
+        console.log('收到 offer', room);
         socket.to(room).emit('offer', desc);
     });
 
