@@ -109,19 +109,29 @@ const getUserPureProfile = async (userID, userEmail) => {
 
 const getTeacherProfile = async (teacherID, userEmail) => {
     const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
 
-    // get all professions
-    const queryTeacherProfile = 'SELECT * FROM teachers WHERE email = ?';
-    const [teacherProfileResult] = await conn.query(queryTeacherProfile, [userEmail]);
-    let teacherProfileCombine = { userProfile: teacherProfileResult[0] };
+        // get all professions
+        const queryTeacherProfile = 'SELECT * FROM teachers WHERE email = ?';
+        const [teacherProfileResult] = await conn.query(queryTeacherProfile, [userEmail]);
+        let teacherProfileCombine = { userProfile: teacherProfileResult[0] };
 
-    // get all professions
-    const queryUserAppointments = 'SELECT * FROM appointments WHERE teacher_time_id = ?';
-    const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [teacherID]);
+        // get all professions
+        const queryUserAppointments = 'SELECT * FROM appointments WHERE teacher_time_id = ?';
+        const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [teacherID]);
 
-    teacherProfileCombine.appointments = userProfileResultAppointments;
+        teacherProfileCombine.appointments = userProfileResultAppointments;
+        await conn.query('COMMIT');
 
-    return teacherProfileCombine;
+        return teacherProfileCombine;
+    } catch (error) {
+        await conn.query('ROLLBACK');
+        console.log('error', error);
+        return error;
+    } finally {
+        await conn.release();
+    }
 };
 
 const signUp = async (identity, name, email, password) => {

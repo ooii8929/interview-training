@@ -6,7 +6,7 @@ const AWS = require('aws-sdk');
 const Question = require('../models/question_model');
 const Answer = require('../models/answer_model');
 const fs = require('fs');
-
+const _ = require('lodash');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
@@ -297,6 +297,19 @@ const getTraining = async (req, res) => {
     return res.status(200).send(allTraining);
 };
 
+const getTrainingRecords = async (req, res) => {
+    let { user_id, identity } = req.query;
+    let allTraining;
+    if (identity === 'student') {
+        allTraining = await Answer.getAllTraining(user_id);
+    }
+    if (identity === 'teacher') {
+        allTraining = await Answer.getTutorTrainingRecords(user_id);
+    }
+    console.log('allTraining', allTraining);
+    return res.status(200).send(allTraining);
+};
+
 const getQuestionsByProfession = async (req, res) => {
     let { profession } = req.query;
     let questions = await Question.getCodeQuestions(profession);
@@ -428,5 +441,6 @@ module.exports = {
     getProfileQuestions,
     storeVideoAnswerUrl,
     submitVideoAnswer,
+    getTrainingRecords,
     submitVideoAnswerCheck,
 };

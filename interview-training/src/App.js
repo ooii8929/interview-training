@@ -51,8 +51,11 @@ function App() {
                     identity: localStorage.getItem('identity'),
                 },
             });
-            if (localStorage.getItem('identity') == 'student') {
+            if (localStorage.getItem('identity') === 'student') {
                 setAvatorURL(getAvatorResult['data'][0][0]['picture']);
+            }
+            if (localStorage.getItem('identity') === 'teacher') {
+                setAvatorURL(getAvatorResult['data']['userProfile']['picture']);
             }
         }
 
@@ -108,7 +111,7 @@ function App() {
                     <Route path="/course/video" element={<RequireAuth Component={CourseVideo} />} />
                     <Route path="/course/code" element={<RequireAuth Component={CourseCode} />} />
                     <Route path="/arrange" element={<RequireAuth Component={Arrange} />} />
-                    <Route path="/account" element={<RequireAuth Component={Account} />} />
+                    <Route path="/account" element={<Account />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -7,9 +7,10 @@ import Card from './Card';
 import TutorCard from './TutorCard';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Container } from '@mui/material';
-
+import Records from './Records';
+import ArrangeTime from './ArrangeTime';
 import './index.scss';
 
 let allTutors;
@@ -18,17 +19,19 @@ function Tutor() {
     const { Constant } = useContext(AppContext);
 
     const [profiles, setProfiles] = React.useState(null);
-    const [appointments, setAppointments] = React.useState(null);
-    const [allTraining, setAllTraining] = React.useState(null);
+    const [appointments, setAppointments] = React.useState('');
+    const [allTraining, setAllTraining] = React.useState('');
+    const [allTutorRecords, setAllTutorRecords] = React.useState('');
 
     const [time, setTime] = React.useState(null);
     const userID = localStorage.getItem('userid');
     const userEmail = localStorage.getItem('useremail');
-    const userIdentity = localStorage.getItem('identity');
+    let userIdentity = '';
     const [file, setFile] = React.useState();
     const [fileContent, setFileContent] = React.useState();
     const [fileType, setFileType] = React.useState();
     const [fileName, setFileName] = React.useState();
+    let location = useLocation();
     function handleChange(e) {
         console.log('e.target.files', e.target.files[0]);
         setFile(URL.createObjectURL(e.target.files[0]));
@@ -66,14 +69,27 @@ function Tutor() {
         console.log('updateAvator', updateAvator);
     }
 
+    React.useEffect(() => {
+        let nowUserId = localStorage.getItem('userid');
+        userIdentity = localStorage.getItem('identity');
+        if (!nowUserId) {
+            alert('你需要先登入');
+            localStorage.setItem('returnPage', location.pathname);
+            return <Navigate to="/login" />;
+        }
+        async function init() {
+            await getProfile();
+            // if (userIdentity === 'student') {
+            //     getTraining();
+            //     getUserAppointments();
+            // }
+        }
+        init();
+    }, []);
+
+    //TODO: Get user profile
     async function getProfile() {
         try {
-            let responseAppoint = await axios.get(`${Constant[0]}/tutor/user/appoint`, {
-                params: {
-                    userID: userID,
-                },
-            });
-
             // console.log('responseProfile', responseProfile);
             let profile = await axios.get(`${Constant[0]}/user/profile`, {
                 params: {
@@ -82,16 +98,35 @@ function Tutor() {
                     identity: userIdentity,
                 },
             });
-            if (profile) {
-                console.log('profile', profile);
-                let now = new Date();
-                let createDT = new Date(profile['data']['userProfile']['create_dt']);
-                const diffTime = Math.abs(now - createDT);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                setTime(diffDays);
-                setFile(profile['data']['userProfile']['picture']);
-                setProfiles(profile['data']);
-                console.log('responseAppoint', responseAppoint['data']);
+
+            console.log('1. get profile', profile);
+            let now = new Date();
+            let createDT = new Date(profile['data']['userProfile']['create_dt']);
+            const diffTime = Math.abs(now - createDT);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            setTime(diffDays);
+            setFile(profile['data']['userProfile']['picture']);
+            setProfiles(profile['data']);
+
+            //TODO: get record
+            if (userIdentity === 'teacher') {
+                await getTeacherTrainingRecords();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    //TODO: Get user profile
+    async function getUserAppointments() {
+        try {
+            let responseAppoint = await axios.get(`${Constant[0]}/tutor/user/appoint`, {
+                params: {
+                    userID: userID,
+                },
+            });
+            if (responseAppoint['data'].length !== 0) {
+                console.log('responseAppoint', responseAppoint);
                 setAppointments(responseAppoint['data']);
             }
         } catch (error) {
@@ -109,6 +144,7 @@ function Tutor() {
 
             if (responseAllTraining) {
                 console.log('responseAllTraining', responseAllTraining);
+
                 setAllTraining(responseAllTraining);
             }
         } catch (error) {
@@ -118,29 +154,26 @@ function Tutor() {
 
     async function getTeacherTrainingRecords() {
         try {
-            let responseAllTraining = await axios.get(`${Constant[0]}/training`, {
+            let responseAllTraining = await axios.get(`${Constant[0]}/training/records`, {
                 params: {
                     user_id: userID,
+                    identity: userIdentity,
                 },
             });
 
-            if (responseAllTraining) {
-                console.log('responseAllTraining', responseAllTraining);
-                setAllTraining(responseAllTraining);
-            }
+            console.log('responseAllTraining', responseAllTraining);
+            setAllTutorRecords(responseAllTraining);
         } catch (error) {
             console.log(error);
         }
     }
+    React.useEffect(() => {
+        console.log('use effect allTutorRecords', allTutorRecords);
+    }, [allTutorRecords]);
 
     React.useEffect(() => {
-        getProfile();
-        if (userIdentity === 'student') {
-            getTraining();
-        } else if (userIdentity === 'teacher') {
-            getTeacherTrainingRecords();
-        }
-    }, []);
+        if (appointments) console.log('appointments', appointments);
+    }, [appointments]);
 
     return (
         <>
@@ -165,9 +198,16 @@ function Tutor() {
                 ) : null}
 
                 <Container className="account-box">
-                    <Typography variant="h4" component="h2">
-                        近期課程
-                    </Typography>
+                    {allTraining ? (
+                        <Typography variant="h4" component="h2">
+                            近期課程
+                        </Typography>
+                    ) : (
+                        <Typography variant="h4" component="h2">
+                            已安排時間
+                        </Typography>
+                    )}
+
                     <Grid container columns={12} className="account-box-grid">
                         {appointments
                             ? appointments.map((appointment, index) => {
@@ -187,17 +227,55 @@ function Tutor() {
                               })
                             : null}
                     </Grid>
+
+                    <Grid container columns={12} className="account-box-grid">
+                        {allTutorRecords
+                            ? allTutorRecords['data']['unappointed'].map((arrange, index) => {
+                                  console.log('====================================');
+                                  console.log('arrange', arrange);
+                                  console.log('====================================');
+                                  return (
+                                      <Grid item xs={4} key={index} className="account-box-grid-self">
+                                          <ArrangeTime key={index} time={arrange['available_time']} create={arrange['create_dt']} />
+                                      </Grid>
+                                  );
+                              })
+                            : null}
+                    </Grid>
                 </Container>
                 <Container className="account-box">
-                    <Typography variant="h4" component="h2">
-                        歷屆模擬題
-                    </Typography>
+                    {allTraining ? (
+                        <Typography variant="h4" component="h2">
+                            歷屆模擬題
+                        </Typography>
+                    ) : (
+                        <Typography variant="h4" component="h2">
+                            已預約課程
+                        </Typography>
+                    )}
                     <Grid container columns={12} className="account-box-grid-self">
                         {allTraining
                             ? allTraining['data'].map((training, index) => {
                                   return (
+                                      <>
+                                          <Grid item xs={4} key={index}>
+                                              <Card key={index} tID={training['video']['title']} availableTime={training['profesiion']} createDT={training['create_dt']} />
+                                          </Grid>
+                                      </>
+                                  );
+                              })
+                            : null}
+                    </Grid>
+
+                    <Grid container columns={12} className="account-box-grid-self">
+                        {allTutorRecords
+                            ? allTutorRecords['data']['appointed'].map((record, index) => {
+                                  console.log('====================================');
+                                  console.log('record', record);
+                                  console.log('====================================');
+                                  return (
                                       <Grid item xs={4} key={index}>
-                                          <Card key={index} tID={training['video']['title']} availableTime={training['profesiion']} createDT={training['create_dt']} />
+                                          <Records href={record['course_url']} availableTime={record['available_time']} picture={record['picture']} />
                                       </Grid>
                                   );
                               })

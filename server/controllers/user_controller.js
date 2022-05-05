@@ -180,6 +180,7 @@ const updateAvator = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
+    console.log('run get user profile');
     let { userID, userEmail, identity } = req.query;
     try {
         let userProfile;
