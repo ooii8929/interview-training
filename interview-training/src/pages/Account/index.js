@@ -112,6 +112,11 @@ function Tutor() {
             if (userIdentity === 'teacher') {
                 await getTeacherTrainingRecords();
             }
+
+            if (userIdentity === 'student') {
+                await getTraining();
+                await getUserAppointments();
+            }
         } catch (error) {
             console.log(error);
         }
