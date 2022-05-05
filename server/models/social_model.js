@@ -47,13 +47,26 @@ const insertCodeArticle = async (postData) => {
     return insertResult;
 };
 
-const insertComment = async (user_id, article_id, summerNote) => {
+const insertComment = async (user_id, article_id, summerNote, userInfo) => {
     // Get records
     const dbConnect = dbo.getDb();
-    console.log();
-    let insertResult = await dbConnect
-        .collection('article')
-        .update({ _id: ObjectId(article_id) }, { $push: { comments: { user_id: user_id, content: summerNote, create_dt: new Date() } } });
+
+    let insertResult = await dbConnect.collection('article').update(
+        { _id: ObjectId(article_id) },
+        {
+            $push: {
+                comments: {
+                    user_id: user_id,
+                    content: summerNote,
+                    create_dt: new Date(),
+                    name: userInfo.name,
+                    picture: userInfo.picture,
+                    profession: userInfo.profession,
+                    experience: userInfo.experience1,
+                },
+            },
+        }
+    );
 
     return insertResult;
 };

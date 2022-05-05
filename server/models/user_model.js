@@ -121,8 +121,6 @@ const getTeacherProfile = async (teacherID, userEmail) => {
 
     teacherProfileCombine.appointments = userProfileResultAppointments;
 
-    console.log('teacherProfileCombine', teacherProfileCombine);
-
     return teacherProfileCombine;
 };
 

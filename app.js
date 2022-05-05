@@ -47,6 +47,7 @@ const io = require('socket.io')(server, {
 io.on('connection', (socket) => {
     // 加入房間
     socket.on('join', (room) => {
+        console.log(socket.id);
         socket.join(room);
         console.log('準備通話');
         socket.to(room).emit('ready', '準備通話');

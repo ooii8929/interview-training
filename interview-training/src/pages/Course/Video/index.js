@@ -5,6 +5,7 @@ import { getFileName } from './utils/index';
 import axios from 'axios';
 import './main.scss';
 import CountDownTimer from './CountDownTimer';
+import CountDown from './CountDown';
 import { Grid, Button } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
@@ -229,6 +230,12 @@ export default function Video(props) {
     //     )}
     // </Grid>;
 
+    const [isCount, setIsCount] = React.useState(true);
+    async function stopCountDown() {
+        setIsCount(false);
+        //setStopNum(remainSecond);
+    }
+
     return (
         <>
             <div ref={timeWarning}></div>
@@ -238,7 +245,7 @@ export default function Video(props) {
                         <h1>{question[0].title}</h1>
                     </div>
                     <div>
-                        <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} className="countTime" />
+                        <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} className="countTime" isCount={isCount} setIsCount={setIsCount} />
                     </div>
 
                     <Grid container spacing={2} col={{ xs: 12 }} className="display-video">
@@ -260,7 +267,16 @@ export default function Video(props) {
                     <Button variant="contained" endIcon={<PlayCircleFilledIcon />} onClick={handleRecording} className="video-btn" size="large">
                         開始作答
                     </Button>
-                    <Button variant="contained" endIcon={<StopCircleIcon />} onClick={handleStop} className="video-btn" size="large">
+                    <Button
+                        variant="contained"
+                        endIcon={<StopCircleIcon />}
+                        onClick={(e) => {
+                            handleStop();
+                            stopCountDown();
+                        }}
+                        className="video-btn"
+                        size="large"
+                    >
                         完成作答
                     </Button>
                     <Button variant="contained" endIcon={<SendIcon />} onClick={handleSave} className="video-btn" size="large">

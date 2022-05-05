@@ -61,9 +61,17 @@ const insertCodeArticle = async (req, res) => {
 
 const insertComments = async (req, res) => {
     // insert code post
-    const { user_id, article_id, summerNote } = req.body;
+    const { user_id, article_id, summerNote, identity, user_email } = req.body;
+    let userInfo;
+    if (identity == 'user') {
+        userInfo = await USER.getUserPureProfile(user_id, user_email);
+    }
 
-    let insertResult = await SOCIAL.insertComment(user_id, article_id, summerNote);
+    if (identity == 'teacher') {
+        userInfo = await USER.getTeacherProfile(user_id, user_email);
+    }
+    console.log('insertComments userInfo', userInfo);
+    let insertResult = await SOCIAL.insertComment(user_id, article_id, summerNote, userInfo.userProfile);
     console.log('insertResult', insertResult);
 
     return res.status(200).send(insertResult);

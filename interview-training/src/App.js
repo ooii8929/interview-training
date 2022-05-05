@@ -22,7 +22,10 @@ import axios from 'axios';
 export const AppContext = createContext();
 
 function App() {
-    console.log('Constant', Constant);
+    // console.log('Constant', Constant);
+    React.useEffect(() => {
+        console.log('testing');
+    }, []);
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const jobType = localStorage.getItem('jobType');
     const [userId, setUserId] = React.useState('');
