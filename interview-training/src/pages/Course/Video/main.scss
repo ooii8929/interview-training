@@ -24,3 +24,53 @@ video{
 .countTime{
 margin-bottom: 3%;
 }
+
+
+#pop[animation="1"]{
+  animation: pop 0.3s linear 1;
+}
+#pop[animation="0"]{
+  animation: pop2 0.3s linear 1;
+}
+@keyframes pop{
+  50%  {transform: scale(1.2);}
+}
+
+@keyframes pop2{
+  50%  {transform: scale(1.2);}
+}
+
+.countNumCircle{
+
+    display: flex;
+    justify-content: center;
+    
+    text-align: center !important;
+    margin-top: 1% !important;
+    margin-bottom: 1% !important;
+}
+
+
+
+.countNumCircle-item-num{
+    margin-left: -30%;
+    margin-top: -3px;
+    font-size: 2em;
+}
+
+.tp-count-down-timer__time{
+    display: flex !important;
+     align-items:flex-end !important;
+     justify-content: center !important;
+}
+.countNumCircle{
+    width: 100px !important;
+    margin-top: -5px !important;
+    margin-left: -26px !important;
+    margin-bottom: -25px !important;
+    margin-right: 5px !important;
+}
+
+.countNumCircle span{
+    width: 60px !important;
+}

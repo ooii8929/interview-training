@@ -23,7 +23,9 @@ export default function Video(props) {
     let timeWarning = useRef(null);
     const [nowQuestionNumber, setNowQuestionNumber] = React.useState(null);
     const display = useRef(null);
+    const showAnswerDisplay = useRef(null);
     const recorderRef = useRef(null);
+    const countDownDiv = useRef(null);
     let nowUserId = localStorage.getItem('userid');
     let jobType = localStorage.getItem('jobType');
     let tmpProfile;
@@ -40,26 +42,32 @@ export default function Video(props) {
         }
     }, []);
     const handleRecording = async () => {
+        showAnswerDisplay.current.style.display = 'none';
+        display.current.style.display = 'block';
+        countDownDiv.current.style.display = 'block';
         // const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                width: 1920,
-                height: 1080,
-                frameRate: 30,
-            },
-            audio: false,
-        });
-        setSeconds(30);
-        setStream(mediaStream);
-        recorderRef.current = new RecordRTC(mediaStream, { type: 'video' });
-        display.current.srcObject = mediaStream;
+        // const mediaStream = await navigator.mediaDevices.getUserMedia({
+        //     video: {
+        //         width: 1920,
+        //         height: 1080,
+        //         frameRate: 30,
+        //     },
+        //     audio: false,
+        // });
+        setIsCount(true);
+        setSeconds(5);
+        // setStream(mediaStream);
+        // recorderRef.current = new RecordRTC(mediaStream, { type: 'video' });
+        // display.current.srcObject = mediaStream;
         recorderRef.current.startRecording();
     };
 
     const handleStop = () => {
         recorderRef.current.stopRecording(() => {
-            console.log('recorderRef.current.getBlob()', recorderRef.current.getBlob());
-            setBlob(recorderRef.current.getBlob());
+            display.current.style.display = 'none';
+            showAnswerDisplay.current.style.display = 'block';
+            showAnswerDisplay.current.src = window.URL.createObjectURL(recorderRef.current.getBlob());
+            //setBlob(recorderRef.current.getBlob());
         });
 
         // display.current.srcObject = false;
@@ -74,52 +82,43 @@ export default function Video(props) {
         }
     }, [blob]);
 
-    const handleSave = async () => {
-        var file = new File([blob], getFileName('webm'), {
-            type: 'video/webm',
-        });
+    // const handleSave = async () => {
+    //     var file = new File([blob], getFileName('webm'), {
+    //         type: 'video/webm',
+    //     });
 
-        try {
-            let presignedUrl = await axios.get(`${Constant[0]}/training/video/answer/url`, {
-                params: {
-                    filename: file.name,
-                },
-            });
-            let success = await axios.put(presignedUrl['data'], file, {
-                headers: { 'Content-Type': 'video/webm' },
-            });
+    //     try {
+    //         let presignedUrl = await axios.get(`${Constant[0]}/training/video/answer/url`, {
+    //             params: {
+    //                 filename: file.name,
+    //             },
+    //         });
+    //         let success = await axios.put(presignedUrl['data'], file, {
+    //             headers: { 'Content-Type': 'video/webm' },
+    //         });
 
-            console.log('success file name', success.config.data.name);
+    //         console.log('success file name', success.config.data.name);
 
-            tmpProfile = profileQuestion;
-            console.log('提交答案');
-            console.log('tmpProfile', tmpProfile);
-            let data = {
-                user_id: nowUserId,
-                question_id: tmpProfile.data._id,
-                qid: nowQuestionNumber,
-                answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
-            };
-            console.log('data', data);
-            let submitAnswer = await axios.post(`${Constant[0]}/training/video/answer`, data);
-            // tmpProfile.data.video.filter((e) => {
-            //   console.log("e", e);
-            //   if (e.qid == nowQuestionNumber) {
-            //     e.answer_url =
-            //       `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` +
-            //       success.config.data.name;
-            //     e.status = 1;
-            //   }
-            //   console.log("tmpProfile after", submitAnswer);
-            // });
-            console.log('tmpProfile after', submitAnswer);
-            setAnswerStatus(true);
-        } catch (error) {
-            console.log(error);
-        }
+    //         tmpProfile = profileQuestion;
+    //         console.log('提交答案');
+    //         console.log('tmpProfile', tmpProfile);
+    //         let data = {
+    //             user_id: nowUserId,
+    //             question_id: tmpProfile.data._id,
+    //             qid: nowQuestionNumber,
+    //             answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
+    //         };
+    //         console.log('data', data);
+    //         let submitAnswer = await axios.post(`${Constant[0]}/training/video/answer`, data);
 
-        // invokeSaveAsDialog(blob);
-    };
+    //         console.log('tmpProfile after', submitAnswer);
+    //         setAnswerStatus(true);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+
+    //     // invokeSaveAsDialog(blob);
+    // };
 
     useEffect(() => {
         if (!refVideo.current) {
@@ -156,6 +155,21 @@ export default function Video(props) {
                 setNowQuestion(profileQuestion);
                 console.log('setNowQuestion after axios');
             }
+            async function initStream(params) {
+                const mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: 1920,
+                        height: 1080,
+                        frameRate: 30,
+                    },
+                    audio: false,
+                });
+
+                recorderRef.current = new RecordRTC(mediaStream, { type: 'video' });
+                display.current.srcObject = mediaStream;
+                setStream(mediaStream);
+            }
+            initStream();
         },
         [profileQuestion]
     );
@@ -196,10 +210,10 @@ export default function Video(props) {
             // 3.找到尚未完成的題目
             let notFinishedQuestion = profileQuestion.data.video.filter((e) => {
                 console.log('e', e);
-                return e.status == 0;
+                return e.status === 0;
             });
             console.log('4. 找到尚未完成題目', notFinishedQuestion);
-            if (notFinishedQuestion.length == 0) {
+            if (notFinishedQuestion.length === 0) {
                 window.location.href = '/course/code';
             }
             // 4. 如果有，設定題號
@@ -216,19 +230,6 @@ export default function Video(props) {
             setQuestion(nowQuestion);
         }
     }
-    // <Grid item xs={6}>
-    //     {answerStatus ? (
-    //         <VideoCheck
-    //             check={question[0].check}
-    //             setChangeStatus={setChangeStatus}
-    //             profileQuestion={profileQuestion}
-    //             nowQuestionNumber={nowQuestionNumber}
-    //             setAnswerStatus={setAnswerStatus}
-    //         />
-    //     ) : (
-    //         <video type="video/webm" controls preload src={question[0].video_url} />
-    //     )}
-    // </Grid>;
 
     const [isCount, setIsCount] = React.useState(true);
     async function stopCountDown() {
@@ -244,9 +245,10 @@ export default function Video(props) {
                     <div className="video_title">
                         <h1>{question[0].title}</h1>
                     </div>
-                    <div>
+                    <div ref={countDownDiv} style={{ display: 'none' }}>
                         <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} className="countTime" isCount={isCount} setIsCount={setIsCount} />
                     </div>
+                    <div></div>
 
                     <Grid container spacing={2} col={{ xs: 12 }} className="display-video">
                         {answerStatus ? (
@@ -257,11 +259,13 @@ export default function Video(props) {
                                     profileQuestion={profileQuestion}
                                     nowQuestionNumber={nowQuestionNumber}
                                     setAnswerStatus={setAnswerStatus}
+                                    blob={blob}
                                 />
                             </Grid>
                         ) : null}
                         <Grid item xs={6}>
                             <video type="video/webm" autoPlay ref={display} />
+                            <video type="video/webm" autoPlay controls ref={showAnswerDisplay} style={{ display: 'none' }} />
                         </Grid>
                     </Grid>
                     <Button variant="contained" endIcon={<PlayCircleFilledIcon />} onClick={handleRecording} className="video-btn" size="large">
@@ -279,8 +283,17 @@ export default function Video(props) {
                     >
                         完成作答
                     </Button>
-                    <Button variant="contained" endIcon={<SendIcon />} onClick={handleSave} className="video-btn" size="large">
-                        提交答案
+
+                    <Button
+                        variant="contained"
+                        endIcon={<SendIcon />}
+                        onClick={() => {
+                            setAnswerStatus(true);
+                        }}
+                        className="video-btn"
+                        size="large"
+                    >
+                        檢視答案
                     </Button>
                 </div>
             ) : null}

@@ -68,12 +68,6 @@ function Tutor() {
 
     async function getProfile() {
         try {
-            // let responseProfile = await axios.get(`${Constant[0]}/user/profile`, {
-            //     params: {
-            //         userID: userID,
-            //     },
-            // });
-
             let responseAppoint = await axios.get(`${Constant[0]}/tutor/user/appoint`, {
                 params: {
                     userID: userID,
@@ -107,12 +101,6 @@ function Tutor() {
 
     async function getTraining() {
         try {
-            // let responseProfile = await axios.get(`${Constant[0]}/user/profile`, {
-            //     params: {
-            //         userID: userID,
-            //     },
-            // });
-
             let responseAllTraining = await axios.get(`${Constant[0]}/training`, {
                 params: {
                     user_id: userID,
@@ -127,9 +115,31 @@ function Tutor() {
             console.log(error);
         }
     }
+
+    async function getTeacherTrainingRecords() {
+        try {
+            let responseAllTraining = await axios.get(`${Constant[0]}/training`, {
+                params: {
+                    user_id: userID,
+                },
+            });
+
+            if (responseAllTraining) {
+                console.log('responseAllTraining', responseAllTraining);
+                setAllTraining(responseAllTraining);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     React.useEffect(() => {
         getProfile();
-        getTraining();
+        if (userIdentity === 'student') {
+            getTraining();
+        } else if (userIdentity === 'teacher') {
+            getTeacherTrainingRecords();
+        }
     }, []);
 
     return (

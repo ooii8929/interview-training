@@ -17,6 +17,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
 const theme = createTheme();
 
 export default function SignUp() {
@@ -62,7 +64,13 @@ export default function SignUp() {
             localStorage.setItem('useremail', signInResponse.data.data.user.email);
             localStorage.setItem('identity', signIdentity);
             setUserId(signInResponse.data.data.user.id);
-            alert('success login');
+            Swal.fire({
+                title: 'Success Login!',
+                text: '歡迎回來',
+                icon: 'success',
+                confirmButtonText: 'Cool',
+            });
+
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
                 localStorage.removeItem('returnPage');
@@ -71,7 +79,12 @@ export default function SignUp() {
                 window.location.href = '/account';
             }
         } catch (error) {
-            alert('wrong password');
+            Swal.fire({
+                title: 'Wrong password!',
+                text: '再試看看！會不會是生日？',
+                icon: 'error',
+                confirmButtonText: '再試一次',
+            });
         }
     }
     React.useEffect(
@@ -110,7 +123,12 @@ export default function SignUp() {
             localStorage.setItem('username', updateResult.data.data.user.name);
             localStorage.setItem('useremail', updateResult.data.data.user.email);
             localStorage.setItem('identity', identity);
-            alert('success register');
+            Swal.fire({
+                title: 'Success Register!',
+                text: '歡迎回來',
+                icon: 'success',
+                confirmButtonText: 'Cool',
+            });
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
                 localStorage.removeItem('returnPage');
