@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound';
 import Arrange from './pages/Arrange';
 import Reserve from './pages/Reserve';
 import Course from './pages/Course';
+import CourseResult from './pages/CourseResult';
 import Logout from './pages/Logout';
 import Tutor from './pages/Tutor';
 import CourseVideo from './pages/Course/Video';
@@ -113,6 +114,7 @@ function App() {
                     <Route path="/arrange" element={<RequireAuth Component={Arrange} />} />
                     <Route path="/account" element={<Account />} />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/course/result" element={<CourseResult />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </AppContext.Provider>
