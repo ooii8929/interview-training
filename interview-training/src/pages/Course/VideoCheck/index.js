@@ -34,7 +34,7 @@ export default function VideoCheck(props) {
         });
         tmpProfile.data.video.filter((e) => {
             console.log('e', e);
-            if (e.qid == props.nowQuestionNumber) {
+            if (e.qid === props.nowQuestionNumber) {
                 e.status = 1;
             }
         });

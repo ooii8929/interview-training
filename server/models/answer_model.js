@@ -44,6 +44,18 @@ const getAllTraining = async (user_id) => {
     return allTrainingResult;
 };
 
+const getCourseResultByQid = async (userID) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+    try {
+        const nowQuestionResult = await dbConnect.collection('training').find({ user_id: userID, status: 1 }).sort({ $natural: 1 }).toArray();
+        console.log('nowQuestionResult', nowQuestionResult);
+        return nowQuestionResult;
+    } catch (err) {
+        res.status(400).send(err);
+    }
+};
+
 const getTutorTrainingRecords = async (user_id) => {
     const conn = await pool.getConnection();
     try {
@@ -208,6 +220,32 @@ const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
     }
 };
 
+const endTraining = async (user_id, question_id) => {
+    console.log('endTraining', user_id, question_id);
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    try {
+        let endTrainingResult = await dbConnect.collection('training').updateOne(
+            {
+                user_id: `${user_id}`,
+                _id: ObjectId(question_id),
+            },
+            {
+                $set: {
+                    finished_dt: new Date(),
+                    status: 1,
+                },
+            }
+        );
+        console.log('endTrainingResult', endTrainingResult);
+        return { msg: endTrainingResult };
+    } catch (err) {
+        console.log('err', err);
+        return { err: err };
+    }
+};
+
 const submitVideoAnswerCheck = async (user_id, question_id, qid, checked) => {
     // Get records
     const dbConnect = dbo.getDb();
@@ -250,4 +288,6 @@ module.exports = {
     submitVideoAnswerCheck,
     submitCodeAnswer,
     getTutorTrainingRecords,
+    endTraining,
+    getCourseResultByQid,
 };

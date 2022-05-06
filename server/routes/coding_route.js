@@ -18,12 +18,18 @@ const {
     storeVideoAnswerUrl,
     submitCodeAnswer,
     getTrainingRecords,
+    endTraining,
+    getTrainingResultByQid,
     getTraining,
 } = require('../controllers/coding_controller');
 
+// Training
 router.route('/training/video/answer').post(wrapAsync(submitVideoAnswer));
 router.route('/training/video/answer/check').post(wrapAsync(submitVideoAnswerCheck));
 router.route('/training/code/answer').post(wrapAsync(submitCodeAnswer));
+
+// Training end
+router.route('/training/end').post(wrapAsync(endTraining));
 
 router.route('/training/submit/compile').post(wrapAsync(submitCompile));
 
@@ -40,6 +46,8 @@ router.route('/training').get(wrapAsync(getTraining));
 router.route('/training/records').get(wrapAsync(getTrainingRecords));
 
 router.route('/training/profile/questions').get(wrapAsync(getProfileQuestions));
+
+router.route('/training/profile/result').get(wrapAsync(getTrainingResultByQid));
 
 router.route('/training/python').post(wrapAsync(pythonCompile));
 

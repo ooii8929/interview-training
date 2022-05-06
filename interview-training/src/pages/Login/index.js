@@ -25,9 +25,8 @@ export default function SignUp() {
     const { Constant } = useContext(AppContext);
 
     let navigate = useNavigate();
-    const { setProfileQuestion, profileQuestion, jobType, userId, setUserId } = useContext(AppContext);
+    const { userId, setUserId } = useContext(AppContext);
     const [email, setEmail] = React.useState('');
-    const [isLogin, setIsLogin] = React.useState(false);
     const [password, setPassword] = React.useState('');
     const [registerEmail, setRegisterEmail] = React.useState('');
     const [registerPassword, setRegisterPassword] = React.useState('');

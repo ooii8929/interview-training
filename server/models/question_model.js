@@ -117,5 +117,6 @@ module.exports = {
     getVideoQuestions,
     getQuestionsByID,
     insertProfileTraining,
+
     checkProfileQuestions,
 };

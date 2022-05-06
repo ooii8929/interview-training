@@ -15,14 +15,16 @@ export default function Introduce(props) {
     let userName = localStorage.getItem('username');
     let jobType = localStorage.getItem('jobtype');
     return (
-        <Row>
+        <Row className="prepare-intro">
             <Col xs="5">
                 <Lottie animationData={TeacherLottie} />
             </Col>
-            <Col xs="7" className="introduce-container">
+            <Col xs="6" className="introduce-container">
                 <Typography variant="h5" gutterBottom className="introduce-container-title">
                     Hey，{userName}，<br />
-                    你接下來將要挑戰10分鐘的{jobType}挑戰。其中包含線上模擬面試、程式技術實作。
+                    你接下來將要挑戰10分鐘的{jobType}挑戰。
+                    <br />
+                    其中包含線上模擬面試、程式技術實作。
                     <br />
                     請確保網路順暢以及視訊音訊設備正常。
                     <br />

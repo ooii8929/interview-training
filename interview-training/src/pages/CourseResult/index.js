@@ -1,34 +1,25 @@
-import React, { useContext, useCallback, useState, useRef, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AppContext } from '../../App';
+import Lottie from 'lottie-react';
+import Finished from './finished.json';
 import { Row, Col } from 'react-bootstrap';
-import './index.scss';
 import axios from 'axios';
-// Choose and change
-import StepperSection from './components/Stepper';
-import Question from './components/Question';
-import Prepare from './components/Prepare';
+import './main.scss';
+import Swal from 'sweetalert2';
 
+let jobType;
+let nowUserId;
 export default function CourseResult() {
     const { Constant } = useContext(AppContext);
+    // score
+    const [codeSuccess, setCodeSuccess] = useState(null);
+    const [codeFail, setCodeFail] = useState(null);
+    const [videoSuccess, setVideoSuccess] = useState(null);
+    const [videoCheck, setVideoCheck] = useState(null);
+    //
 
-    const [stream, setStream] = useState(null);
-    const [answerStatus, setAnswerStatus] = useState(false);
-    const [question, setQuestion] = React.useState('');
-    const [blob, setBlob] = useState(null);
-    const refVideo = useRef(null);
-    let timeWarning = useRef(null);
-    const [nowQuestionNumber, setNowQuestionNumber] = React.useState(null);
-    const display = useRef(null);
-    const showAnswerDisplay = useRef(null);
-    const recorderRef = useRef(null);
-    const countDownDiv = useRef(null);
-    let nowUserId = localStorage.getItem('userid');
-    let jobType = localStorage.getItem('jobType');
-    let tmpProfile;
-    const [seconds, setSeconds] = React.useState(null);
-    const [changeStatus, setChangeStatus] = React.useState('');
     const [profileQuestion, setProfileQuestion] = React.useState('');
-    let isPause = false;
 
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
     React.useEffect((e) => {
@@ -37,23 +28,86 @@ export default function CourseResult() {
         async function getVideoQuestions() {
             nowUserId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
-
-            let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
+            let questionID = localStorage.getItem('question_id');
+            let response = await axios.get(`${Constant[0]}/training/profile/result`, {
                 params: {
-                    profession: jobType || 'backend',
                     userID: nowUserId,
+                    question_id: questionID,
                 },
             });
-            console.log('2. get question response', response);
+
+            if (response['data'].length === 0) {
+                await Swal.fire({
+                    title: '尚未完成作答!別偷作弊',
+                    text: '即將導回模擬訓練頁，請先檢查是否已完成題目',
+                    icon: 'error',
+                    confirmButtonText: '遣返',
+                });
+                window.location.href = '/course';
+            }
+            console.log('2. get question result', response);
             setProfileQuestion(response);
         }
         getVideoQuestions();
     }, []);
+    React.useEffect(
+        (e) => {
+            if (!codeSuccess) {
+                if (profileQuestion) {
+                    // calculate score
+                    // code
+
+                    profileQuestion['data'][0]['code'].map((e) => {
+                        if (e['javascript_answer_status']) {
+                            if (e['javascript_answer_status'].answer_status === 1) {
+                                setCodeSuccess((prev) => prev + 1);
+                            }
+                            if (e['javascript_answer_status'].answer_status === -1) {
+                                setCodeFail((prev) => prev + 1);
+                            }
+                        }
+                    });
+
+                    profileQuestion['data'][0]['video'].map((e) => {
+                        console.log('e.checked.length', e.checked.length);
+                        setVideoSuccess((prev) => prev + e.checked.length);
+                        return setVideoCheck((prev) => prev + e.check.length);
+                    });
+                }
+            }
+        },
+        [profileQuestion]
+    );
+
     return (
         <>
             <Row>
-                <Col xs="10" id="code-main">
-                    <StepperSection prepare={<Prepare />} question={<Question />} />
+                <Col xs="5" id="code-main">
+                    <Lottie animationData={Finished} />
+                </Col>{' '}
+                <Col xs="7">
+                    <h2>恭喜完成！</h2>
+                    {profileQuestion ? (
+                        <div id="result-content">
+                            <p>
+                                {' '}
+                                此次挑戰，你共獲得 <span className="special-font">
+                                    {((codeSuccess + videoSuccess) / (codeSuccess + codeFail + videoCheck)).toFixed(2) * 100}
+                                </span>{' '}
+                                分
+                            </p>
+                            <p>
+                                在 {codeSuccess + codeFail} 題技術題中，你答對了 <span className="special-font">{codeSuccess}</span> 題
+                            </p>
+                            <p>
+                                並在模擬實境中獲得{' '}
+                                <span className="special-font">
+                                    {videoSuccess}/{videoCheck}
+                                </span>{' '}
+                                的重點分數
+                            </p>
+                        </div>
+                    ) : null}
                 </Col>
             </Row>
         </>

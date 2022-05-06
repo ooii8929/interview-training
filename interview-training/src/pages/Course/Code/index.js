@@ -10,6 +10,7 @@ import VideoCheck from '../VideoCheck';
 import Accordion from './components/accordion';
 import './index.scss';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import CodeEditor from '@uiw/react-textarea-code-editor';
 let response;
@@ -104,8 +105,20 @@ export default function Video(props) {
         console.log('submitAnswer response', response);
         setRunCodeResponse(response['data']);
         if (response['data']['answer_status'] == -1) {
+            await Swal.fire({
+                title: '答錯了拉...',
+                text: '再想一下，想清楚，好嗎？',
+                icon: 'error',
+                confirmButtonText: '再試一次',
+            });
             setRunCodeResponseStatus('Fail');
         } else {
+            await Swal.fire({
+                title: '成功了！！！',
+                text: '太強了！你是鬼吧',
+                icon: 'success',
+                confirmButtonText: '查看狀態',
+            });
             setRunCodeResponseStatus('Success');
         }
         setRunCodeResponseInput(response['data']['input']);
@@ -140,7 +153,7 @@ export default function Video(props) {
         }
     }
 
-    function setNowQuestion(profileQuestion) {
+    async function setNowQuestion(profileQuestion) {
         if (profileQuestion) {
             // 3.找到尚未完成的題目
             let notFinishedQuestion = profileQuestion.data.code.filter((e) => {
@@ -148,6 +161,16 @@ export default function Video(props) {
                 return e.status == 0;
             });
             console.log('3. 找到尚未完成題目', notFinishedQuestion);
+            // 如果題目都完成了，跳轉到結果頁
+            if (notFinishedQuestion.length === 0) {
+                // 發送答題結束的req
+                let endQuestionResponse = await axios.post(`${Constant[0]}/training/end`, {
+                    user_id: userId,
+                    question_id: profileQuestion.data._id,
+                });
+                localStorage.setItem('question_id', profileQuestion.data._id);
+                window.location.href = '/course/result';
+            }
             // 4. 如果有，設定題號
             if (notFinishedQuestion) setNowQuestionNumber(notFinishedQuestion[0]['qid']);
         }

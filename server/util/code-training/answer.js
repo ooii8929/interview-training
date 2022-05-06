@@ -1,6 +1,1 @@
-function reverseString(str) {
-  return str
-    .split('')
-    .reverse()
-    .join('');
-}console.log(reverseString('hello'))
+function printAll(min,max){   for(let i = min ; i <= max ; i++ ){       console.log(i);   } }console.log(printAll(2,10))

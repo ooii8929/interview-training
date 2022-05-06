@@ -3,6 +3,7 @@ const morganBody = require('morgan-body');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const Cache = require('./util/cache');
 const { PORT_TEST, PORT, NODE_ENV, API_VERSION } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
 var cookieParser = require('cookie-parser');

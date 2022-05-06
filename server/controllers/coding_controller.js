@@ -142,6 +142,15 @@ const submitVideo = async (req, res) => {
     res.status(200).send(codingAnswer);
 };
 
+// 答題結束
+const endTraining = async (req, res) => {
+    const { user_id, question_id } = req.body;
+
+    let endResult = await Answer.endTraining(user_id, question_id);
+    console.log('endResult', endResult);
+    res.status(200).send(endResult);
+};
+
 // get s3 upload url
 const storeVideoAnswerUrl = async (req, res) => {
     AWS.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_ACCESS_PASSWORD, region: 'ap-northeast-1', signatureVersion: 'v4' });
@@ -310,6 +319,15 @@ const getTrainingRecords = async (req, res) => {
     return res.status(200).send(allTraining);
 };
 
+const getTrainingResultByQid = async (req, res) => {
+    let { userID, question_id } = req.query;
+
+    let trainingResult = await Answer.getCourseResultByQid(userID, question_id);
+
+    console.log('trainingResult', trainingResult);
+    return res.status(200).send(trainingResult);
+};
+
 const getQuestionsByProfession = async (req, res) => {
     let { profession } = req.query;
     let questions = await Question.getCodeQuestions(profession);
@@ -431,6 +449,7 @@ async function submitVideoAnswerCheck(req, res) {
 
 module.exports = {
     addLogicQuestion,
+    endTraining,
     getQuestionsByProfession,
     storeVideoAnswer,
     submitCompile,
@@ -443,4 +462,5 @@ module.exports = {
     submitVideoAnswer,
     getTrainingRecords,
     submitVideoAnswerCheck,
+    getTrainingResultByQid,
 };
