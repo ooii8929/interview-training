@@ -45,7 +45,7 @@ router.route('/training').get(wrapAsync(getTraining));
 
 router.route('/training/records').get(wrapAsync(getTrainingRecords));
 
-router.route('/training/profile/questions').get(wrapAsync(getProfileQuestions));
+router.route('/training/profile/questions').get(authentication(), wrapAsync(getProfileQuestions));
 
 router.route('/training/profile/result').get(wrapAsync(getTrainingResultByQid));
 

@@ -359,13 +359,14 @@ const storeVideoAnswer = async (req, res) => {
 };
 
 const getProfileQuestions = async (req, res) => {
-    let { userID, profession } = req.query;
-    console.log('userID', userID, profession);
-    if (!userID || userID == undefined || !profession || profession == undefined) {
-        return res.status(400).send({ error: "Can't find profession or userid" });
+    let { id } = req.session.user;
+    let { profession } = req.query;
+    console.log('id', id, profession);
+    if (!id || id == undefined || !profession || profession == undefined) {
+        return res.status(400).send({ error: "Can't find profession or id" });
     }
 
-    let checkProfileQuestions = await Question.checkProfileQuestions(userID);
+    let checkProfileQuestions = await Question.checkProfileQuestions(id);
 
     console.log('checkProfileQuestions', checkProfileQuestions);
     if (checkProfileQuestions.length > 0) {
@@ -373,7 +374,7 @@ const getProfileQuestions = async (req, res) => {
     }
     console.log('generate question');
     let profileQuestions = {
-        user_id: userID,
+        user_id: id,
         status: 0,
         profesiion: profession,
         percent: {

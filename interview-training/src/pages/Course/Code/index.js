@@ -49,11 +49,16 @@ export default function Video(props) {
             userId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
 
-            let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
+            let response = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${Constant[0]}/training/profile/questions`,
                 params: {
                     profession: jobType || 'backend',
                     userID: userId,
                 },
+                headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
             });
             console.log('1. get question response', response);
 

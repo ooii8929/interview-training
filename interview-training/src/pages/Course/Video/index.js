@@ -137,7 +137,6 @@ export default function Video(props) {
             let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
                 params: {
                     profession: jobType || 'backend',
-                    userID: nowUserId,
                 },
             });
             console.log('2. get question response', response);

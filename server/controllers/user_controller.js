@@ -154,9 +154,7 @@ const signIn = async (req, res) => {
                 } else {
                     console.log('save', sess);
                     res.header('Content-Type', 'application/json');
-                    return res.status(200).send({
-                        session: 'success',
-                    });
+                    return res.status(200).send(sess.user);
                 }
             });
         } catch (error) {
@@ -212,8 +210,6 @@ const updateAvator = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-    console.log('run get user profile');
-    console.log(req.session);
     if (req.session.user) {
         return res.status(200).send(req.session.user);
     }
@@ -228,7 +224,6 @@ const getUserProfile = async (req, res) => {
             userProfile = await User.getUserProfile(userID, userEmail);
         }
 
-        console.log();
         return res.status(200).send(userProfile);
     } catch (error) {
         console.log('getUserProfile error', error);

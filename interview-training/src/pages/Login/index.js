@@ -72,13 +72,17 @@ export default function SignUp() {
                 icon: 'success',
                 confirmButtonText: 'Cool',
             });
+            localStorage.setItem('userid', signInResponse.data.id);
+            localStorage.setItem('username', signInResponse.data.name);
+            localStorage.setItem('useremail', signInResponse.data.email);
+            localStorage.setItem('identity', identity);
 
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
                 localStorage.removeItem('returnPage');
-                //window.location.href = returnPageURL;
+                window.location.href = returnPageURL;
             } else {
-                //window.location.href = '/account';
+                window.location.href = '/account';
             }
         } catch (error) {
             Swal.fire({

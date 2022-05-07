@@ -24,9 +24,7 @@ export const AppContext = createContext();
 
 function App() {
     // console.log('Constant', Constant);
-    React.useEffect(() => {
-        console.log('testing');
-    }, []);
+
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const jobType = localStorage.getItem('jobType');
     const [userId, setUserId] = React.useState('');
@@ -82,19 +80,6 @@ function App() {
         [profileQuestion]
     );
 
-    function RequireAuth({ Component }) {
-        // <Route path="/course/" element={<RequireAuth Component={Course} />} />
-        let location = useLocation();
-        let nowUserId = localStorage.getItem('userid');
-        if (!nowUserId) {
-            alert('你需要先登入');
-            localStorage.setItem('returnPage', location.pathname);
-            return <Navigate to="/login" />;
-        }
-        console.log('Auth');
-        return <Component />;
-    }
-
     return (
         <BrowserRouter>
             <AppContext.Provider value={appContextValue}>
@@ -108,10 +93,10 @@ function App() {
                     <Route path="/social/:id" element={<SocialArticle />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/tutor" element={<Tutor />} />
-                    <Route path="/course" element={<RequireAuth Component={Course} />} />
-                    <Route path="/course/video" element={<RequireAuth Component={CourseVideo} />} />
-                    <Route path="/course/code" element={<RequireAuth Component={CourseCode} />} />
-                    <Route path="/arrange" element={<RequireAuth Component={Arrange} />} />
+                    <Route path="/course" element={<Course />} />
+                    <Route path="/course/video" element={<CourseVideo />} />
+                    <Route path="/course/code" element={<CourseCode />} />
+                    <Route path="/arrange" element={<Arrange />} />
                     <Route path="/account" element={<Account />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/course/result" element={<CourseResult />} />

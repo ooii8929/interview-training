@@ -48,14 +48,13 @@ const wrapAsync = (fn) => {
 
 const authentication = () => {
     return async function (req, res, next) {
-        console.log('req.session.user');
+        console.log('authentication user info');
         console.log(req.session.user);
         if (!req.session.user) {
             res.status(403).send({ error: 'Forbidden' });
             return;
         }
         next();
-        return;
     };
 };
 
