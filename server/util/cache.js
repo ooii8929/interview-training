@@ -1,12 +1,13 @@
 require('dotenv').config();
-const redis = require('redis');
+const Redis = require('ioredis');
 const { CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD } = process.env;
 
-const redisClient = redis.createClient({
-    url: `redis://${CACHE_USER}:${CACHE_PASSWORD}@${CACHE_HOST}:${CACHE_PORT}`,
-    socket: {
-        keepAlive: false,
-    },
+const redisClient = new Redis({
+    port: CACHE_PORT, // Redis port
+    host: CACHE_HOST, // Redis host
+    username: CACHE_USER, // needs Redis >= 6
+    password: CACHE_PASSWORD,
+    db: 0, // Defaults to 0
 });
 
 redisClient.ready = false;

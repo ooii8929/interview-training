@@ -18,12 +18,13 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import Cookies from 'universal-cookie';
 
 const theme = createTheme();
 
 export default function SignUp() {
     const { Constant } = useContext(AppContext);
-
+    const cookies = new Cookies();
     let navigate = useNavigate();
     const { userId, setUserId } = useContext(AppContext);
     const [email, setEmail] = React.useState('');
@@ -49,20 +50,22 @@ export default function SignUp() {
 
         console.log('user sign in', data.get('signIdentity'));
         try {
-            let signInResponse = await axios.post(`${Constant[0]}/user/login`, {
+            let signInResponse = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${Constant[0]}/user/login`,
                 data: {
                     identity: data.get('signIdentity'),
                     email: data.get('signEmail'),
                     password: data.get('signPassword'),
                     provider: 'native',
                 },
+                headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
             });
 
-            localStorage.setItem('userid', signInResponse.data.data.user.id);
-            localStorage.setItem('username', signInResponse.data.data.user.name);
-            localStorage.setItem('useremail', signInResponse.data.data.user.email);
-            localStorage.setItem('identity', signIdentity);
-            setUserId(signInResponse.data.data.user.id);
+            console.log('signInResponse', signInResponse);
+            //cookies.set('connect.sid', '2');
             Swal.fire({
                 title: 'Success Login!',
                 text: '歡迎回來',
@@ -73,9 +76,9 @@ export default function SignUp() {
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
                 localStorage.removeItem('returnPage');
-                window.location.href = returnPageURL;
+                //window.location.href = returnPageURL;
             } else {
-                window.location.href = '/account';
+                //window.location.href = '/account';
             }
         } catch (error) {
             Swal.fire({
@@ -112,9 +115,9 @@ export default function SignUp() {
         };
         try {
             let updateResult;
-            if (data.get('identity') == 'teacher') {
+            if (data.get('identity') === 'teacher') {
                 updateResult = await axios.post(`${Constant[0]}/teacher/signup`, registerInfo);
-            } else if (data.get('identity') == 'student') {
+            } else if (data.get('identity') === 'student') {
                 updateResult = await axios.post(`${Constant[0]}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);

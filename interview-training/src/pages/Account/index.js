@@ -70,13 +70,13 @@ function Tutor() {
     }
 
     React.useEffect(() => {
-        let nowUserId = localStorage.getItem('userid');
-        userIdentity = localStorage.getItem('identity');
-        if (!nowUserId) {
-            alert('你需要先登入');
-            localStorage.setItem('returnPage', location.pathname);
-            return <Navigate to="/login" />;
-        }
+        // let nowUserId = localStorage.getItem('userid');
+        // userIdentity = localStorage.getItem('identity');
+        // if (!nowUserId) {
+        //     alert('你需要先登入');
+        //     localStorage.setItem('returnPage', location.pathname);
+        //     return <Navigate to="/login" />;
+        // }
         async function init() {
             await getProfile();
             // if (userIdentity === 'student') {
@@ -91,21 +91,26 @@ function Tutor() {
     async function getProfile() {
         try {
             // console.log('responseProfile', responseProfile);
-            let profile = await axios.get(`${Constant[0]}/user/profile`, {
+            let profile = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${Constant[0]}/user/profile`,
                 params: {
                     userID: userID,
                     userEmail: userEmail,
                     identity: userIdentity,
                 },
+                headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
             });
 
             console.log('1. get profile', profile);
             let now = new Date();
-            let createDT = new Date(profile['data']['userProfile']['create_dt']);
+            let createDT = new Date(profile['data']['create_dt']);
             const diffTime = Math.abs(now - createDT);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             setTime(diffDays);
-            setFile(profile['data']['userProfile']['picture']);
+            setFile(profile['data']['picture']);
             setProfiles(profile['data']);
 
             //TODO: get record
@@ -195,9 +200,9 @@ function Tutor() {
 
                 {profiles ? (
                     <div className="account-info">
-                        <h1>{profiles['userProfile']['name']}</h1>
+                        <h1>{profiles['name']}</h1>
                         <br />
-                        <p>{profiles['userProfile']['email']}</p>
+                        <p>{profiles['email']}</p>
                         已經加入面面 {time} 天了 ｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡
                     </div>
                 ) : null}

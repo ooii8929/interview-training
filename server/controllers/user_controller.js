@@ -3,10 +3,12 @@ const validator = require('validator');
 const User = require('../models/user_model');
 const { pool } = require('../models/mysqlcon');
 const util = require('../util/util');
+const Cache = require('../util/cache');
 const _ = require('lodash');
+var session = require('express-session');
+
 const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
-
 const signUp = async (req, res) => {
     const { identity, name, email, password } = req.body.data;
     console.log('register', identity, name, email, password);
@@ -106,50 +108,80 @@ const facebookSignIn = async (accessToken) => {
 };
 
 const signIn = async (req, res) => {
-    const { data } = req.body;
-    console.log('data', data);
-    let result;
-    switch (data.provider) {
-        case 'native':
-            if (data.identity == 'student') {
-                result = await User.nativeSignIn(data.email, data.password);
+    if (Cache.ready) {
+        try {
+            var sess = req.session;
+            console.log(sess.user);
+
+            const data = req.body;
+            console.log('data', data);
+            let result;
+            switch (data.provider) {
+                case 'native':
+                    if (data.identity == 'student') {
+                        result = await User.nativeSignIn(data.email, data.password);
+                    }
+
+                    if (data.identity == 'teacher') {
+                        result = await User.nativeTeacherSignIn(data.email, data.password);
+                    }
+
+                    break;
+                case 'facebook':
+                    result = await facebookSignIn(data.access_token);
+                    break;
+                default:
+                    result = { error: 'Wrong Request' };
             }
 
-            if (data.identity == 'teacher') {
-                result = await User.nativeTeacherSignIn(data.email, data.password);
+            if (result.error) {
+                const status_code = result.status ? result.status : 403;
+                res.status(status_code).send({ error: result.error });
+                return;
             }
 
-            break;
-        case 'facebook':
-            result = await facebookSignIn(data.access_token);
-            break;
-        default:
-            result = { error: 'Wrong Request' };
-    }
+            const user = result.user;
+            if (!user) {
+                res.status(500).send({ error: 'Database Query Error' });
+                return;
+            }
 
-    if (result.error) {
-        const status_code = result.status ? result.status : 403;
-        res.status(status_code).send({ error: result.error });
-        return;
-    }
+            sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, create_dt: user.create_dt };
 
-    const user = result.user;
-    if (!user) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
+            sess.save((err) => {
+                if (err) {
+                    return res.status(400).send('fail');
+                } else {
+                    console.log('save', sess);
+                    res.header('Content-Type', 'application/json');
+                    return res.status(200).send({
+                        session: 'success',
+                    });
+                }
+            });
+        } catch (error) {
+            console.log('error', error);
+            return res.status(400).send('fail');
+        }
     }
+};
 
-    res.status(200).send({
-        data: {
-            user: {
-                id: user.id,
-                provider: user.provider,
-                name: user.name,
-                email: user.email,
-                picture: user.picture,
-            },
-        },
-    });
+const signOut = async (req, res) => {
+    if (Cache.ready) {
+        try {
+            req.session.destroy((err) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send({ error: 'error' });
+                }
+
+                return res.status(200).send({ msg: 'success' });
+            });
+        } catch (error) {
+            console.log('error', error);
+            return res.status(400).send({ error: 'error' });
+        }
+    }
 };
 
 const getAvatorURL = async (req, res) => {
@@ -181,6 +213,11 @@ const updateAvator = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     console.log('run get user profile');
+    console.log(req.session);
+    if (req.session.user) {
+        return res.status(200).send(req.session.user);
+    }
+
     let { userID, userEmail, identity } = req.query;
     try {
         let userProfile;
@@ -191,6 +228,7 @@ const getUserProfile = async (req, res) => {
             userProfile = await User.getUserProfile(userID, userEmail);
         }
 
+        console.log();
         return res.status(200).send(userProfile);
     } catch (error) {
         console.log('getUserProfile error', error);
@@ -200,6 +238,7 @@ const getUserProfile = async (req, res) => {
 
 const getUserPureProfile = async (req, res) => {
     let { user_id, user_email, identity } = req.query;
+
     try {
         let userProfile;
         if (identity == 'teacher') {
@@ -255,6 +294,7 @@ const insertUserProfile = async (req, res) => {
 module.exports = {
     signUp,
     signIn,
+    signOut,
     getUserProfile,
     insertUserProfile,
     getUserCodeLog,

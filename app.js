@@ -1,40 +1,90 @@
 require('dotenv').config();
 const morganBody = require('morgan-body');
 const express = require('express');
+const session = require('express-session');
+// const redis = require('redis');
+const connectRedis = require('connect-redis');
+const cookieParser = require('cookie-parser');
+
+//const Redis = require('ioredis');
+
 const cors = require('cors');
 const app = express();
-const Cache = require('./util/cache');
+const Cache = require('./server/util/cache');
 const { PORT_TEST, PORT, NODE_ENV, API_VERSION } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
-var cookieParser = require('cookie-parser');
-const session = require('express-session');
+
+const { CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD } = process.env;
+
+// const redisClient = new Redis(`redis://${CACHE_USER}:${CACHE_PASSWORD}@${CACHE_HOST}:${CACHE_PORT}`);
+
 // let stream = require('./server/util/stream-ws');
+const root = require('path').join(__dirname, 'interview-training/build');
+
+app.use(express.static(root));
+
+// CORS allow all
+
+app.use(cookieParser());
+app.disable('X-Powered-By');
+
+app.set('trust proxy', 1);
+app.use(
+    cors({
+        credentials: true,
+        origin: ['https://localhost:3001', 'http://localhost:3001'],
+        methods: 'GET, POST, PUT, DELETE',
+    })
+);
+
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-HTTP-Method-Override, Set-Cookie, Cookie');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    next();
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.set('json spaces', 2);
+
+const RedisStore = require('connect-redis')(session);
+
 const dbo = require('./server/models/mongodbcon');
 
 const fs = require('fs');
 
 // app.use(express.static('interview-training/build'));
-const root = require('path').join(__dirname, 'interview-training/build');
-app.use(express.static(root));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-// Session
-app.use(cookieParser());
+// var RedisStore = require('connect-redis')(session);
 
+//Configure session middleware
 app.use(
     session({
-        secret: 'mySecret',
+        store: new RedisStore({ client: Cache }),
+        secret: 'secret$%^134',
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
+        cookie: {
+            httpOnly: true,
+            // secure: true,
+            // sameSite: 'none',
+            maxAge: parseInt(8600000), // if true prevent client side JS from reading the cookie
+        },
     })
 );
-// morganBody(app);
 
 const server = require('http')
     .Server(app)
     .listen(port, () => {
+        // Cache.connect().catch(() => {
+        //     console.log('redis connect fail');
+        // });
         console.log(`Listening on port ${port}...`);
     });
+
+// morganBody(app);
+
 // Socket.io
 const io = require('socket.io')(server, {
     cors: {
@@ -91,7 +141,6 @@ io.on('connection', (socket) => {
         socket.to(data.room).emit('chat', { sender: data.sender, msg: data.msg, time: data.time });
     });
 });
-
 //io.of('/stream').on('connection', stream);
 
 dbo.connectToServer(function (err) {
@@ -144,9 +193,6 @@ dbo.connectToServer(function (err) {
 // const swaggerDocument = require('./public/src/swagger.json');
 
 // app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// CORS allow all
-app.use(cors());
 
 app.get('/favicon.ico', (req, res) => {
     return;
