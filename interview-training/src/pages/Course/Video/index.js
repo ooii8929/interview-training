@@ -88,7 +88,7 @@ export default function Video(props) {
     //     });
 
     //     try {
-    //         let presignedUrl = await axios.get(`${Constant[0]}/training/video/answer/url`, {
+    //         let presignedUrl = await axios.get(`${process.env.REACT_APP_BASE_URL}/training/video/answer/url`, {
     //             params: {
     //                 filename: file.name,
     //             },
@@ -109,7 +109,7 @@ export default function Video(props) {
     //             answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
     //         };
     //         console.log('data', data);
-    //         let submitAnswer = await axios.post(`${Constant[0]}/training/video/answer`, data);
+    //         let submitAnswer = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/video/answer`, data);
 
     //         console.log('tmpProfile after', submitAnswer);
     //         setAnswerStatus(true);
@@ -134,11 +134,17 @@ export default function Video(props) {
             nowUserId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
 
-            let response = await axios.get(`${Constant[0]}/training/profile/questions`, {
+            let response = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/training/profile/questions`,
                 params: {
                     profession: jobType || 'backend',
                 },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
+
             console.log('2. get question response', response);
             setProfileQuestion(response);
         }

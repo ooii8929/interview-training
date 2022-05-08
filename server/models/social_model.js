@@ -30,7 +30,7 @@ const getArticleByID = async (article_id) => {
             .collection('article')
             .find({ _id: ObjectId(article_id) })
             .toArray();
-        console.log('cursor', cursor);
+        console.log('cursor');
         return cursor;
     } catch (error) {
         console.log('error', error);
@@ -50,20 +50,24 @@ const insertCodeArticle = async (postData) => {
 const insertComment = async (user_id, article_id, summerNote, userInfo) => {
     // Get records
     const dbConnect = dbo.getDb();
+    let commentInfo = {
+        user_id: user_id,
+        content: summerNote,
+        create_dt: new Date(),
+        name: userInfo.name,
+        picture: userInfo.picture,
+    };
+
+    if (userInfo.profession && userInfo.experience1) {
+        commentInfo.profession = userInfo.profession;
+        commentInfo.experience = userInfo.experience1;
+    }
 
     let insertResult = await dbConnect.collection('article').update(
         { _id: ObjectId(article_id) },
         {
             $push: {
-                comments: {
-                    user_id: user_id,
-                    content: summerNote,
-                    create_dt: new Date(),
-                    name: userInfo.name,
-                    picture: userInfo.picture,
-                    profession: userInfo.profession,
-                    experience: userInfo.experience1,
-                },
+                comments: commentInfo,
             },
         }
     );

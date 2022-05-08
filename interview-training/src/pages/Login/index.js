@@ -49,19 +49,27 @@ export default function SignUp() {
         const data = new FormData(e.currentTarget);
 
         console.log('user sign in', data.get('signIdentity'));
+        if (!data.get('signIdentity')) {
+            Swal.fire({
+                title: '請選擇身份!',
+                icon: 'error',
+                confirmButtonText: '再試一次',
+            });
+            return;
+        }
         try {
             let signInResponse = await axios({
                 withCredentials: true,
                 method: 'POST',
                 credentials: 'same-origin',
-                url: `${Constant[0]}/user/login`,
+                url: `${process.env.REACT_APP_BASE_URL}/user/login`,
                 data: {
                     identity: data.get('signIdentity'),
                     email: data.get('signEmail'),
                     password: data.get('signPassword'),
                     provider: 'native',
                 },
-                headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
             });
 
             console.log('signInResponse', signInResponse);
@@ -75,7 +83,7 @@ export default function SignUp() {
             localStorage.setItem('userid', signInResponse.data.id);
             localStorage.setItem('username', signInResponse.data.name);
             localStorage.setItem('useremail', signInResponse.data.email);
-            localStorage.setItem('identity', identity);
+            localStorage.setItem('identity', identity || 'student');
 
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
@@ -120,9 +128,9 @@ export default function SignUp() {
         try {
             let updateResult;
             if (data.get('identity') === 'teacher') {
-                updateResult = await axios.post(`${Constant[0]}/teacher/signup`, registerInfo);
+                updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/teacher/signup`, registerInfo);
             } else if (data.get('identity') === 'student') {
-                updateResult = await axios.post(`${Constant[0]}/user/signup`, registerInfo);
+                updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);
             localStorage.setItem('userid', updateResult.data.data.user.id);
@@ -149,7 +157,7 @@ export default function SignUp() {
 
     async function register(e) {
         try {
-            let signInResponse = await axios.post(`${Constant[0]}/user/signup`, {
+            let signInResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/signup`, {
                 data: {
                     name: name,
                     identity: identity,

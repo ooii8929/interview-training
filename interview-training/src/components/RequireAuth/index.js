@@ -11,8 +11,8 @@ export default function RequireAuth({ Component }) {
             withCredentials: true,
             method: 'GET',
             credentials: 'same-origin',
-            url: `${Constant[0]}/user/profile`,
-            headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
+            url: `${process.env.REACT_APP_BASE_URL}/user/profile`,
+            headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
         });
     }
     getProfile();

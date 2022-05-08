@@ -29,7 +29,7 @@ export default function CourseResult() {
             nowUserId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
             let questionID = localStorage.getItem('question_id');
-            let response = await axios.get(`${Constant[0]}/training/profile/result`, {
+            let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/training/profile/result`, {
                 params: {
                     userID: nowUserId,
                     question_id: questionID,

@@ -53,12 +53,12 @@ export default function Video(props) {
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
-                url: `${Constant[0]}/training/profile/questions`,
+                url: `${process.env.REACT_APP_BASE_URL}/training/profile/questions`,
                 params: {
                     profession: jobType || 'backend',
                     userID: userId,
                 },
-                headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
             });
             console.log('1. get question response', response);
 
@@ -90,7 +90,7 @@ export default function Video(props) {
     }, [language]);
 
     async function getUserCodeLog(questionID) {
-        let codeLog = await axios.get(`${Constant[0]}/user/code/log`, {
+        let codeLog = await axios.get(`${process.env.REACT_APP_BASE_URL}/user/code/log`, {
             params: {
                 question_id: questionID,
                 user_id: userId,
@@ -100,7 +100,7 @@ export default function Video(props) {
     }
     // submit answer
     async function submitAnswer(e) {
-        response = await axios.post(`${Constant[0]}/training/submit/compile/`, {
+        response = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/submit/compile/`, {
             user_id: userId,
             question_id: profileQuestion.data._id,
             qid: nowQuestionNumber,
@@ -138,7 +138,7 @@ export default function Video(props) {
 
     async function runCode() {
         try {
-            response = await axios.post(`${Constant[0]}/training/run/compile`, {
+            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/run/compile`, {
                 question_id: questionID,
                 language: language,
                 content: code,
@@ -169,7 +169,7 @@ export default function Video(props) {
             // 如果題目都完成了，跳轉到結果頁
             if (notFinishedQuestion.length === 0) {
                 // 發送答題結束的req
-                let endQuestionResponse = await axios.post(`${Constant[0]}/training/end`, {
+                let endQuestionResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/end`, {
                     user_id: userId,
                     question_id: profileQuestion.data._id,
                 });
@@ -227,7 +227,7 @@ export default function Video(props) {
 
     async function shareAnswer(n) {
         try {
-            response = await axios.post(`${Constant[0]}/article/code`, {
+            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/article/code`, {
                 user_id: userId,
                 question_id: questionID,
                 code: code,

@@ -11,7 +11,7 @@ export default function Article(props) {
     const { id } = useParams();
     const { Constant } = useContext(AppContext);
 
-    const baseURL = `${Constant[0]}/article`;
+    const baseURL = `${process.env.REACT_APP_BASE_URL}/article`;
     const jobType = localStorage.getItem('jobType');
     const [articles, setArticles] = React.useState(null);
 
@@ -68,20 +68,6 @@ export default function Article(props) {
                 </div>
             </Grid>
             <Grid item xs={4} className="article-container">
-                <div>
-                    stats
-                    <Grid container spacing={4} className="article-block">
-                        <Grid item xs={3} className="article-container">
-                            chat
-                        </Grid>
-                        <Grid item xs={3} className="article-container">
-                            share
-                        </Grid>
-                        <Grid item xs={3} className="article-container">
-                            view
-                        </Grid>
-                    </Grid>
-                </div>
                 <div>
                     Related Question
                     {[1, 2, 3].map((e, index) => {

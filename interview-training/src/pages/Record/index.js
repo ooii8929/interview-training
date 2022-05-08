@@ -17,11 +17,17 @@ export default function SocialArticle() {
 
     React.useEffect((e) => {
         async function getVideoQuestions() {
-            let response = await axios.get(`${Constant[0]}/training/video/questions`, {
+            let response = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/training/video/questions`,
                 params: {
-                    profession: 'backend',
+                    profession: jobType || 'backend',
                 },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
+
             setVideoQuestions(response);
         }
         getVideoQuestions();

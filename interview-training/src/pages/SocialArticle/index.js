@@ -5,25 +5,26 @@ import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
-
+import Swal from 'sweetalert2';
 import axios from 'axios';
 import { AppContext } from '../../App';
 import './components/main.css';
 // import { Editor, EditorState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
-import RichTextEditor from './components';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useParams, useLocation } from 'react-router-dom';
+
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+
 import { Grid, Box } from '@mui/material';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import ReplyAllIcon from '@mui/icons-material/ReplyAll';
-import StarIcon from '@mui/icons-material/Star';
+
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
 let allArticles;
 
 export default function SocialArticle() {
+    let navigate = useNavigate();
+
     const EditorComponent = () => <Editor />;
     const [message, setMessage] = React.useState(null);
     const { id } = useParams();
@@ -33,7 +34,7 @@ export default function SocialArticle() {
     const tringleBad = useRef(null);
     const [articles, setArticles] = React.useState(null);
     const [articleInfo, setArticleInfo] = React.useState(null);
-    const baseURL = `${Constant[0]}/article/id`;
+    const baseURL = `${process.env.REACT_APP_BASE_URL}/article/id`;
     const jobType = localStorage.getItem('jobType');
     const userId = localStorage.getItem('userid');
     const userName = localStorage.getItem('username');
@@ -53,7 +54,7 @@ export default function SocialArticle() {
         };
 
         try {
-            let res = await axios.post(`${Constant[0]}/article/good`, postDetail);
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/article/good`, postDetail);
             e.target.classList.add('good-clicked');
             tringleBad.current.classList.remove('good-clicked');
             setGoods((prev) => prev + 1);
@@ -71,7 +72,7 @@ export default function SocialArticle() {
             article_id: id,
         };
         try {
-            let res = await axios.post(`${Constant[0]}/article/bad`, postDetail);
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/article/bad`, postDetail);
             console.log('e', e.target);
             e.target.classList.remove('good-clicked');
             tringleGood.current.classList.remove('good-clicked');
@@ -118,7 +119,7 @@ export default function SocialArticle() {
         (e) => {
             async function getArticles() {
                 try {
-                    let tmpAllArticles = await axios.get(`${Constant[0]}/article`, {
+                    let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/article`, {
                         params: {
                             profession: language,
                         },
@@ -151,38 +152,62 @@ export default function SocialArticle() {
 
     useEffect(
         (e) => {
-            console.log('articleInfo before', articleInfo);
-            if (articleInfo) console.log('articleInfo', articleInfo);
+            if (articleInfo) console.log('articleInfo success');
         },
         [articleInfo]
     );
     useEffect(
         (e) => {
-            if (message) console.log('message', message);
+            if (message) console.log('message success');
         },
         [message]
     );
     useEffect(
         (e) => {
-            if (editorState) console.log('editorState', editorState);
+            if (editorState) console.log('editorState success');
         },
         [editorState]
     );
 
     async function postComment(msg) {
-        let postCommentDetail = {
-            user_id: userId,
-            user_name: userName,
-            article_id: id,
-            summerNote: msg,
-            identity: identity,
-            user_email: userEmail,
-        };
-        let postCommentResult = await axios.post(`${Constant[0]}/article/comment`, postCommentDetail);
-        let tmpArticleInfo = await axios.get(baseURL, {
+        let postCommentResult;
+        try {
+            postCommentResult = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/article/comment`,
+                data: {
+                    user_id: userId,
+                    user_name: userName,
+                    article_id: id,
+                    summerNote: msg,
+                    identity: identity,
+                    user_email: userEmail,
+                },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
+        } catch (error) {
+            console.log('error', error);
+            await Swal.fire({
+                title: '你還沒登入，對拔!',
+                text: '先登入讓我們好好認識你呀',
+                icon: 'error',
+                confirmButtonText: '好，立刻登入',
+            });
+            localStorage.setItem('returnPage', location.pathname);
+            navigate('/login');
+        }
+
+        let tmpArticleInfo = await axios({
+            withCredentials: true,
+            method: 'GET',
+            credentials: 'same-origin',
+            url: baseURL,
             params: {
                 article_id: id,
             },
+            headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
         });
 
         setArticleInfo(tmpArticleInfo['data'][0]);
@@ -283,29 +308,11 @@ export default function SocialArticle() {
                 </Grid>
                 <Grid item xs={4} className="article-container article-container-right">
                     <div className="article-side">
-                        stats
-                        <Grid container spacing={4} className="article-block">
-                            <Grid item xs={3} className="article-info">
-                                <VisibilityIcon />
-                                300
-                            </Grid>
-                            <Grid item xs={3} className="article-info">
-                                <ReplyAllIcon />
-                                400
-                            </Grid>
-                            <Grid item xs={3} className="article-info">
-                                <StarIcon />
-                                200
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <div className="article-side">
                         <h3>其他相關回答</h3>
                         {articles
                             ? articles['articles'].map((e, index) => {
                                   return (
                                       <div key={index}>
-                                          <div className="article-relate">{e.author_name}</div>
                                           <CodeEditor
                                               value={e.code}
                                               language={language}
@@ -317,6 +324,11 @@ export default function SocialArticle() {
                                                   fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                                               }}
                                           />
+                                          <div className="article-relate">
+                                              提交人：{e.author_name}
+                                              <br />
+                                              {e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                          </div>
                                       </div>
                                   );
                               })

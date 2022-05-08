@@ -9,7 +9,6 @@ const getAllArticle = async (req, res) => {
     let groupAuthorArticle = _.groupBy(articles, 'author_id');
 
     let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
-    console.log('authors', authors);
     let articlesAndAuthors = {
         authors: authors,
         articles: articles,
@@ -28,7 +27,6 @@ const insertCodeArticle = async (req, res) => {
     const { question_id, user_id, code, language } = req.body;
     const userProfile = await USER.getUserProfileByUserID(user_id);
     const questionProfile = await QUESTION.getQuestionsByID(question_id);
-    console.log('questionProfile', questionProfile);
     const { title, description, profession } = questionProfile['questions'][0][0];
     if (!userProfile) {
         res.status(500).send({ error: 'Database Query Error' });
@@ -54,7 +52,6 @@ const insertCodeArticle = async (req, res) => {
         reply: [],
     };
     let insertResult = await SOCIAL.insertCodeArticle(postData);
-    console.log('insertResult', insertResult);
 
     res.status(200).send(insertResult);
 };
@@ -63,16 +60,14 @@ const insertComments = async (req, res) => {
     // insert code post
     const { user_id, article_id, summerNote, identity, user_email } = req.body;
     let userInfo;
-    if (identity == 'user') {
+    if (identity == 'student') {
         userInfo = await USER.getUserPureProfile(user_id, user_email);
     }
 
     if (identity == 'teacher') {
         userInfo = await USER.getTeacherProfile(user_id, user_email);
     }
-    console.log('insertComments userInfo', userInfo);
-    let insertResult = await SOCIAL.insertComment(user_id, article_id, summerNote, userInfo.userProfile);
-    console.log('insertResult', insertResult);
+    let insertResult = await SOCIAL.insertComment(user_id, article_id, summerNote, userInfo[0][0]);
 
     return res.status(200).send(insertResult);
 };

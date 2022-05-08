@@ -26,7 +26,7 @@ export default function VideoCheck(props) {
         console.log(tmpChecked);
         let tmpProfile = props.profileQuestion;
         await handleSave();
-        await axios.post(`${Constant[0]}/training/video/answer/check`, {
+        await axios.post(`${process.env.REACT_APP_BASE_URL}/training/video/answer/check`, {
             user_id: nowUserId,
             question_id: tmpProfile.data._id,
             qid: props.nowQuestionNumber,
@@ -48,7 +48,7 @@ export default function VideoCheck(props) {
         });
 
         try {
-            let presignedUrl = await axios.get(`${Constant[0]}/training/video/answer/url`, {
+            let presignedUrl = await axios.get(`${process.env.REACT_APP_BASE_URL}/training/video/answer/url`, {
                 params: {
                     filename: file.name,
                 },
@@ -69,7 +69,7 @@ export default function VideoCheck(props) {
                 answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
             };
             console.log('data', data);
-            let submitAnswer = await axios.post(`${Constant[0]}/training/video/answer`, data);
+            let submitAnswer = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/video/answer`, data);
 
             console.log('tmpProfile after', submitAnswer);
         } catch (error) {

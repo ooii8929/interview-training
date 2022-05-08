@@ -12,16 +12,15 @@ const redisClient = new Redis({
 
 redisClient.ready = false;
 
+redisClient.on('error', () => {
+    redisClient.ready = false;
+
+    console.log('Error in Redis');
+});
+
 redisClient.on('ready', () => {
     redisClient.ready = true;
     console.log('Redis is ready');
-});
-
-redisClient.on('error', () => {
-    redisClient.ready = false;
-    if (process.env.NODE_ENV == 'production') {
-        console.log('Error in Redis');
-    }
 });
 
 redisClient.on('end', () => {

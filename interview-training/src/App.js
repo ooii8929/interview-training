@@ -43,12 +43,17 @@ function App() {
         console.log('0. get user id by session storage', localStorage.getItem('userid'), localStorage.getItem('useremail'));
 
         async function getAvator() {
-            let getAvatorResult = await axios.get(`${Constant[0]}/user/profile/avator`, {
+            let getAvatorResult = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/user/profile/avator`,
                 params: {
                     user_id: localStorage.getItem('userid'),
                     user_email: localStorage.getItem('useremail'),
                     identity: localStorage.getItem('identity'),
                 },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
             if (localStorage.getItem('identity') === 'student') {
                 setAvatorURL(getAvatorResult['data'][0][0]['picture']);

@@ -1,37 +1,52 @@
 import Introduce from './introduce';
 import React, { useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../../App';
 import './main.scss';
 import { Grid, Stack } from '@mui/material';
 import axios from 'axios';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import BalanceIcon from '@mui/icons-material/Balance';
+import Swal from 'sweetalert2';
 
 export default function Prepare() {
-    const { jobType, userId, Constant } = useContext(AppContext);
+    let location = useLocation();
+    const { jobType, userId } = useContext(AppContext);
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const [codeFinishedPercent, setCodeFinishedPercent] = React.useState('');
     const [senseFinishedPercent, setSenseFinishedPercent] = React.useState('');
+    let navigate = useNavigate();
 
     React.useEffect((e) => {
         console.log('profileQuestion', profileQuestion);
         if (!profileQuestion) {
             async function getVideoQuestions() {
                 console.log('user info', jobType, userId);
+                try {
+                    let response = await axios({
+                        withCredentials: true,
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        url: `${process.env.REACT_APP_BASE_URL}/training/profile/questions`,
+                        params: {
+                            profession: jobType || 'backend',
+                        },
+                        headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+                    });
 
-                let response = await axios({
-                    withCredentials: true,
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    url: `${Constant[0]}/training/profile/questions`,
-                    params: {
-                        profession: jobType || 'backend',
-                    },
-                    headers: { 'Access-Control-Allow-Origin': 'https://localhost:3001', 'Content-Type': 'application/json' },
-                });
-                console.log('response', response);
-                setProfileQuestion(response);
+                    console.log('response', response);
+                    setProfileQuestion(response);
+                } catch (error) {
+                    console.log('error', error);
+                    await Swal.fire({
+                        title: '你還沒登入，對拔!',
+                        text: '先登入讓我們好好認識你呀',
+                        icon: 'error',
+                        confirmButtonText: '好，立刻登入',
+                    });
+                    localStorage.setItem('returnPage', location.pathname);
+                    navigate('/login');
+                }
             }
             getVideoQuestions();
         }
@@ -41,10 +56,10 @@ export default function Prepare() {
         (e) => {
             if (profileQuestion) {
                 console.log('course.js profileQuestion', profileQuestion);
-                let codeFinished = profileQuestion.data.code.filter((e) => e.status == 1);
+                let codeFinished = profileQuestion.data.code.filter((e) => e.status === 1);
                 console.log('codeFinished', codeFinished);
                 setCodeFinishedPercent((codeFinished.length / profileQuestion.data.code.length).toFixed(2));
-                let senseFinished = profileQuestion.data.video.filter((e) => e.status == 1);
+                let senseFinished = profileQuestion.data.video.filter((e) => e.status === 1);
                 setSenseFinishedPercent((senseFinished.length / profileQuestion.data.video.length).toFixed(2));
             }
         },

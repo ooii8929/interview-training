@@ -165,6 +165,7 @@ const signIn = async (req, res) => {
 };
 
 const signOut = async (req, res) => {
+    console.log('run sign out');
     if (Cache.ready) {
         try {
             req.session.destroy((err) => {
