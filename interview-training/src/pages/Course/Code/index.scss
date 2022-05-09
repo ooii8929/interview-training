@@ -5,6 +5,10 @@
      flex-direction:column;
       justify-content: space-between;
 }
+.css-mhc70k-MuiGrid-root{
+    width:100% !important; 
+    margin-left: 0px !important;
+}
 .loading-image{
     display: inline-block;
     width: 600px;
@@ -79,4 +83,20 @@ padding-top: 3%;
 
 .user-log-container{
     margin: 3% 0%;
+}
+
+.codeeditor{
+    background-color: #f2f2f2 !important;
+}
+
+.w-tc-editor{
+    --color-prettylights-syntax-string:rgb(53, 100, 208) !important;
+    color: rgb(54, 52, 50) !important;
+}
+
+.history-div{
+    display: flex;
+    flex-direction: column;
+justify-content: center;
+    align-items: center;
 }

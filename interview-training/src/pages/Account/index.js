@@ -220,7 +220,7 @@ function Tutor() {
                                               profession={appointment['profession']}
                                               picture={appointment['picture']}
                                               tID={appointment['question_id']}
-                                              createDT={appointment['create_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                              createDT={appointment['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
                                               href={appointment['course_url']}
                                           />
                                       </Grid>

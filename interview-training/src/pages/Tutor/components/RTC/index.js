@@ -52,7 +52,7 @@ const Main = () => {
         if (!ws) {
             console.log('1. connect ws');
             console.log('(1.) connect');
-            setWs(webSocket(`${Constant[1]}`));
+            setWs(webSocket(`${process.env.REACT_APP_BASE_URL}`));
         }
     }, []);
 
@@ -100,6 +100,11 @@ const Main = () => {
         ws.on('ice_candidate', async (desc) => {
             console.log('(7.) 收到 candidate', desc);
             handleCandidate(desc);
+        });
+
+        ws.on('chat', (data) => {
+            console.log('data', data);
+            addChat(data, 'remote');
         });
     };
 
@@ -275,7 +280,7 @@ const Main = () => {
             <video ref={remoteVideo} autoPlay playsInline className="video-screen remoteVideo"></video>
             <video ref={remoteScreenVideo} autoPlay playsInline className="video-screen"></video>
             <div className="select-device">
-                <div>
+                <div className="select-device-option">
                     <FormControl fullWidth>
                         <InputLabel>切換麥克風:</InputLabel>
                         <Select
@@ -299,7 +304,7 @@ const Main = () => {
                     </FormControl>
                 </div>
 
-                <div className="select-device">
+                <div className="select-device-option">
                     <FormControl fullWidth>
                         <InputLabel>切換攝影機:</InputLabel>
                         <Select
@@ -323,6 +328,44 @@ const Main = () => {
                         </Select>
                     </FormControl>
                 </div>
+                <button
+                    type="button"
+                    className="btn btn-dark rounded-0 border-info btn-no-effect"
+                    onClick={() => {
+                        setShareScreenIsUse(!shareScreenIsUse);
+                    }}
+                >
+                    Share screen
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-dark rounded-0 border-info btn-no-effect"
+                    onClick={async () => {
+                        localStream = await navigator.mediaDevices.getUserMedia({
+                            audio: true,
+                            video: true,
+                        });
+                        localVideo.current.srcObject = localStream;
+
+                        setConnect(true);
+                        ws.emit('join', room);
+                    }}
+                >
+                    Start
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-dark rounded-0 border-info btn-no-effect"
+                    ref={hangupButton}
+                    onClick={() => {
+                        if (ws) {
+                            ws.emit('leave', room);
+                        }
+                        hangup();
+                    }}
+                >
+                    Hang up
+                </button>
             </div>
             <div id="note-container">
                 <div className=" chat-col d-print-none  bg-info chat-opened" id="chat-pane" style={{ display: 'block' }}>
@@ -365,44 +408,6 @@ const Main = () => {
                     </form>
                 </div>
             </div>
-            <button
-                type="button"
-                className="btn btn-dark rounded-0 border-info btn-no-effect"
-                onClick={() => {
-                    setShareScreenIsUse(!shareScreenIsUse);
-                }}
-            >
-                Share screen
-            </button>
-            <button
-                type="button"
-                className="btn btn-dark rounded-0 border-info btn-no-effect"
-                onClick={async () => {
-                    localStream = await navigator.mediaDevices.getUserMedia({
-                        audio: true,
-                        video: true,
-                    });
-                    localVideo.current.srcObject = localStream;
-
-                    setConnect(true);
-                    ws.emit('join', room);
-                }}
-            >
-                Start
-            </button>
-            <button
-                type="button"
-                className="btn btn-dark rounded-0 border-info btn-no-effect"
-                ref={hangupButton}
-                onClick={() => {
-                    if (ws) {
-                        ws.emit('leave', room);
-                    }
-                    hangup();
-                }}
-            >
-                Hang up
-            </button>
         </div>
     );
 };

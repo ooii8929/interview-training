@@ -110,6 +110,7 @@ export default function Video(props) {
                 user_id: userId,
             },
         });
+        console.log('codeLog', codeLog);
         setUserCodeLogs(codeLog.data);
     }
     // submit answer
@@ -143,6 +144,7 @@ export default function Video(props) {
         setRunCodeResponseInput(response['data']['input']);
         setRunCodeResponseOutput(response['data']['output']);
         setRunCodeResponseExpect(response['data']['except']);
+        console.log('questionID', questionID);
         await getUserCodeLog(questionID);
     }
 
@@ -269,6 +271,7 @@ export default function Video(props) {
                 question_id: questionID,
                 code: code,
                 language: language,
+                identity: localStorage.getItem('identity'),
             });
         } catch (error) {
             console.error(error);
@@ -312,12 +315,14 @@ export default function Video(props) {
                             </div>
                             <div>
                                 <div>{question.title}</div>
+                                <div className="w-tc-editor-var"> </div>
                                 <CodeEditor
                                     value={code}
                                     language={language}
                                     placeholder="Please enter JS code."
                                     onChange={(evn) => setCode(evn.target.value)}
                                     padding={15}
+                                    className="codeeditor"
                                     style={{
                                         minHeight: '60vh',
                                         fontSize: 16,

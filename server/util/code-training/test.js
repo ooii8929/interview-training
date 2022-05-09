@@ -3,5 +3,5 @@
  * @return {void} Do not return anything, modify s in-place instead.
  */
 var reverseString = function(s) {
-    while(true){console.log('23')}
+    return s.split("").reverse().join("");
 };console.log(reverseString('hello'))

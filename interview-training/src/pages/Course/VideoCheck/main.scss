@@ -1,6 +1,20 @@
 .check-video-box{
     .MuiBox-root.css-agnjr6{
-        margin-left: 20% !important;
+        margin-left: 10% !important;
+         margin-right: 5% !important;
     }
    
+}
+
+.selected-btn-div label{    
+    border: 1px solid gray !important;
+    border-radius: 50px !important;
+    background-color: #fff !important;
+    margin: 3% 0% !important;
+    padding: 3% !important;
+}
+
+.display-video{
+    display: flex !important;
+    align-items: center !important;
 }

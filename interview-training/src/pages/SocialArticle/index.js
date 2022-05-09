@@ -25,7 +25,6 @@ let allArticles;
 export default function SocialArticle() {
     let navigate = useNavigate();
 
-    const EditorComponent = () => <Editor />;
     const [message, setMessage] = React.useState(null);
     const { id } = useParams();
     const { Constant } = useContext(AppContext);
@@ -33,6 +32,7 @@ export default function SocialArticle() {
     const tringleGood = useRef(null);
     const tringleBad = useRef(null);
     const [articles, setArticles] = React.useState(null);
+    // this article info
     const [articleInfo, setArticleInfo] = React.useState(null);
     const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/id`;
     const jobType = localStorage.getItem('jobType');
@@ -46,6 +46,43 @@ export default function SocialArticle() {
     const [isGood, setIsGood] = React.useState(false);
     const [authorPicture, setAuthorPicture] = React.useState('');
     const location = useLocation();
+
+    // get article info by id
+    React.useEffect(() => {
+        async function getSpecificArticle() {
+            try {
+                let tmpArticleInfo = await axios.get(baseURL, {
+                    params: {
+                        article_id: id,
+                    },
+                });
+                setGoods(tmpArticleInfo['data'][0]['goods'].length);
+                let goodsClickedUser = tmpArticleInfo['data'][0]['goods'].filter(function (e) {
+                    return e === userId;
+                });
+                console.log('goodsClickedUser', goodsClickedUser);
+                if (goodsClickedUser.length > 0) {
+                    tringleGood.current.classList.add('good-clicked');
+                    tringleGood.current.disable = true;
+                }
+                setArticleInfo(tmpArticleInfo['data'][0]);
+                setLanguage(tmpArticleInfo['data'][0]['language']);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getSpecificArticle();
+    }, []);
+
+    useEffect(
+        (e) => {
+            if (articleInfo) {
+                console.log('articleInfo success');
+                setAuthorPicture(articleInfo['picture']);
+            }
+        },
+        [articleInfo]
+    );
 
     async function postGood(e) {
         let postDetail = {
@@ -88,33 +125,6 @@ export default function SocialArticle() {
         }
     }
 
-    React.useEffect(() => {
-        async function getSpecificArticle() {
-            try {
-                let tmpArticleInfo = await axios.get(baseURL, {
-                    params: {
-                        article_id: id,
-                    },
-                });
-                setGoods(tmpArticleInfo['data'][0]['goods'].length);
-                let goodsClickedUser = tmpArticleInfo['data'][0]['goods'].filter(function (e) {
-                    return e == userId;
-                });
-                console.log('goodsClickedUser', goodsClickedUser);
-                if (goodsClickedUser.length > 0) {
-                    tringleGood.current.classList.add('good-clicked');
-                    tringleGood.current.disable = true;
-                }
-                setArticleInfo(tmpArticleInfo['data'][0]);
-                setLanguage(tmpArticleInfo['data'][0]['language']);
-                console.log('setArticleInfo', tmpArticleInfo);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        getSpecificArticle();
-    }, []);
-
     useEffect(
         (e) => {
             async function getArticles() {
@@ -138,24 +148,18 @@ export default function SocialArticle() {
     );
     useEffect(
         (e) => {
-            if (articles)
-                if (Array.isArray(articles['authors'])) {
-                    let tmpAuthor = articles['authors'].filter((e) => (e.id = articles['authors'].authorID));
-                    setAuthorPicture(tmpAuthor);
-                } else {
-                    let tmpAuthor = articles['authors']['picture'];
-                    setAuthorPicture(tmpAuthor);
-                }
+            // if (articles)
+            //     if (Array.isArray(articles['authors'])) {
+            //         let tmpAuthor = articles['authors'].filter((e) => (e.id = articles['authors'].authorID));
+            //         setAuthorPicture(tmpAuthor);
+            //     } else {
+            //         let tmpAuthor = articles['authors']['picture'];
+            //         setAuthorPicture(tmpAuthor);
+            //     }
         },
         [articles]
     );
 
-    useEffect(
-        (e) => {
-            if (articleInfo) console.log('articleInfo success');
-        },
-        [articleInfo]
-    );
     useEffect(
         (e) => {
             if (message) console.log('message success');
@@ -210,7 +214,7 @@ export default function SocialArticle() {
             headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
         });
 
-        setArticleInfo(tmpArticleInfo['data'][0]);
+        //  setArticleInfo(tmpArticleInfo['data'][0]);
     }
 
     return (
@@ -218,9 +222,9 @@ export default function SocialArticle() {
             <Grid container spacing={4} className="article-block">
                 <Grid item xs={8} className="article-container article-container-left">
                     <div>
-                        <Grid container spacing={4}>
-                            <Grid item xs={2} className="article-main-left">
-                                {articles ? (
+                        {articleInfo ? (
+                            <Grid container spacing={4}>
+                                <Grid item xs={2} className="article-main-left">
                                     <Box
                                         component="img"
                                         className="avator"
@@ -231,15 +235,14 @@ export default function SocialArticle() {
                                         alt="The house from the offer."
                                         src={authorPicture}
                                     />
-                                ) : null}
-                                <div className="goods-container">
-                                    <div className="tringle good" onClick={postGood} ref={tringleGood}></div>
-                                    {articles ? <div className="now-goods">{goods}</div> : null}
-                                    <div className="tringle-bad good" onClick={postBad} ref={tringleBad}></div>
-                                </div>
-                            </Grid>
-                            <Grid item xs={10} className="article-main-right">
-                                {articleInfo ? (
+
+                                    <div className="goods-container">
+                                        <div className="tringle good" onClick={postGood} ref={tringleGood}></div>
+                                        {articles ? <div className="now-goods">{goods}</div> : null}
+                                        <div className="tringle-bad good" onClick={postBad} ref={tringleBad}></div>
+                                    </div>
+                                </Grid>
+                                <Grid item xs={10} className="article-main-right">
                                     <>
                                         <div className="allcard">
                                             <h1>{articleInfo.title}</h1>
@@ -251,59 +254,61 @@ export default function SocialArticle() {
                                             </SyntaxHighlighter>
                                         </div>
                                         <div className="reply-container">
-                                            {articleInfo['comments'].map((e, index) => {
-                                                return (
-                                                    <div key={index} className="comment-specfic">
-                                                        <div className="comment-specfic-avator">
-                                                            <Grid container spacing={2}>
-                                                                <Grid item xs={2}>
-                                                                    <Box
-                                                                        component="img"
-                                                                        className="avator"
-                                                                        sx={{
-                                                                            height: 50,
-                                                                            width: 50,
-                                                                        }}
-                                                                        src={e.picture}
-                                                                    />
-                                                                </Grid>
-                                                                <Grid item xs={10} className="comment-specfic-avator-right">
-                                                                    <div className="comment-specfic-title">
-                                                                        <div dangerouslySetInnerHTML={{ __html: e.name }}></div>
-                                                                        <div dangerouslySetInnerHTML={{ __html: e.experience }}></div>
-                                                                    </div>
-                                                                    <div dangerouslySetInnerHTML={{ __html: e.profession }}></div>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </div>
-                                                        <div className="comment-specfic-content">
-                                                            <div dangerouslySetInnerHTML={{ __html: e.content }}></div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
+                                            {articleInfo['comments']
+                                                ? articleInfo['comments'].map((e, index) => {
+                                                      return (
+                                                          <div key={index} className="comment-specfic">
+                                                              <div className="comment-specfic-avator">
+                                                                  <Grid container spacing={2}>
+                                                                      <Grid item xs={2}>
+                                                                          <Box
+                                                                              component="img"
+                                                                              className="avator"
+                                                                              sx={{
+                                                                                  height: 50,
+                                                                                  width: 50,
+                                                                              }}
+                                                                              src={e.picture}
+                                                                          />
+                                                                      </Grid>
+                                                                      <Grid item xs={10} className="comment-specfic-avator-right">
+                                                                          <div className="comment-specfic-title">
+                                                                              <div dangerouslySetInnerHTML={{ __html: e.name }}></div>
+                                                                              <div dangerouslySetInnerHTML={{ __html: e.experience }}></div>
+                                                                          </div>
+                                                                          <div dangerouslySetInnerHTML={{ __html: e.profession }}></div>
+                                                                      </Grid>
+                                                                  </Grid>
+                                                              </div>
+                                                              <div className="comment-specfic-content">
+                                                                  <div dangerouslySetInnerHTML={{ __html: e.content }}></div>
+                                                              </div>
+                                                          </div>
+                                                      );
+                                                  })
+                                                : null}
                                         </div>
                                     </>
-                                ) : null}
 
-                                <div className="post-comment">
-                                    <br />
-                                    <hr />
-                                    <br />
-                                    <h5>你有更好的解法嗎？立刻分享吧</h5>
-                                    <Editor onChange={setEditorState} />
-                                    <button
-                                        onClick={() => {
-                                            console.log('EditorComponent', editorState);
-                                            const rawContentState = draftToHtml(editorState);
-                                            postComment(rawContentState);
-                                        }}
-                                    >
-                                        提交
-                                    </button>
-                                </div>
+                                    <div className="post-comment">
+                                        <br />
+                                        <hr />
+                                        <br />
+                                        <h5>你有更好的解法嗎？立刻分享吧</h5>
+                                        <Editor onChange={setEditorState} />
+                                        <button
+                                            onClick={() => {
+                                                console.log('EditorComponent', editorState);
+                                                const rawContentState = draftToHtml(editorState);
+                                                postComment(rawContentState);
+                                            }}
+                                        >
+                                            提交
+                                        </button>
+                                    </div>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        ) : null}
                     </div>
                 </Grid>
                 <Grid item xs={4} className="article-container article-container-right">

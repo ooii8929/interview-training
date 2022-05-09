@@ -9,12 +9,12 @@ import { Link } from 'react-router-dom';
 
 import './main.scss';
 export default function BasicCard(props) {
-    let authorPicture;
-    if (Array.isArray(props.authors)) {
-        authorPicture = props.authors.filter((e) => (e.id = props.authorID));
-    } else {
-        authorPicture = props.authors['picture'];
-    }
+    // let authorPicture;
+    // if (Array.isArray(props.authors)) {
+    //     authorPicture = props.authors.filter((e) => (e.id = props.authorID));
+    // } else {
+    //     authorPicture = props.authors['picture'];
+    // }
 
     return (
         <div
@@ -26,7 +26,7 @@ export default function BasicCard(props) {
             <Link to={`/social/${props.href}`}>
                 <div className="ovelay"> </div>
                 <header className="user">
-                    <img src={authorPicture} alt="" />
+                    <img src={props.picture} alt="" />
                     <div className="user-info">
                         <h2 className="user-info-name">{props.authorName}</h2>
                         <p className="user-info-time">{props.postTime.replace('T', ' ').replace('Z', ' ')}</p>
@@ -34,7 +34,8 @@ export default function BasicCard(props) {
                 </header>
                 <main>
                     <h2>{props.title}</h2>
-                    <p className="social-desc">{props.description} </p>
+                    <div className="social-desc" dangerouslySetInnerHTML={{ __html: props.description }}></div>
+
                     <p>{props.language}</p>
                 </main>
                 <section>

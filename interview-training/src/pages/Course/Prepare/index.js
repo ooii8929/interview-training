@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 export default function Prepare() {
     let location = useLocation();
     const { jobType, userId } = useContext(AppContext);
+
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const [codeFinishedPercent, setCodeFinishedPercent] = React.useState('');
     const [senseFinishedPercent, setSenseFinishedPercent] = React.useState('');

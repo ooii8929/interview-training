@@ -42,7 +42,7 @@ const insertCodeArticle = async (postData) => {
     // Get records
     const dbConnect = dbo.getDb();
 
-    let insertResult = dbConnect.collection('article').insertOne(postData);
+    let insertResult = await dbConnect.collection('article').insertOne(postData);
 
     return insertResult;
 };

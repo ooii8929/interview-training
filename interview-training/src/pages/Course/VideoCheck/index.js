@@ -98,10 +98,10 @@ export default function VideoCheck(props) {
     let handleChanges = [handleChange2, handleChange3, handleChange4];
 
     const children = (
-        <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }} className="selected-btn-div">
             {props.check
                 ? props.check.map((e, index) => {
-                      return <FormControlLabel label={e} key={index} control={<Checkbox checked={checked[index]} onChange={handleChanges[index]} />} />;
+                      return <FormControlLabel label={e} key={index} control={<Checkbox checked={checked[index]} onChange={handleChanges[index]} className="selected-btn" />} />;
                   })
                 : null}
         </Box>

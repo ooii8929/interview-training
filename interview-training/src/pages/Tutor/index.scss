@@ -6,14 +6,22 @@
 }
 .localVideo{
     position: absolute;
-    top:95px;
+    top:85px;
     height: auto !important;
     width: 300px !important;
+    z-index: -100 !important;
     left: 0px;
 }
-.remoteVideo{
-    width: 500px !important;
+.remoteVideo {
+    position: absolute !important;
+    top:85px !important;
+    width: 50vw !important;
+    z-index: -100 !important;
+    margin: auto !important;
+    left: 25% !important;
+    height: auto !important;
 }
+
 
 .css-1bped5o-MuiBottomNavigation-root{
 box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
@@ -31,7 +39,9 @@ font-size: 20px !important;
 padding-top: 3%;}
 
 .select-device{
-    width: 40%;
+    width: 22% !important;
+position: absolute !important;
+bottom: 0px !important;
 }
 
 .video-screen{

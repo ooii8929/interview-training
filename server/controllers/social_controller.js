@@ -6,6 +6,7 @@ const _ = require('lodash');
 
 const getAllArticle = async (req, res) => {
     let articles = await SOCIAL.getAllArticle();
+    console.log('articles', articles);
     let groupAuthorArticle = _.groupBy(articles, 'author_id');
 
     let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
@@ -24,8 +25,8 @@ const getArticleByID = async (req, res) => {
 
 const insertCodeArticle = async (req, res) => {
     // insert code post
-    const { question_id, user_id, code, language } = req.body;
-    const userProfile = await USER.getUserProfileByUserID(user_id);
+    const { question_id, user_id, code, language, identity } = req.body;
+    const userProfile = await USER.getUserProfileByUserID(user_id, identity);
     const questionProfile = await QUESTION.getQuestionsByID(question_id);
     const { title, description, profession } = questionProfile['questions'][0][0];
     if (!userProfile) {
@@ -39,6 +40,7 @@ const insertCodeArticle = async (req, res) => {
 
     const postData = {
         question_id: question_id,
+        picture: userProfile.picture,
         title: title,
         description: description,
         author_id: userProfile.id,

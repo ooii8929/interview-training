@@ -339,11 +339,18 @@ const getUserProfileByEmail = async (email) => {
     }
 };
 
-const getUserProfileByUserID = async (userID) => {
+const getUserProfileByUserID = async (userID, identity) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
-        const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [userID]);
+        let users;
+        if (identity === 'teacher') {
+            [users] = await pool.query('SELECT * FROM teachers WHERE id = ?', [userID]);
+        }
+        if (identity === 'student') {
+            [users] = await pool.query('SELECT * FROM users WHERE id = ?', [userID]);
+        }
+
         console.log('users', users);
         await conn.query('COMMIT');
         return users[0];

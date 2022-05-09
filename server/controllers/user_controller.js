@@ -243,7 +243,6 @@ const getUserPureProfile = async (req, res) => {
         if (identity == 'student') {
             userProfile = await User.getUserPureProfile(user_id, user_email);
         }
-        console.log('userProfile', userProfile);
         return res.status(200).send(userProfile);
     } catch (error) {
         return res.status(400).send({ error: error });
@@ -252,20 +251,22 @@ const getUserPureProfile = async (req, res) => {
 
 const getUserCodeLog = async (req, res) => {
     let { question_id, user_id } = req.query;
+    console.log('question_id, user_id', question_id, user_id);
 
     // Get records
     const dbConnect = dbo.getDb();
 
     dbConnect
         .collection('profile')
-        .find({ question_id: question_id, user_id: user_id })
+        .find({ user_id: user_id, question_id: parseInt(question_id) })
         .limit(50)
         .sort({ create_dt: -1 })
         .toArray(function (err, result) {
             if (err) {
-                res.status(400).send('Error fetching listings!');
+                return res.status(400).send('Error fetching listings!');
             } else {
-                res.status(200).json(result);
+                console.log('result', result);
+                return res.status(200).json(result);
             }
         });
 };

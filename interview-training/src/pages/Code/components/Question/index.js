@@ -124,7 +124,7 @@ export default function Question() {
             language: language,
         });
         setRunCodeResponse(response['data']);
-        if (response['data']['answer_status'] == -1) {
+        if (response['data']['answer_status'] === -1) {
             setRunCodeResponseStatus('Fail');
         } else {
             setRunCodeResponseStatus('Success');

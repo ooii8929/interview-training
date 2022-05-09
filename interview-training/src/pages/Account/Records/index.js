@@ -14,7 +14,7 @@ export default function Records(props) {
                 <CardMedia component="img" height="140" image={props.picture} alt="green iguana" />
                 <CardContent>
                     <Typography variant="body2" color="text.secondary">
-                        {props.availableTime}
+                        {props.availableTime.replace('T', ' ').replace('Z', ' ').split('.', 1)}
                     </Typography>
                 </CardContent>
             </CardActionArea>

@@ -60,6 +60,7 @@ function Social() {
                                   return (
                                       <Card
                                           key={index}
+                                          picture={article['picture']}
                                           authorID={article['author_id']}
                                           authors={authors}
                                           reply={article['reply']}
