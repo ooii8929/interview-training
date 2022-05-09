@@ -32,7 +32,7 @@ app.set('trust proxy', 1);
 app.use(
     cors({
         credentials: true,
-        origin: ['process.env.REACT_APP_BASE_URL', 'http://localhost:3001'],
+        origin: [`${process.env.REACT_APP_BASE_URL}`, 'http://localhost:3001'],
         methods: 'GET, POST, PUT, DELETE',
     })
 );

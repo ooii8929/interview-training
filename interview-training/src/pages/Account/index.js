@@ -101,7 +101,7 @@ function Tutor() {
                     userEmail: userEmail,
                     identity: userIdentity,
                 },
-                headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
             });
 
             console.log('1. get profile', profile);

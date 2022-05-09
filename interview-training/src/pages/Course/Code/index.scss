@@ -5,8 +5,16 @@
      flex-direction:column;
       justify-content: space-between;
 }
+.loading-image{
+    display: inline-block;
+    width: 600px;
+}
 
-
+.loading-div{
+     display: flex !important;
+     flex-direction: column !important;
+     align-items: center !important;
+}
 
 #code-main{
     padding: 5%;

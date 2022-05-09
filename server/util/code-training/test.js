@@ -1,7 +1,7 @@
-var printAll = function(min,max) {      
-	// code here
-	for(let i = min;i<=max;i++){
-	console.log(i)
-	}
-	
-};console.log(printAll(2,10))
+/**
+ * @param {character[]} s
+ * @return {void} Do not return anything, modify s in-place instead.
+ */
+var reverseString = function(s) {
+    while(true){console.log('23')}
+};console.log(reverseString('hello'))

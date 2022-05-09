@@ -1,22 +1,36 @@
 import React, { useState, useRef, useContext } from 'react';
-import { AppContext } from '../../../App';
 import axios from 'axios';
-import { Box, Grid, Button } from '@mui/material';
+import { Grid, Button } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
 import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
 import Accordion from './components/accordion';
+import { css } from '@emotion/react';
 import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 let response;
-export default function Video(props) {
-    const { Constant } = useContext(AppContext);
 
+export default function Video(props) {
+    const [open, setOpen] = React.useState(false);
+    const [randomFun, setRandomFun] = React.useState(1);
+    const loadingFun = [
+        '你知道嗎？在非洲，每一分鐘，就有６０秒過去',
+        '你知道嗎？車子貼baby in car 是為了事故時讓救護人員救援時特別注意到',
+        '你知道嗎？7-ELEVEn的最後一個n是小寫唷！',
+        '你知道嗎？加拿大有一座北極熊的專屬監獄。如果北極熊闖入民宅偷吃食物被抓到，就會被抓去坐牢。',
+    ];
+    const loadingFunImg = ['', '', '', 'https://i1.wp.com/animal-friendly.co/wp-content/uploads/2019/08/jail3.jpg?w=1392&ssl=1'];
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleToggle = () => {
+        setOpen(!open);
+    };
     let navigate = useNavigate();
     let userId = localStorage.getItem('userid');
     const [userCodeLogs, setUserCodeLogs] = React.useState(null);
@@ -138,14 +152,37 @@ export default function Video(props) {
 
     async function runCode() {
         try {
-            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/run/compile`, {
-                question_id: questionID,
-                language: language,
-                content: code,
+            setRandomFun(getRandomInt(4));
+            handleToggle();
+            response = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/training/run/compile`,
+                data: {
+                    question_id: questionID,
+                    language: language,
+                    content: code,
+                },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
             });
+            handleClose();
+
+            if (response.data.code === 137) {
+                await Swal.fire({
+                    title: '錯誤代碼137',
+                    text: '可能是無窮迴圈、記憶體耗盡',
+                    icon: 'error',
+                    confirmButtonText: '再修改看看',
+                });
+                response['data']['answer_status'] = -1;
+            }
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            }
             console.log('run code response', response);
             setRunCodeResponse(response['data']);
-            if (response['data']['answer_status'] == -1) {
+            if (response['data']['answer_status'] === -1) {
                 setRunCodeResponseStatus('Fail');
             } else {
                 setRunCodeResponseStatus('Success');
@@ -163,7 +200,7 @@ export default function Video(props) {
             // 3.找到尚未完成的題目
             let notFinishedQuestion = profileQuestion.data.code.filter((e) => {
                 console.log('e', e);
-                return e.status == 0;
+                return e.status === 0;
             });
             console.log('3. 找到尚未完成題目', notFinishedQuestion);
             // 如果題目都完成了，跳轉到結果頁
@@ -336,6 +373,18 @@ export default function Video(props) {
                     >
                         跑看看
                     </Button>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
+                        <CircularProgress color="inherit" />
+                        <div className="loading-div">
+                            {loadingFunImg[randomFun] ? (
+                                <>
+                                    <img src={`${loadingFunImg[randomFun]}`} className="loading-image" /> <br />
+                                </>
+                            ) : null}
+
+                            <h2>{loadingFun[randomFun]}</h2>
+                        </div>
+                    </Backdrop>
                     <Button
                         endIcon={<StopCircleIcon />}
                         size="large"

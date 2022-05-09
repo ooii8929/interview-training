@@ -12,7 +12,7 @@ export default function RequireAuth({ Component }) {
             method: 'GET',
             credentials: 'same-origin',
             url: `${process.env.REACT_APP_BASE_URL}/user/profile`,
-            headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
+            headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
         });
     }
     getProfile();

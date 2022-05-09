@@ -208,6 +208,7 @@ const runCompile = async (req, res) => {
 
             try {
                 var { stdout, stderr } = await exec('./server/util/code-training/build-javascript-answer.sh');
+
                 formalAnswer = `${stdout}`;
             } catch (err) {
                 return res.status(200).send(err);
@@ -215,8 +216,11 @@ const runCompile = async (req, res) => {
 
             try {
                 var { stdout, stderr } = await exec('./server/util/code-training/build-javascript.sh');
+                console.log('stdout:', stdout);
+                console.log('stderr:', stdout);
                 ans = `${stdout}`;
             } catch (err) {
+                console.log('run compile err', err);
                 return res.status(200).send(err);
             }
 

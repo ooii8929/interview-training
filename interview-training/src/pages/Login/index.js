@@ -69,7 +69,7 @@ export default function SignUp() {
                     password: data.get('signPassword'),
                     provider: 'native',
                 },
-                headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
             });
 
             console.log('signInResponse', signInResponse);
