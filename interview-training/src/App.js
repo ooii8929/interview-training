@@ -39,40 +39,38 @@ function App() {
 
     React.useEffect((e) => {
         console.log('0. get user id by session storage', localStorage.getItem('userid'), localStorage.getItem('useremail'));
+        try {
+            async function getAvator() {
+                let getAvatorResult = await axios({
+                    withCredentials: true,
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
+                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+                });
+                console.log('getAvatorResult', getAvatorResult);
+                setAvatorResult(getAvatorResult);
+            }
 
-        async function getAvator() {
-            let getAvatorResult = await axios({
-                withCredentials: true,
-                method: 'GET',
-                credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile/avator`,
-                params: {
-                    user_id: localStorage.getItem('userid'),
-                    user_email: localStorage.getItem('useremail'),
-                    identity: localStorage.getItem('identity'),
-                },
-                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-            });
-            console.log('getAvatorResult', getAvatorResult);
-            setAvatorResult(getAvatorResult);
+            if (localStorage.getItem('userid')) {
+                getAvator();
+            }
+
+            if (!userId && localStorage.getItem('userid')) console.log('0. get user id by session storage run');
+            setUserId(localStorage.getItem('userid'));
+        } catch (error) {
+            console.log('get avator fail', error);
         }
-
-        if (localStorage.getItem('userid')) {
-            getAvator();
-        }
-
-        if (!userId && localStorage.getItem('userid')) console.log('0. get user id by session storage run');
-        setUserId(localStorage.getItem('userid'));
     }, []);
 
     React.useEffect(
         (e) => {
             if (avatorResult) {
                 if (localStorage.getItem('identity') === 'student') {
-                    setAvatorURL(avatorResult['data'][0][0]['picture']);
+                    setAvatorURL(avatorResult['data']['picture']);
                 }
                 if (localStorage.getItem('identity') === 'teacher') {
-                    setAvatorURL(avatorResult['data']['userProfile']['picture']);
+                    setAvatorURL(avatorResult['data']['picture']);
                 }
             }
         },
