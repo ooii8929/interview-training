@@ -18,15 +18,17 @@ let allTutors;
 function Tutor() {
     const { Constant } = useContext(AppContext);
 
+    const userID = localStorage.getItem('userid');
+    const userEmail = localStorage.getItem('useremail');
+    let userIdentity = localStorage.getItem('identity');
+
     const [profiles, setProfiles] = React.useState(null);
     const [appointments, setAppointments] = React.useState('');
     const [allTraining, setAllTraining] = React.useState('');
     const [allTutorRecords, setAllTutorRecords] = React.useState('');
 
     const [time, setTime] = React.useState(null);
-    const userID = localStorage.getItem('userid');
-    const userEmail = localStorage.getItem('useremail');
-    let userIdentity = '';
+
     const [file, setFile] = React.useState();
     const [fileContent, setFileContent] = React.useState();
     const [fileType, setFileType] = React.useState();
@@ -70,19 +72,8 @@ function Tutor() {
     }
 
     React.useEffect(() => {
-        // let nowUserId = localStorage.getItem('userid');
-        // userIdentity = localStorage.getItem('identity');
-        // if (!nowUserId) {
-        //     alert('你需要先登入');
-        //     localStorage.setItem('returnPage', location.pathname);
-        //     return <Navigate to="/login" />;
-        // }
         async function init() {
             await getProfile();
-            // if (userIdentity === 'student') {
-            //     getTraining();
-            //     getUserAppointments();
-            // }
         }
         init();
     }, []);
@@ -246,7 +237,12 @@ function Tutor() {
                                   console.log('====================================');
                                   return (
                                       <Grid item xs={4} key={index} className="account-box-grid-self">
-                                          <ArrangeTime key={index} time={arrange['available_time']} create={arrange['create_dt']} />
+                                          <ArrangeTime
+                                              key={index}
+                                              student={arrange['name']}
+                                              time={arrange['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                              create={arrange['create_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                          />
                                       </Grid>
                                   );
                               })

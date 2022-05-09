@@ -26,13 +26,11 @@ function App() {
     // console.log('Constant', Constant);
 
     const [profileQuestion, setProfileQuestion] = React.useState('');
-    const jobType = localStorage.getItem('jobType');
     const [userId, setUserId] = React.useState('');
     const [avatorURL, setAvatorURL] = React.useState('');
 
     const appContextValue = {
         userId,
-        jobType,
         profileQuestion,
         setProfileQuestion,
         setUserId,
@@ -55,6 +53,7 @@ function App() {
                 },
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
+            console.log('getAvatorResult', getAvatorResult);
             if (localStorage.getItem('identity') === 'student') {
                 setAvatorURL(getAvatorResult['data'][0][0]['picture']);
             }

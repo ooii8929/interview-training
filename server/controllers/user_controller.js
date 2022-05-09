@@ -243,6 +243,7 @@ const getUserPureProfile = async (req, res) => {
         if (identity == 'student') {
             userProfile = await User.getUserPureProfile(user_id, user_email);
         }
+        console.log('userProfile', userProfile);
         return res.status(200).send(userProfile);
     } catch (error) {
         return res.status(400).send({ error: error });

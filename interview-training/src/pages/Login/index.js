@@ -42,6 +42,7 @@ export default function SignUp() {
 
     const handleSignChange = (event: SelectChangeEvent) => {
         setSignIdentify(event.target.value);
+        localStorage.setItem('identity', event.target.value);
     };
 
     async function signIn(e) {
@@ -50,7 +51,7 @@ export default function SignUp() {
 
         console.log('user sign in', data.get('signIdentity'));
         if (!data.get('signIdentity')) {
-            Swal.fire({
+            await Swal.fire({
                 title: '請選擇身份!',
                 icon: 'error',
                 confirmButtonText: '再試一次',
@@ -74,7 +75,7 @@ export default function SignUp() {
 
             console.log('signInResponse', signInResponse);
             //cookies.set('connect.sid', '2');
-            Swal.fire({
+            await Swal.fire({
                 title: 'Success Login!',
                 text: '歡迎回來',
                 icon: 'success',
@@ -83,7 +84,6 @@ export default function SignUp() {
             localStorage.setItem('userid', signInResponse.data.id);
             localStorage.setItem('username', signInResponse.data.name);
             localStorage.setItem('useremail', signInResponse.data.email);
-            localStorage.setItem('identity', identity || 'student');
 
             if (localStorage.getItem('returnPage')) {
                 let returnPageURL = localStorage.getItem('returnPage');
@@ -93,7 +93,7 @@ export default function SignUp() {
                 window.location.href = '/account';
             }
         } catch (error) {
-            Swal.fire({
+            await Swal.fire({
                 title: 'Wrong password!',
                 text: '再試看看！會不會是生日？',
                 icon: 'error',
@@ -136,8 +136,8 @@ export default function SignUp() {
             localStorage.setItem('userid', updateResult.data.data.user.id);
             localStorage.setItem('username', updateResult.data.data.user.name);
             localStorage.setItem('useremail', updateResult.data.data.user.email);
-            localStorage.setItem('identity', identity);
-            Swal.fire({
+            // localStorage.setItem('identity', identity);
+            await Swal.fire({
                 title: 'Success Register!',
                 text: '歡迎回來',
                 icon: 'success',
@@ -155,37 +155,37 @@ export default function SignUp() {
         }
     };
 
-    async function register(e) {
-        try {
-            let signInResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/signup`, {
-                data: {
-                    name: name,
-                    identity: identity,
-                    email: registerEmail,
-                    password: registerPassword,
-                    provider: 'native',
-                },
-            });
-            console.log(name, identity, registerEmail, registerPassword);
+    // async function register(e) {
+    //     try {
+    //         let signInResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/signup`, {
+    //             data: {
+    //                 name: name,
+    //                 identity: identity,
+    //                 email: registerEmail,
+    //                 password: registerPassword,
+    //                 provider: 'native',
+    //             },
+    //         });
+    //         console.log(name, identity, registerEmail, registerPassword);
 
-            localStorage.setItem('userid', signInResponse.data.data.user.id);
-            localStorage.setItem('username', signInResponse.data.data.user.name);
-            localStorage.setItem('useremail', signInResponse.data.data.user.email);
-            localStorage.setItem('identity', identity);
+    //         localStorage.setItem('userid', signInResponse.data.data.user.id);
+    //         localStorage.setItem('username', signInResponse.data.data.user.name);
+    //         localStorage.setItem('useremail', signInResponse.data.data.user.email);
+    //         localStorage.setItem('identity', identity);
 
-            alert('success register');
-            if (localStorage.getItem('returnPage')) {
-                let returnPageURL = localStorage.getItem('returnPage');
-                localStorage.removeItem('returnPage');
-                window.location.href = returnPageURL;
-            } else {
-                window.location.href = '/account';
-            }
-        } catch (error) {
-            console.log('error', error.response);
-            alert(error.response.data.error);
-        }
-    }
+    //         alert('success register');
+    //         if (localStorage.getItem('returnPage')) {
+    //             let returnPageURL = localStorage.getItem('returnPage');
+    //             localStorage.removeItem('returnPage');
+    //             window.location.href = returnPageURL;
+    //         } else {
+    //             window.location.href = '/account';
+    //         }
+    //     } catch (error) {
+    //         console.log('error', error.response);
+    //         alert(error.response.data.error);
+    //     }
+    // }
 
     return (
         <>

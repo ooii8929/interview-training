@@ -112,15 +112,15 @@ const getTeacherProfile = async (teacherID, userEmail) => {
     try {
         await conn.query('START TRANSACTION');
 
-        // get all professions
+        // get all teacher profile
         const queryTeacherProfile = 'SELECT * FROM teachers WHERE email = ?';
         const [teacherProfileResult] = await conn.query(queryTeacherProfile, [userEmail]);
         let teacherProfileCombine = { userProfile: teacherProfileResult[0] };
 
-        // get all professions
-        const queryUserAppointments = 'SELECT * FROM appointments WHERE teacher_time_id = ?';
+        // get all appointments
+        const queryUserAppointments =
+            'SELECT * FROM appointments ap INNER JOIN teachers_time tt ON tt.id=ap.teacher_time_id INNER JOIN users ON users.id=ap.user_id WHERE tt.t_id = ?';
         const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [teacherID]);
-
         teacherProfileCombine.appointments = userProfileResultAppointments;
         await conn.query('COMMIT');
 
