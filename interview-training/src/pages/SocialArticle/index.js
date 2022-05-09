@@ -34,7 +34,7 @@ export default function SocialArticle() {
     const tringleBad = useRef(null);
     const [articles, setArticles] = React.useState(null);
     const [articleInfo, setArticleInfo] = React.useState(null);
-    const baseURL = `${process.env.REACT_APP_BASE_URL}/article/id`;
+    const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/id`;
     const jobType = localStorage.getItem('jobType');
     const userId = localStorage.getItem('userid');
     const userName = localStorage.getItem('username');
@@ -54,7 +54,7 @@ export default function SocialArticle() {
         };
 
         try {
-            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/article/good`, postDetail);
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/good`, postDetail);
             e.target.classList.add('good-clicked');
             tringleBad.current.classList.remove('good-clicked');
             setGoods((prev) => prev + 1);
@@ -72,7 +72,7 @@ export default function SocialArticle() {
             article_id: id,
         };
         try {
-            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/article/bad`, postDetail);
+            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/bad`, postDetail);
             console.log('e', e.target);
             e.target.classList.remove('good-clicked');
             tringleGood.current.classList.remove('good-clicked');
@@ -119,7 +119,7 @@ export default function SocialArticle() {
         (e) => {
             async function getArticles() {
                 try {
-                    let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/article`, {
+                    let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article`, {
                         params: {
                             profession: language,
                         },
@@ -176,7 +176,7 @@ export default function SocialArticle() {
                 withCredentials: true,
                 method: 'POST',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/article/comment`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/comment`,
                 data: {
                     user_id: userId,
                     user_name: userName,

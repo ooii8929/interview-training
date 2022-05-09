@@ -47,7 +47,7 @@ function App() {
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/user/profile/avator`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile/avator`,
                 params: {
                     user_id: localStorage.getItem('userid'),
                     user_email: localStorage.getItem('useremail'),

@@ -67,7 +67,7 @@ export default function Video(props) {
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/training/profile/questions`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/questions`,
                 params: {
                     profession: jobType || 'backend',
                     userID: userId,
@@ -104,7 +104,7 @@ export default function Video(props) {
     }, [language]);
 
     async function getUserCodeLog(questionID) {
-        let codeLog = await axios.get(`${process.env.REACT_APP_BASE_URL}/user/code/log`, {
+        let codeLog = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/code/log`, {
             params: {
                 question_id: questionID,
                 user_id: userId,
@@ -114,7 +114,7 @@ export default function Video(props) {
     }
     // submit answer
     async function submitAnswer(e) {
-        response = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/submit/compile/`, {
+        response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/submit/compile/`, {
             user_id: userId,
             question_id: profileQuestion.data._id,
             qid: nowQuestionNumber,
@@ -123,7 +123,7 @@ export default function Video(props) {
         });
         console.log('submitAnswer response', response);
         setRunCodeResponse(response['data']);
-        if (response['data']['answer_status'] == -1) {
+        if (response['data']['answer_status'] === -1) {
             await Swal.fire({
                 title: '答錯了拉...',
                 text: '再想一下，想清楚，好嗎？',
@@ -158,13 +158,13 @@ export default function Video(props) {
                 withCredentials: true,
                 method: 'POST',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/training/run/compile`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/run/compile`,
                 data: {
                     question_id: questionID,
                     language: language,
                     content: code,
                 },
-                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
             handleClose();
 
@@ -206,7 +206,7 @@ export default function Video(props) {
             // 如果題目都完成了，跳轉到結果頁
             if (notFinishedQuestion.length === 0) {
                 // 發送答題結束的req
-                let endQuestionResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/training/end`, {
+                let endQuestionResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/end`, {
                     user_id: userId,
                     question_id: profileQuestion.data._id,
                 });
@@ -264,7 +264,7 @@ export default function Video(props) {
 
     async function shareAnswer(n) {
         try {
-            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/article/code`, {
+            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`, {
                 user_id: userId,
                 question_id: questionID,
                 code: code,

@@ -41,7 +41,7 @@ function Tutor() {
     }
 
     async function updateAvator() {
-        let getAvatorURL = await axios.get(`${process.env.REACT_APP_BASE_URL}/user/avator`, {
+        let getAvatorURL = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, {
             params: {
                 file_name: fileName,
                 file_type: fileType,
@@ -64,7 +64,7 @@ function Tutor() {
 
         console.log('data', data);
 
-        let updateAvator = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/avator`, data);
+        let updateAvator = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, data);
 
         console.log('updateAvator', updateAvator);
     }
@@ -95,13 +95,13 @@ function Tutor() {
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/user/profile`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
                 params: {
                     userID: userID,
                     userEmail: userEmail,
                     identity: userIdentity,
                 },
-                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
 
             console.log('1. get profile', profile);
@@ -130,7 +130,7 @@ function Tutor() {
     //TODO: Get user profile
     async function getUserAppointments() {
         try {
-            let responseAppoint = await axios.get(`${process.env.REACT_APP_BASE_URL}/tutor/user/appoint`, {
+            let responseAppoint = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/user/appoint`, {
                 params: {
                     userID: userID,
                 },
@@ -146,7 +146,7 @@ function Tutor() {
 
     async function getTraining() {
         try {
-            let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/training`, {
+            let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training`, {
                 params: {
                     user_id: userID,
                 },
@@ -164,7 +164,7 @@ function Tutor() {
 
     async function getTeacherTrainingRecords() {
         try {
-            let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/training/records`, {
+            let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/records`, {
                 params: {
                     user_id: userID,
                     identity: userIdentity,

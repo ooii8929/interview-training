@@ -10,7 +10,7 @@ export default function Logout() {
             await axios({
                 withCredential: true,
                 method: 'POST',
-                url: `${process.env.REACT_APP_BASE_URL}/user/logout`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/logout`,
             });
             localStorage.removeItem('userid');
             localStorage.removeItem('username');

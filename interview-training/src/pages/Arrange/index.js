@@ -72,7 +72,7 @@ export default function Arrange() {
             profession: data.get('profession'),
         };
         try {
-            let updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/tutor/teacher/information`, teacherInfo);
+            let updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/teacher/information`, teacherInfo);
             console.log('update result', updateResult);
         } catch (error) {
             console.log('update error', error);
@@ -105,7 +105,7 @@ export default function Arrange() {
         }
 
         try {
-            let updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/tutor/teacher/schedule`, scheduleInfo);
+            let updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/teacher/schedule`, scheduleInfo);
             console.log('update result', updateResult);
         } catch (error) {
             console.log('update error', error);

@@ -62,14 +62,14 @@ export default function SignUp() {
                 withCredentials: true,
                 method: 'POST',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/user/login`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/login`,
                 data: {
                     identity: data.get('signIdentity'),
                     email: data.get('signEmail'),
                     password: data.get('signPassword'),
                     provider: 'native',
                 },
-                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_BASE_URL}`, 'Content-Type': 'application/json' },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
 
             console.log('signInResponse', signInResponse);
@@ -128,9 +128,9 @@ export default function SignUp() {
         try {
             let updateResult;
             if (data.get('identity') === 'teacher') {
-                updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/teacher/signup`, registerInfo);
+                updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/teacher/signup`, registerInfo);
             } else if (data.get('identity') === 'student') {
-                updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/signup`, registerInfo);
+                updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);
             localStorage.setItem('userid', updateResult.data.data.user.id);
@@ -157,7 +157,7 @@ export default function SignUp() {
 
     async function register(e) {
         try {
-            let signInResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/signup`, {
+            let signInResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/signup`, {
                 data: {
                     name: name,
                     identity: identity,

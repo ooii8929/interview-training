@@ -27,7 +27,7 @@ export default function Prepare() {
                         withCredentials: true,
                         method: 'GET',
                         credentials: 'same-origin',
-                        url: `${process.env.REACT_APP_BASE_URL}/training/profile/questions`,
+                        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/questions`,
                         params: {
                             profession: jobType || 'backend',
                         },

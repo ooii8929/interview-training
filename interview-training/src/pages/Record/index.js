@@ -21,7 +21,7 @@ export default function SocialArticle() {
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/training/video/questions`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/video/questions`,
                 params: {
                     profession: jobType || 'backend',
                 },
