@@ -103,14 +103,14 @@ export default function SignUp() {
     }
     React.useEffect(
         (e) => {
-            console.log('userId', userId);
-            if (userId) {
-                if (localStorage.getItem('returnPage')) {
-                    let returnPageURL = localStorage.getItem('returnPage');
-                    localStorage.removeItem('returnPage');
-                    return navigate(returnPageURL);
-                }
-            }
+            // console.log('userId', userId);
+            // if (userId) {
+            //     if (localStorage.getItem('returnPage')) {
+            //         let returnPageURL = localStorage.getItem('returnPage');
+            //         localStorage.removeItem('returnPage');
+            //         return navigate(returnPageURL);
+            //     }
+            // }
         },
         [userId]
     );

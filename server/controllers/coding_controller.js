@@ -184,6 +184,9 @@ const runCompile = async (req, res) => {
     const { content, question_id, language } = req.body;
     console.log('runCompile', content, question_id, language);
     let answer = await Answer.getQuestionAnswer(question_id);
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
 
     let formalAnswer;
     try {
@@ -192,37 +195,60 @@ const runCompile = async (req, res) => {
             let contenta = content + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
             let formalAnswerContent = answer['formal_answer'] + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
-            await fs.writeFile('./server/util/code-training/answer.js', formalAnswerContent, (err) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-            });
+            let specificNumber = getRandomInt(230240210412051);
 
-            await fs.writeFile('./server/util/code-training/test.js', contenta, (err) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-            });
+            /*--- Run Formal Answer ---*/
+
+            var writeAnswerStream = await fs.createWriteStream(`./server/util/code-training/${specificNumber}-answer.js`);
+            await writeAnswerStream.write(formalAnswerContent);
+            await writeAnswerStream.end();
 
             try {
-                var { stdout, stderr } = await exec('./server/util/code-training/build-javascript-answer.sh');
+                var { stdout, stderr } = await exec(`./server/util/code-training/build-javascript-answer.sh ${specificNumber}-answer.js`, {
+                    shell: '/bin/bash',
+                });
 
                 formalAnswer = `${stdout}`;
+                await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
+                    if (err) console.log(err);
+                });
             } catch (err) {
                 return res.status(200).send(err);
             }
 
+            // await fs.writeFile('./server/util/code-training/answer.js', formalAnswerContent, (err) => {
+            //     if (err) {
+            //         console.error(err);
+            //         return;
+            //     }
+            // });
+
+            /*--- Run User Answer ---*/
+
+            var writeQuestionStream = await fs.createWriteStream(`./server/util/code-training/${specificNumber}-question.js`);
+            await writeQuestionStream.write(contenta);
+            await writeAnswerStream.end();
+
             try {
-                var { stdout, stderr } = await exec('./server/util/code-training/build-javascript.sh');
-                console.log('stdout:', stdout);
-                console.log('stderr:', stdout);
+                var { stdout, stderr } = await exec(`./server/util/code-training/build-javascript.sh ${specificNumber}-question.js`, {
+                    shell: '/bin/bash',
+                });
+
                 ans = `${stdout}`;
+                await fs.unlink(`./server/util/code-training/${specificNumber}-question.js`, (err) => {
+                    if (err) console.log(err);
+                });
             } catch (err) {
                 console.log('run compile err', err);
                 return res.status(200).send(err);
             }
+
+            // await fs.writeFile('./server/util/code-training/test.js', contenta, (err) => {
+            //     if (err) {
+            //         console.error(err);
+            //         return;
+            //     }
+            // });
 
             if (formalAnswer == ans) {
                 let reply = {
