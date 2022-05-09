@@ -28,7 +28,7 @@ function App() {
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const [userId, setUserId] = React.useState('');
     const [avatorURL, setAvatorURL] = React.useState('');
-
+    const [avatorResult, setAvatorResult] = React.useState('');
     const appContextValue = {
         userId,
         profileQuestion,
@@ -54,12 +54,7 @@ function App() {
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
             console.log('getAvatorResult', getAvatorResult);
-            if (localStorage.getItem('identity') === 'student') {
-                setAvatorURL(getAvatorResult['data'][0][0]['picture']);
-            }
-            if (localStorage.getItem('identity') === 'teacher') {
-                setAvatorURL(getAvatorResult['data']['userProfile']['picture']);
-            }
+            setAvatorResult(getAvatorResult);
         }
 
         if (localStorage.getItem('userid')) {
@@ -69,6 +64,20 @@ function App() {
         if (!userId && localStorage.getItem('userid')) console.log('0. get user id by session storage run');
         setUserId(localStorage.getItem('userid'));
     }, []);
+
+    React.useEffect(
+        (e) => {
+            if (avatorResult) {
+                if (localStorage.getItem('identity') === 'student') {
+                    setAvatorURL(avatorResult['data'][0][0]['picture']);
+                }
+                if (localStorage.getItem('identity') === 'teacher') {
+                    setAvatorURL(avatorResult['data']['userProfile']['picture']);
+                }
+            }
+        },
+        [avatorResult]
+    );
 
     React.useEffect(
         (e) => {
