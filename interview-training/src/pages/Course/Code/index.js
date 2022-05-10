@@ -115,6 +115,11 @@ export default function Video(props) {
     }
     // submit answer
     async function submitAnswer(e) {
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+        setRandomFun(getRandomInt(4));
+        handleToggle();
         response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/submit/compile/`, {
             user_id: userId,
             question_id: profileQuestion.data._id,
@@ -122,6 +127,7 @@ export default function Video(props) {
             content: code,
             language: language,
         });
+        handleClose();
         console.log('submitAnswer response', response);
         setRunCodeResponse(response['data']);
         if (response['data']['answer_status'] === -1) {
