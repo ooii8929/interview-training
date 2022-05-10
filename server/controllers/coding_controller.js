@@ -209,8 +209,8 @@ const runCompile = async (req, res) => {
     try {
         // condition language
         if (language == 'javascript') {
-            let contenta = content + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
-            let formalAnswerContent = answer['formal_answer'] + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
+            let contenta = content + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
+            let formalAnswerContent = answer['formal_answer'] + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
             let specificNumber = getRandomInt(230240210412051);
 
@@ -224,7 +224,6 @@ const runCompile = async (req, res) => {
                 var { stdout, stderr } = await exec(`./server/util/code-training/build-javascript-answer.sh ${specificNumber}-answer.js`, {
                     shell: '/bin/bash',
                 });
-
                 formalAnswer = `${stdout}`;
                 await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
                     if (err) console.log(err);
@@ -492,6 +491,7 @@ async function submitVideoAnswerCheck(req, res) {
     const { user_id, question_id, qid, checked } = req.body;
     console.log('submitVideoAnswer', user_id, question_id, qid, checked);
     let afterSubmit = await Answer.submitVideoAnswerCheck(user_id, question_id, qid, checked);
+
     return res.status(200).send(afterSubmit);
 }
 

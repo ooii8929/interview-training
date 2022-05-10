@@ -7,6 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { Grid, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import './main.scss';
 export default function VideoCheck(props) {
@@ -23,7 +24,7 @@ export default function VideoCheck(props) {
                 tmpChecked.push(props.check[i]);
             }
         }
-        console.log(tmpChecked);
+
         let tmpProfile = props.profileQuestion;
         await handleSave();
         await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/video/answer/check`, {
@@ -32,12 +33,20 @@ export default function VideoCheck(props) {
             qid: props.nowQuestionNumber,
             checked: tmpChecked,
         });
+
         tmpProfile.data.video.filter((e) => {
             console.log('e', e);
             if (e.qid === props.nowQuestionNumber) {
                 e.status = 1;
             }
         });
+
+        await Swal.fire({
+            title: '已提交完成!',
+            icon: 'success',
+            confirmButtonText: '前往下一題',
+        });
+
         console.log('tmpProfile after change status', tmpProfile);
         navigate(0);
     }
