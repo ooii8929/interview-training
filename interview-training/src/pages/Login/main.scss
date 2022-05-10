@@ -7,3 +7,28 @@
     width: 100%;
 margin-left: 4% !important;
 }
+
+.toggle-login{
+    width: 20% !important;
+    
+}
+
+.login-page-container{
+    display: flex !important;
+    justify-content: center  !important;
+    flex-direction: column  !important;
+    padding-top: 3%  !important;
+    .MuiToggleButton-root{
+        background-color: #fff !important;
+        padding: 3% 8% !important;
+    }
+    .css-mhc70k-MuiGrid-root>.MuiGrid-item{
+    padding-left: 0% !important;
+}
+}
+
+
+.login-page-container .Mui-selected{
+    background-color: #0d6efd !important;
+    color: #fff !important;
+}

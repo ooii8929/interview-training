@@ -1,4 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-import './main.scss';
+
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -18,30 +19,19 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Cookies from 'universal-cookie';
-import Toggle from './Toggle';
 
 const theme = createTheme();
 
-export default function SignUp() {
+export default function RegisterForm(props) {
     const cookies = new Cookies();
     let navigate = useNavigate();
+
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [registerEmail, setRegisterEmail] = React.useState('');
     const [registerPassword, setRegisterPassword] = React.useState('');
-    const [identity, setIdentify] = React.useState('');
-    const [signIdentity, setSignIdentify] = React.useState('');
 
     const [name, setName] = React.useState('');
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setIdentify(event.target.value);
-    };
-
-    const handleSignChange = (event: SelectChangeEvent) => {
-        setSignIdentify(event.target.value);
-        localStorage.setItem('identity', event.target.value);
-    };
 
     async function signIn(e) {
         e.preventDefault();
@@ -63,7 +53,7 @@ export default function SignUp() {
                 credentials: 'same-origin',
                 url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/login`,
                 data: {
-                    identity: data.get('signIdentity'),
+                    identity: props.identity,
                     email: data.get('signEmail'),
                     password: data.get('signPassword'),
                     provider: 'native',
@@ -79,7 +69,7 @@ export default function SignUp() {
                 icon: 'success',
                 confirmButtonText: 'Cool',
             });
-            localStorage.setItem('userid', signInResponse.data.id);
+            localStorage.setItem('props.userID', signInResponse.data.id);
             localStorage.setItem('username', signInResponse.data.name);
             localStorage.setItem('useremail', signInResponse.data.email);
 
@@ -105,7 +95,7 @@ export default function SignUp() {
         const data = new FormData(event.currentTarget);
         console.log('data', data);
         let registerInfo = {
-            identity: data.get('identity'),
+            identity: props.identity,
             name: data.get('name'),
             email: data.get('registerEmail'),
             password: data.get('registerPassword'),
@@ -113,16 +103,16 @@ export default function SignUp() {
         };
         try {
             let updateResult;
-            if (data.get('identity') === 'teacher') {
+            if (data.get('props.identity') === 'teacher') {
                 updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/teacher/signup`, registerInfo);
-            } else if (data.get('identity') === 'student') {
+            } else if (data.get('props.identity') === 'student') {
                 updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/signup`, registerInfo);
             }
             console.log('update result', updateResult);
-            localStorage.setItem('userid', updateResult.data.data.user.id);
+            localStorage.setItem('props.userID', updateResult.data.data.user.id);
             localStorage.setItem('username', updateResult.data.data.user.name);
             localStorage.setItem('useremail', updateResult.data.data.user.email);
-            // localStorage.setItem('identity', identity);
+            // localStorage.setItem('props.identity', props.identity);
             await Swal.fire({
                 title: 'Success Register!',
                 text: '歡迎回來',
@@ -146,18 +136,18 @@ export default function SignUp() {
     //         let signInResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/signup`, {
     //             data: {
     //                 name: name,
-    //                 identity: identity,
+    //                 props.identity: props.identity,
     //                 email: registerEmail,
     //                 password: registerPassword,
     //                 provider: 'native',
     //             },
     //         });
-    //         console.log(name, identity, registerEmail, registerPassword);
+    //         console.log(name, props.identity, registerEmail, registerPassword);
 
-    //         localStorage.setItem('userid', signInResponse.data.data.user.id);
+    //         localStorage.setItem('props.userID', signInResponse.data.data.user.id);
     //         localStorage.setItem('username', signInResponse.data.data.user.name);
     //         localStorage.setItem('useremail', signInResponse.data.data.user.email);
-    //         localStorage.setItem('identity', identity);
+    //         localStorage.setItem('props.identity', props.identity);
 
     //         alert('success register');
     //         if (localStorage.getItem('returnPage')) {
@@ -174,8 +164,75 @@ export default function SignUp() {
     // }
 
     return (
-        <div className="login-page-container">
-            <Toggle></Toggle>
-        </div>
+        <>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Register
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    label="Name"
+                                    name="name"
+                                    value={name}
+                                    autoComplete="name"
+                                    onInput={(e) => {
+                                        setName(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="registerEmail"
+                                    label="Email Address"
+                                    name="registerEmail"
+                                    value={registerEmail}
+                                    autoComplete="registerEmail"
+                                    onInput={(e) => {
+                                        setRegisterEmail(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="registerPassword"
+                                    label="registerPassword"
+                                    type="password"
+                                    value={registerPassword}
+                                    id="registerPassword"
+                                    autoComplete="registerPassword"
+                                    onInput={(e) => {
+                                        setRegisterPassword(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                            Register
+                        </Button>
+                    </Box>
+                </Box>
+            </Container>
+        </>
     );
 }
