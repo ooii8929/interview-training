@@ -16,7 +16,7 @@ export default function Introduce(props) {
     let jobType = localStorage.getItem('jobtype');
     return (
         <Row className="prepare-intro">
-            <Col xs="5">
+            <Col xs="5" className="prepare-intro-left">
                 <Lottie animationData={TeacherLottie} />
             </Col>
             <Col xs="6" className="introduce-container">

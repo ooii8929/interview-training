@@ -45,6 +45,7 @@ export default function SocialArticle() {
     const [language, setLanguage] = React.useState(null);
     const [isGood, setIsGood] = React.useState(false);
     const [authorPicture, setAuthorPicture] = React.useState('');
+    const [comments, setComments] = React.useState('');
     const location = useLocation();
 
     // get article info by id
@@ -56,6 +57,7 @@ export default function SocialArticle() {
                         article_id: id,
                     },
                 });
+                console.log('tmpArticleInfo', tmpArticleInfo);
                 setGoods(tmpArticleInfo['data'][0]['goods'].length);
                 let goodsClickedUser = tmpArticleInfo['data'][0]['goods'].filter(function (e) {
                     return e === userId;
@@ -85,6 +87,9 @@ export default function SocialArticle() {
     );
 
     async function postGood(e) {
+        if (tringleGood.current.disable === true) {
+            return;
+        }
         let postDetail = {
             user_id: userId,
             article_id: id,
@@ -191,6 +196,20 @@ export default function SocialArticle() {
                 },
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
+
+            console.log('postCommentResult', postCommentResult);
+
+            let tmpArticleInfo = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: baseURL,
+                params: {
+                    article_id: id,
+                },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
+            setArticleInfo(tmpArticleInfo['data'][0]);
         } catch (error) {
             console.log('error', error);
             await Swal.fire({
@@ -202,19 +221,6 @@ export default function SocialArticle() {
             localStorage.setItem('returnPage', location.pathname);
             navigate('/login');
         }
-
-        let tmpArticleInfo = await axios({
-            withCredentials: true,
-            method: 'GET',
-            credentials: 'same-origin',
-            url: baseURL,
-            params: {
-                article_id: id,
-            },
-            headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-        });
-
-        //  setArticleInfo(tmpArticleInfo['data'][0]);
     }
 
     return (
