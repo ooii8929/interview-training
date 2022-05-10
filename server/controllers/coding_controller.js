@@ -21,8 +21,8 @@ const submitCompile = async (req, res) => {
 
     if (language == 'javascript') {
         console.log('answer', answer);
-        let contenta = content + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
-        let formalAnswerContent = answer['formal_answer'] + `console.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
+        let contenta = content + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
+        let formalAnswerContent = answer['formal_answer'] + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
         let specificNumber = getRandomInt(230240210412051);
 
