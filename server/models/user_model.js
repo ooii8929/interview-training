@@ -134,21 +134,89 @@ const getTeacherProfile = async (teacherID, userEmail) => {
     }
 };
 
-const signUp = async (identity, name, email, password) => {
+const signUpToTeacher = async (name, email, password, experience1, experience2, experience3, introduce, profession) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
-        let emails;
-        // if student
-        if (identity == 'student') {
-            emails = await conn.query('SELECT email FROM users WHERE email = ? FOR UPDATE', [email]);
+        // check teacher exist
+        let [findTeacherByEmail] = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
+
+        console.log('findTeacherByEmail', findTeacherByEmail);
+
+        if (findTeacherByEmail.length > 0) {
+            await conn.query('COMMIT');
+            return { error: 'Email Already Exists' };
         }
 
-        // if teacher
-        if (identity == 'teacher') {
-            emails = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
-        }
+        // argon2 hash
+        const hash = await argon2.hash(password);
+
+        const user = {
+            provider: 'native',
+            email: email,
+            password: hash,
+            name: name,
+            picture: null,
+            experience1: experience1,
+            experience2: experience2,
+            experience3: experience3,
+            introduce: introduce,
+        };
+
+        // insert into teachers table
+
+        const queryStr = 'INSERT INTO teachers SET ?';
+        const [teacherResult] = await conn.query(queryStr, user);
+        console.log(typeof profession);
+        console.log([teacherResult['insertId'], profession.replace("'", '').split(',')]);
+        // insert profession and teacher
+        const queryInsertProfession = `INSERT INTO teachers_professions (profession_id,teacher_id)
+        SELECT id,?
+        FROM professions
+        WHERE profession IN (?)`;
+        const [professionResult] = await conn.query(queryInsertProfession, [teacherResult['insertId'], profession.replace("'", '').split(',')]);
+
+        // // get all professions
+        // const queryProfessions = 'SELECT * FROM professions WHERE profession IN (?)';
+        // const [professionsResult] = await conn.query(queryProfessions, [profession]);
+
+        // const allInsertTeacherProfession = [];
+
+        // console.log('professionsResult', professionsResult);
+
+        // professionsResult.forEach((e) => {
+        //     const insertTeacherProfession = [];
+        //     insertTeacherProfession.push(teacherResult.insertId);
+        //     insertTeacherProfession.push(e.id);
+        //     allInsertTeacherProfession.push(insertTeacherProfession);
+        // });
+
+        // console.log('allInsertTeacherProfession', allInsertTeacherProfession);
+
+        // // get all professions
+        // const insertTandP = 'INSERT INTO teachers_professions (teacher_id, profession_id) VALUES ?';
+        // const [insertTeacherProfessionResult] = await conn.query(insertTandP, [allInsertTeacherProfession]);
+
+        // user.id = teacherResult.insertId;
+
+        await conn.query('COMMIT');
+        return { user };
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error };
+    } finally {
+        await conn.release();
+    }
+};
+
+const signUpToStudent = async (name, email, password) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        let emails = await conn.query('SELECT email FROM users WHERE email = ? FOR UPDATE', [email]);
 
         console.log('emails', emails);
 
@@ -169,42 +237,10 @@ const signUp = async (identity, name, email, password) => {
             picture: null,
         };
 
-        // if student
-        if (identity == 'student') {
-            const queryStr = 'INSERT INTO users SET ?';
-            const [result] = await conn.query(queryStr, user);
+        const queryStr = 'INSERT INTO users SET ?';
+        const [result] = await conn.query(queryStr, user);
 
-            user.id = result.insertId;
-        }
-
-        // if teacher
-        if (identity == 'teacher') {
-            const queryStr = 'INSERT INTO teachers SET ?';
-            const [teacherResult] = await conn.query(queryStr, user);
-
-            // get all professions
-            const queryProfessions = 'SELECT * FROM professions WHERE profession IN (?)';
-            const [professionsResult] = await conn.query(queryProfessions, [profession]);
-
-            const allInsertTeacherProfession = [];
-
-            console.log('professionsResult', professionsResult);
-
-            professionsResult.forEach((e) => {
-                const insertTeacherProfession = [];
-                insertTeacherProfession.push(teacherResult.insertId);
-                insertTeacherProfession.push(e.id);
-                allInsertTeacherProfession.push(insertTeacherProfession);
-            });
-
-            console.log('allInsertTeacherProfession', allInsertTeacherProfession);
-
-            // get all professions
-            const insertTandP = 'INSERT INTO teachers_professions (teacher_id, profession_id) VALUES ?';
-            const [insertTeacherProfessionResult] = await conn.query(insertTandP, [allInsertTeacherProfession]);
-
-            user.id = teacherResult.insertId;
-        }
+        user.id = result.insertId;
 
         await conn.query('COMMIT');
         return { user };
@@ -379,7 +415,8 @@ const getUsersProfileByUserID = async (userID) => {
 };
 
 module.exports = {
-    signUp,
+    signUpToStudent,
+    signUpToTeacher,
     nativeSignIn,
     facebookSignIn,
     teacherSignUp,

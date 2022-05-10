@@ -50,6 +50,7 @@ export default function CourseResult() {
         }
         getVideoQuestions();
     }, []);
+
     React.useEffect(
         (e) => {
             if (!codeSuccess) {

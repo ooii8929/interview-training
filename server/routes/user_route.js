@@ -10,15 +10,12 @@ const {
     insertUserProfile,
     getUserPureProfile,
     getUserCodeLog,
-    teacherSignUp,
     updateAvator,
     signCheck,
     getAvatorURL,
 } = require('../controllers/user_controller');
 
-router.route('/user/signup').post(wrapAsync(signUp));
-
-router.route('/teacher/signup').post(wrapAsync(teacherSignUp));
+router.route('/signup').post(wrapAsync(signUp));
 
 router.route('/user/login').post(wrapAsync(signIn));
 
