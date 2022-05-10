@@ -35,7 +35,7 @@ export default function CourseResult() {
                     question_id: questionID,
                 },
             });
-
+            console.log('response[]', response['data']);
             if (response['data'].length === 0) {
                 await Swal.fire({
                     title: '尚未完成作答!別偷作弊',
@@ -53,6 +53,7 @@ export default function CourseResult() {
     React.useEffect(
         (e) => {
             if (!codeSuccess) {
+                console.log('profileQuestion', profileQuestion);
                 if (profileQuestion) {
                     // calculate score
                     // code

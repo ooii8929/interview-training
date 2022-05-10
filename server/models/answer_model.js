@@ -123,13 +123,14 @@ const insertCodeAnswer = async (userID, question_id, code_answer, content) => {
 
 const submitCodeAnswer = async (user_id, question_id, qid, language, code_answer, content) => {
     console.log('submitVideoAnswer model', user_id, question_id, qid, language, code_answer, content);
+
     // Get records
     const dbConnect = dbo.getDb();
     if (language == 'javascript') {
         try {
             let updateAnswer = await dbConnect.collection('training').updateOne(
                 {
-                    user_id: `${user_id}`,
+                    user_id: parseInt(user_id),
                     _id: ObjectId(question_id),
                 },
                 {
@@ -194,7 +195,7 @@ const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
     try {
         let updateAnswer = await dbConnect.collection('training').updateOne(
             {
-                user_id: `${user_id}`,
+                user_id: parseInt(user_id),
                 _id: ObjectId(question_id),
             },
             {

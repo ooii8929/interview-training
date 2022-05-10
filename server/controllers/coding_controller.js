@@ -367,7 +367,7 @@ const getTrainingRecords = async (req, res) => {
 
 const getTrainingResultByQid = async (req, res) => {
     let { userID, question_id } = req.query;
-
+    console.log('sdsd', userID, question_id);
     let trainingResult = await Answer.getCourseResultByQid(userID, question_id);
 
     console.log('trainingResult', trainingResult);
