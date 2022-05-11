@@ -1,7 +1,6 @@
 import React from 'react';
 const CountDownTimer = (props) => {
     const [remainSecond, setRemainSecond] = React.useState(0);
-    const [stopNum, setStopNum] = React.useState(0);
 
     const [animation, setAnimation] = React.useState(0);
     let toggle = false;
@@ -18,6 +17,7 @@ const CountDownTimer = (props) => {
                 const pastSeconds = parseInt((Date.now() - startTime) / 1000);
                 const remain = countDownSecond - pastSeconds;
                 setRemainSecond(remain < 0 ? 0 : remain);
+
                 console.log('[timer] count down: ', remain);
                 toggle = !toggle;
                 if (toggle) {

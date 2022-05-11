@@ -13,6 +13,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import CountDownTimer from './components/CountDownTimer';
+import CountDownTimerAnswer from './components/CountDownTimerAnswer';
 let response;
 let isPause = false;
 
@@ -66,12 +67,10 @@ export default function Video(props) {
     // Answer Area
     const [waitAnswer, setWaitAnswer] = React.useState(false);
     const countDownDiv = useRef(null);
+    const countDownDivAnswer = useRef(null);
     const [seconds, setSeconds] = React.useState(null);
     const [isCount, setIsCount] = React.useState(true);
-    async function stopCountDown() {
-        setIsCount(false);
-        //setStopNum(remainSecond);
-    }
+    const [answerIsCount, setAnswerIsCount] = React.useState(true);
 
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
     React.useEffect((e) => {
@@ -170,6 +169,12 @@ export default function Video(props) {
         setRunCodeResponseExpect(response['data']['except']);
         console.log('questionID', questionID);
         await getUserCodeLog(questionID);
+
+        // count down
+        setSeconds(6);
+        setAnswerBtn(true);
+        setAnswerIsCount(true);
+        countDownDivAnswer.current.style.display = 'block ';
     }
 
     function nextQuestion() {
@@ -206,18 +211,22 @@ export default function Video(props) {
             function getRandomInt(max) {
                 return Math.floor(Math.random() * max);
             }
-            console.log('run code response', response);
+
             setRunCodeResponse(response['data']);
             if (response['data']['answer_status'] === -1) {
                 setRunCodeResponseStatus('Fail');
             } else {
                 setRunCodeResponseStatus('Success');
             }
+
             setRunCodeResponseInput(response['data']['input']);
             setRunCodeResponseOutput(response['data']['output']);
             setRunCodeResponseExpect(response['data']['except']);
+
+            // count down
             setSeconds(5);
             setStartBtn(true);
+            setIsCount(true);
             countDownDiv.current.style.display = 'block ';
         } catch (error) {
             console.error(error);
@@ -227,6 +236,15 @@ export default function Video(props) {
     const handleTimeup = useCallback(() => {
         console.log('time up!!');
         setStartBtn(false);
+        setIsCount(false);
+        countDownDiv.current.style.display = 'none ';
+    }, []);
+
+    const handleTimeupAnswer = useCallback(() => {
+        console.log('time up!!');
+        setAnswerBtn(false);
+        setAnswerIsCount(false);
+        countDownDivAnswer.current.style.display = 'none';
     }, []);
 
     async function setNowQuestion(profileQuestion) {
@@ -261,21 +279,21 @@ export default function Video(props) {
         [nowQuestionNumber]
     );
 
-    React.useEffect(
-        (e) => {
-            if (waitAnswer) {
-                // set answer cannot click
-                setAnswerBtn(true);
-                // wait 20 s
-                setTimeout(function () {
-                    // set wait false
-                    setWaitAnswer(false);
-                    setAnswerBtn(false);
-                }, 20000);
-            }
-        },
-        [waitAnswer]
-    );
+    // React.useEffect(
+    //     (e) => {
+    //         if (waitAnswer) {
+    //             // set answer cannot click
+    //             setAnswerBtn(true);
+    //             // wait 20 s
+    //             setTimeout(function () {
+    //                 // set wait false
+    //                 setWaitAnswer(false);
+    //                 setAnswerBtn(false);
+    //             }, 20000);
+    //         }
+    //     },
+    //     [waitAnswer]
+    // );
 
     // 6.用題號得到當前題目
     function getNowQuestion(nowQuestionNumber) {
@@ -303,7 +321,6 @@ export default function Video(props) {
 
     React.useEffect(
         (e) => {
-            console.log('changeStatus', changeStatus);
             if (changeStatus) {
                 setNowQuestion(changeStatus);
             }
@@ -428,6 +445,9 @@ export default function Video(props) {
                             sx={{ mt: 1, mr: 1 }}
                         >
                             <span className="btn-text">提交答案</span>
+                            <div ref={countDownDivAnswer} style={{ display: 'none' }} className="count-num">
+                                <CountDownTimerAnswer seconds={seconds} onTimeUp={handleTimeupAnswer} className="countTime" isCount={answerIsCount} setIsCount={setAnswerIsCount} />
+                            </div>
                         </Button>
 
                         <Button disabled={nextBtn} variant="contained" endIcon={<SendIcon />} className="run-answer" size="large" onClick={nextQuestion} sx={{ mt: 1, mr: 1 }}>

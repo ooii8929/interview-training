@@ -38,6 +38,13 @@ margin-bottom: 3%;
 #pop[animation="0"]{
   animation: pop2 0.3s linear 1;
 }
+
+.pop[animation="1"]{
+  animation: pop 0.3s linear 1;
+}
+.pop[animation="0"]{
+  animation: pop2 0.3s linear 1;
+}
 @keyframes pop{
   50%  {transform: scale(1.2);}
 }

@@ -31,7 +31,7 @@ router.route('/training/code/answer').post(wrapAsync(submitCodeAnswer));
 // Training end
 router.route('/training/end').post(wrapAsync(endTraining));
 
-router.route('/training/submit/compile').post(wrapAsync(submitCompile));
+router.route('/training/submit/compile').post(authentication(), wrapAsync(submitCompile));
 
 router.route('/training/video/submit/compile').post(wrapAsync(submitVideo));
 
