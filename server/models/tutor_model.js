@@ -43,7 +43,6 @@ const getAllTeacherSchedule = async () => {
         const teachers_schedule = await conn.query(
             'SELECT tt.id,tt.t_id,tt.available_time,tt.course_url,ts.experience1,ts.experience2,ts.experience3,ts.introduce,ts.profession,ts.name,ts.picture FROM teachers_time AS tt INNER JOIN teachers AS ts ON ts.id = tt.t_id WHERE tt.status = "0"'
         );
-        console.log('teachers_schedule', teachers_schedule);
         await conn.query('COMMIT');
         return teachers_schedule[0];
     } catch (error) {

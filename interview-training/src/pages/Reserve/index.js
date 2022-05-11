@@ -6,6 +6,7 @@ import Card from './Card';
 import { useParams } from 'react-router-dom';
 import './index.scss';
 import Grid from '@mui/material/Grid';
+import Swal from 'sweetalert2';
 
 let allTutors;
 
@@ -45,9 +46,13 @@ function Tutor() {
                         user_id: userID,
                         course_id: course_id,
                     });
-                    console.log('response', response);
-                    alert('Appoinment success');
-                    getTutors();
+                    await Swal.fire({
+                        title: '預約成功！',
+                        icon: 'success',
+                        confirmButtonText: '前往會員頁查看',
+                    });
+
+                    window.location.href = '/account';
                 } catch (error) {
                     alert(error.response.data.error);
                 }
@@ -65,9 +70,8 @@ function Tutor() {
                     ? Object.keys(tutors).map((tutor, index) => {
                           //<p key={index}>{tutors[tutor][0]['password']}</p>;
                           return (
-                              <Grid item xs={4}>
+                              <Grid item xs={4} key={index}>
                                   <Card
-                                      key={index}
                                       avator={tutors[tutor][0]['picture']}
                                       name={tutors[tutor][0]['name']}
                                       profession={tutors[tutor][0]['profession']}

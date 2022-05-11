@@ -361,7 +361,6 @@ const getTrainingRecords = async (req, res) => {
     if (identity === 'teacher') {
         allTraining = await Answer.getTutorTrainingRecords(user_id);
     }
-    console.log('allTraining', allTraining);
     return res.status(200).send(allTraining);
 };
 

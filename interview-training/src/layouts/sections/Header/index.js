@@ -13,15 +13,32 @@ import MenuItem from '@mui/material/MenuItem';
 import { Link, Outlet } from 'react-router-dom';
 import logo from './logo2.png';
 import './index.scss';
-const pages = {
-    模擬面試: '/',
-    真人面試: '/reserve',
-    幫人面試: '/arrange',
-    面試社群: '/social',
-};
-const settings = { 個人資料: '/account', 登入: '/login', 登出: '/logout' };
+
+const settings = { 個人資料: '/account', 登出: '/logout' };
 
 const Header = (props) => {
+    let pages;
+    // const [pages, setPages] = React.useState(null);
+    // console.log('props.identity', props.identity);
+    if (localStorage.getItem('identity') === 'student') {
+        pages = {
+            模擬面試: '/',
+            真人面試: '/reserve',
+            面試社群: '/social',
+        };
+    } else if (props.identity === 'teacher') {
+        pages = {
+            幫人面試: '/arrange',
+            面試社群: '/social',
+        };
+    } else {
+        pages = {
+            模擬面試: '/',
+            真人面試: '/reserve',
+            面試社群: '/social',
+        };
+    }
+
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -67,11 +84,13 @@ const Header = (props) => {
                             <img src={logo} className="logo" />
                         </Typography>
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                            {Object.keys(pages).map((page) => (
-                                <MenuItem key={page} component={Link} to={pages[page]} sx={{ my: 2, color: 'white', display: 'block' }} className="header-menu">
-                                    {page}
-                                </MenuItem>
-                            ))}
+                            {pages
+                                ? Object.keys(pages).map((page) => (
+                                      <MenuItem key={page} component={Link} to={pages[page]} sx={{ my: 2, color: 'white', display: 'block' }} className="header-menu">
+                                          {page}
+                                      </MenuItem>
+                                  ))
+                                : null}
                         </Box>
 
                         <Box sx={{ flexGrow: 0 }}>

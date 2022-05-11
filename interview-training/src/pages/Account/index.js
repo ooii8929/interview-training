@@ -13,6 +13,7 @@ import Records from './Records';
 import ArrangeTime from './ArrangeTime';
 import './index.scss';
 import Swal from 'sweetalert2';
+import Camera from './camera.png';
 
 let allTutors;
 
@@ -39,15 +40,22 @@ function Tutor() {
     }
 
     async function updateAvator(avatorName, avatorType, avator, avatorContent) {
-        console.log('ava data', avatorName, avatorType, avator, avatorContent);
-        let getAvatorURL = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, {
+        // Get S3 Upload URL
+
+        let getAvatorURL = await axios({
+            withCredentials: true,
+            method: 'GET',
+            credentials: 'same-origin',
+            url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`,
             params: {
                 file_name: avatorName,
                 file_type: avatorType,
             },
+            headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
         });
         console.log('getAvatorURL', getAvatorURL);
 
+        // Put to S3
         await axios.put(getAvatorURL['data']['avatorURL'], avatorContent, {
             headers: { 'Content-Type': avatorType },
         });
@@ -58,7 +66,19 @@ function Tutor() {
             picture: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/avator/` + avatorName,
         };
 
-        await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, data);
+        console.log('data', data);
+
+        // Update Profile Avator URL
+        let updateAvatorURL = await axios({
+            withCredentials: true,
+            method: 'POST',
+            credentials: 'same-origin',
+            url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`,
+            data: data,
+            headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+        });
+
+        console.log('updateAvatorURL', updateAvatorURL);
     }
 
     React.useEffect(() => {
@@ -176,20 +196,24 @@ function Tutor() {
                     <div className="account-avator-container">
                         <img src={avator} className="account-avator" />
                         <div className="upload_avator">
-                            <input type="file" onChange={handleChange} />
-                            <button onClick={updateAvator} className="upload_avator_check">
-                                確定更新大頭貼
-                            </button>
+                            <label for="upload" htmlFor="filePicker" className="update-avator-label">
+                                <input id="filePicker" type="file" onChange={handleChange} style={{ display: 'none' }} />
+                                <div className="update-avator-img">
+                                    <img src={Camera} className="update-avator-icon" />
+                                </div>
+                            </label>
                         </div>
                     </div>
                 ) : (
                     <div className="account-avator-container">
                         <img src="https://truth.bahamut.com.tw/s01/201207/28a8513919088d3328aaa40284c6b13e.PNG" className="account-avator" />
                         <div className="upload_avator">
-                            <input type="file" onChange={handleChange} />
-                            <button onClick={updateAvator} className="upload_avator_check">
-                                確定更新大頭貼
-                            </button>
+                            <label for="upload" htmlFor="filePicker" className="update-avator-label">
+                                <input id="filePicker" type="file" onChange={handleChange} style={{ display: 'none' }} />
+                                <div className="update-avator-img">
+                                    <img src={Camera} className="update-avator-icon" />
+                                </div>
+                            </label>
                         </div>
                     </div>
                 )}

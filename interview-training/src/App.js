@@ -28,6 +28,7 @@ function App() {
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const [userId, setUserId] = React.useState('');
     const [isLogin, setIsLogin] = React.useState(false);
+    const [identity, setIdentity] = React.useState('student');
     const [avatorURL, setAvatorURL] = React.useState('');
     const appContextValue = {
         userId,
@@ -53,6 +54,7 @@ function App() {
                     localStorage.setItem('userid', getAvatorResult.data.id);
                     localStorage.setItem('username', getAvatorResult.data.name);
                     localStorage.setItem('useremail', getAvatorResult.data.email);
+                    localStorage.setItem('identity', getAvatorResult.data.identity);
                 }
             }
 
@@ -65,7 +67,7 @@ function App() {
     return (
         <BrowserRouter>
             <AppContext.Provider value={appContextValue}>
-                <Header avator={avatorURL} />
+                <Header avator={avatorURL} identity={identity} />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
