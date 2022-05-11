@@ -62,7 +62,6 @@ export default function LoginForm(props) {
                 window.location.href = '/account';
             }
         } catch (error) {
-            console.log(error.response);
             await Swal.fire({
                 title: '發生問題!',
                 text: `${error.response.data.error}`,

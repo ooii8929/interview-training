@@ -19,6 +19,7 @@ import SocialArticle from './pages/SocialArticle';
 import React, { createContext } from 'react';
 import Constant from './components/Constant.js';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export const AppContext = createContext();
 
@@ -63,6 +64,33 @@ function App() {
             console.log('get avator fail', error);
         }
     }, []);
+    function RequireAuth({ children }) {
+        let location = useLocation();
+
+        let getAvatorResult = async () => {
+            try {
+                let loginInfo = await axios({
+                    withCredentials: true,
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
+                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+                });
+                setIsLogin(true);
+                console.log('2323');
+                return children;
+            } catch (error) {
+                console.log('2323');
+                await Swal.fire({
+                    title: 'Success Register!',
+                    text: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: 'Cool',
+                });
+            }
+        };
+        getAvatorResult();
+    }
 
     return (
         <BrowserRouter>

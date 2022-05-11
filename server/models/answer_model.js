@@ -48,7 +48,11 @@ const getCourseResultByQid = async (userID) => {
     // Get records
     const dbConnect = dbo.getDb();
     try {
-        const nowQuestionResult = await dbConnect.collection('training').find({ user_id: userID, status: 1 }).sort({ $natural: 1 }).toArray();
+        const nowQuestionResult = await dbConnect
+            .collection('training')
+            .find({ user_id: Number(userID), status: 1 })
+            .sort({ $natural: 1 })
+            .toArray();
         console.log('nowQuestionResult', nowQuestionResult);
         return nowQuestionResult;
     } catch (err) {

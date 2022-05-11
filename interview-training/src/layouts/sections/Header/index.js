@@ -26,7 +26,7 @@ const Header = (props) => {
             真人面試: '/reserve',
             面試社群: '/social',
         };
-    } else if (props.identity === 'teacher') {
+    } else if (props.identity === 'teacher' || localStorage.getItem('identity')) {
         pages = {
             幫人面試: '/arrange',
             面試社群: '/social',

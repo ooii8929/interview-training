@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useCallback } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import axios from 'axios';
 import { Grid, Button } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
@@ -6,20 +6,19 @@ import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
 import Accordion from './components/accordion';
+import { css } from '@emotion/react';
 import './index.scss';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CodeEditor from '@uiw/react-textarea-code-editor';
-import CountDownTimer from './components/CountDownTimer';
 let response;
-let isPause = false;
 
 export default function Video(props) {
     // Button Choose
-    const [startBtn, setStartBtn] = useState(false);
-    const [answerBtn, setAnswerBtn] = useState(false);
+    const [start, setStart] = useState(false);
+    const [stop, setStop] = useState(true);
     const [nextBtn, setNextBtn] = useState(true);
 
     // Backbard
@@ -56,22 +55,13 @@ export default function Video(props) {
     const [language, setLanguage] = React.useState(defaultLanguage);
     const isInitialMount = React.useRef(true);
 
+    const shareBtn = useRef(null);
     const [runCodeResponseInput, setRunCodeResponseInput] = React.useState(null);
     const [runCodeResponseOutput, setRunCodeResponseOutput] = React.useState(null);
     const [runCodeResponseExpect, setRunCodeResponseExpect] = React.useState(null);
     const [changeStatus, setChangeStatus] = React.useState('');
 
     const [runCodeResponseStatus, setRunCodeResponseStatus] = React.useState(null);
-
-    // Answer Area
-    const [waitAnswer, setWaitAnswer] = React.useState(false);
-    const countDownDiv = useRef(null);
-    const [seconds, setSeconds] = React.useState(null);
-    const [isCount, setIsCount] = React.useState(true);
-    async function stopCountDown() {
-        setIsCount(false);
-        //setStopNum(remainSecond);
-    }
 
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
     React.useEffect((e) => {
@@ -132,7 +122,6 @@ export default function Video(props) {
     // submit answer
     async function submitAnswer(e) {
         setNextBtn(false);
-
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
         }
@@ -216,18 +205,10 @@ export default function Video(props) {
             setRunCodeResponseInput(response['data']['input']);
             setRunCodeResponseOutput(response['data']['output']);
             setRunCodeResponseExpect(response['data']['except']);
-            setSeconds(5);
-            setStartBtn(true);
-            countDownDiv.current.style.display = 'block ';
         } catch (error) {
             console.error(error);
         }
     }
-
-    const handleTimeup = useCallback(() => {
-        console.log('time up!!');
-        setStartBtn(false);
-    }, []);
 
     async function setNowQuestion(profileQuestion) {
         if (profileQuestion) {
@@ -261,22 +242,6 @@ export default function Video(props) {
         [nowQuestionNumber]
     );
 
-    React.useEffect(
-        (e) => {
-            if (waitAnswer) {
-                // set answer cannot click
-                setAnswerBtn(true);
-                // wait 20 s
-                setTimeout(function () {
-                    // set wait false
-                    setWaitAnswer(false);
-                    setAnswerBtn(false);
-                }, 20000);
-            }
-        },
-        [waitAnswer]
-    );
-
     // 6.用題號得到當前題目
     function getNowQuestion(nowQuestionNumber) {
         if (profileQuestion) {
@@ -297,6 +262,7 @@ export default function Video(props) {
 
                 setCode(question[0][`${language}_question`]);
             }
+            // getNowQuestion();
         },
         [question]
     );
@@ -310,6 +276,31 @@ export default function Video(props) {
         },
         [changeStatus]
     );
+
+    async function shareAnswer(n) {
+        try {
+            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`, {
+                user_id: userId,
+                question_id: questionID,
+                code: code,
+                language: language,
+                identity: localStorage.getItem('identity'),
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
+        if (!response) {
+            console.log('share error');
+            //     document.querySelector(`#answer-${QuestionNumString}`).innerHTML = `
+            // <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
+        } else {
+            console.log('share reponse', response);
+            shareBtn.current.textContent = '分享成功';
+            shareBtn.current.disabled = true;
+            await getUserCodeLog(questionID);
+        }
+    }
 
     return (
         <>
@@ -388,52 +379,47 @@ export default function Video(props) {
                             </Grid>
                         </>
                     ) : null}
-                    <div style={{ marginTop: '2%' }} className="btn-div">
-                        <Button
-                            endIcon={<PlayCircleFilledIcon />}
-                            size="large"
-                            variant="contained"
-                            className="run-answer"
-                            data-question={question[0].qid}
-                            sx={{ mt: 1, mr: 1 }}
-                            onClick={runCode}
-                            disabled={startBtn}
-                        >
-                            <span className="btn-text">跑看看</span>
-                            <div ref={countDownDiv} style={{ display: 'none' }} className="count-num">
-                                <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} className="countTime" isCount={isCount} setIsCount={setIsCount} />
-                            </div>
-                        </Button>
 
-                        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
-                            <CircularProgress color="inherit" />
-                            <div className="loading-div">
-                                {loadingFunImg[randomFun] ? (
-                                    <>
-                                        <img src={`${loadingFunImg[randomFun]}`} className="loading-image" /> <br />
-                                    </>
-                                ) : null}
+                    <Button
+                        endIcon={<PlayCircleFilledIcon />}
+                        size="large"
+                        variant="contained"
+                        className="run-answer"
+                        data-question={question[0].qid}
+                        sx={{ mt: 1, mr: 1 }}
+                        onClick={runCode}
+                    >
+                        跑看看
+                    </Button>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
+                        <CircularProgress color="inherit" />
+                        <div className="loading-div">
+                            {loadingFunImg[randomFun] ? (
+                                <>
+                                    <img src={`${loadingFunImg[randomFun]}`} className="loading-image" /> <br />
+                                </>
+                            ) : null}
 
-                                <h2>{loadingFun[randomFun]}</h2>
-                            </div>
-                        </Backdrop>
-                        <Button
-                            endIcon={<StopCircleIcon />}
-                            disabled={answerBtn}
-                            size="large"
-                            variant="contained"
-                            className="run-answer"
-                            data-question={question[0].qid}
-                            onClick={submitAnswer}
-                            sx={{ mt: 1, mr: 1 }}
-                        >
-                            <span className="btn-text">提交答案</span>
-                        </Button>
-
-                        <Button disabled={nextBtn} variant="contained" endIcon={<SendIcon />} className="run-answer" size="large" onClick={nextQuestion} sx={{ mt: 1, mr: 1 }}>
-                            <span className="btn-text">前往下一題</span>
-                        </Button>
-                    </div>
+                            <h2>{loadingFun[randomFun]}</h2>
+                        </div>
+                    </Backdrop>
+                    <Button
+                        endIcon={<StopCircleIcon />}
+                        size="large"
+                        variant="contained"
+                        className="run-answer"
+                        data-question={question[0].qid}
+                        onClick={submitAnswer}
+                        sx={{ mt: 1, mr: 1 }}
+                    >
+                        提交答案
+                    </Button>
+                    <Button disabled={nextBtn} variant="contained" endIcon={<SendIcon />} className="run-answer" size="large" onClick={nextQuestion} sx={{ mt: 1, mr: 1 }}>
+                        前往下一題
+                    </Button>
+                    <Button variant="contained" ref={shareBtn} endIcon={<SendIcon />} className="run-answer" size="large" onClick={shareAnswer} sx={{ mt: 1, mr: 1 }}>
+                        分享社群
+                    </Button>
                     {answerStatus ? (
                         <VideoCheck
                             check={question[0].check}

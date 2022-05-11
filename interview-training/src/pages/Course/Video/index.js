@@ -5,13 +5,13 @@ import { getFileName } from './utils/index';
 import axios from 'axios';
 import './main.scss';
 import CountDownTimer from './CountDownTimer';
-import CountDown from './CountDown';
 import { Grid, Button } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
 import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
+
 export default function Video(props) {
     const { Constant } = useContext(AppContext);
 
@@ -19,7 +19,19 @@ export default function Video(props) {
     const [answerStatus, setAnswerStatus] = useState(false);
     const [question, setQuestion] = React.useState('');
     const [blob, setBlob] = useState(null);
+
+    // Button Choose
+    const [start, setStart] = useState(false);
+    const [stop, setStop] = useState(true);
+    const [check, setCheck] = useState(true);
+    const [restart, setRestart] = useState(true);
+
     const refVideo = useRef(null);
+    const startBtn = useRef(null);
+    const finishBtn = useRef(null);
+
+    const checkBtn = useRef(null);
+
     let timeWarning = useRef(null);
     const [nowQuestionNumber, setNowQuestionNumber] = React.useState(null);
     const display = useRef(null);
@@ -55,11 +67,18 @@ export default function Video(props) {
         //     audio: false,
         // });
         setIsCount(true);
-        setSeconds(5);
+        setSeconds(30);
+
         // setStream(mediaStream);
         // recorderRef.current = new RecordRTC(mediaStream, { type: 'video' });
         // display.current.srcObject = mediaStream;
         recorderRef.current.startRecording();
+
+        // Button Choose
+        setStart(true);
+        setStop(false);
+        setAnswerStatus(false);
+        setRestart(true);
     };
 
     const handleStop = () => {
@@ -74,6 +93,10 @@ export default function Video(props) {
         isPause = true;
         clearInterval(seconds);
         handleTimeup();
+
+        // Button Choose
+        setCheck(false);
+        setStop(true);
     };
 
     useEffect(() => {
@@ -127,7 +150,7 @@ export default function Video(props) {
     }, [stream, refVideo]);
 
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
-    React.useEffect((e) => {
+    useEffect((e) => {
         console.log('1. profileQuestion', profileQuestion);
 
         async function getVideoQuestions() {
@@ -146,13 +169,14 @@ export default function Video(props) {
             });
 
             console.log('2. get question response', response);
+
             setProfileQuestion(response);
         }
         getVideoQuestions();
     }, []);
 
     // 2. 如果有數據，找出當前題目並set
-    React.useEffect(
+    useEffect(
         (e) => {
             console.log('profileQuestion return page', profileQuestion);
             if (profileQuestion) {
@@ -167,7 +191,7 @@ export default function Video(props) {
                         height: 1080,
                         frameRate: 30,
                     },
-                    audio: false,
+                    audio: true,
                 });
 
                 recorderRef.current = new RecordRTC(mediaStream, { type: 'video' });
@@ -179,7 +203,7 @@ export default function Video(props) {
         [profileQuestion]
     );
 
-    React.useEffect(
+    useEffect(
         (e) => {
             console.log('changeStatus', changeStatus);
             if (changeStatus) {
@@ -189,7 +213,7 @@ export default function Video(props) {
         [changeStatus]
     );
 
-    React.useEffect(
+    useEffect(
         (e) => {
             if (nowQuestionNumber) console.log('5. 設定當前題號成功：', nowQuestionNumber);
             // 5. 用當前題號拿到題目
@@ -198,7 +222,18 @@ export default function Video(props) {
         [nowQuestionNumber]
     );
 
-    React.useEffect(
+    // React.useEffect(
+    //     (e) => {
+    //         if (stop) {
+    //             startBtn.current.innerText = '重新作答';
+
+    //             setRestart(false);
+    //         }
+    //     },
+    //     [stop]
+    // );
+
+    useEffect(
         (e) => {
             if (question) {
                 console.log('question', question);
@@ -207,6 +242,18 @@ export default function Video(props) {
             // getNowQuestion();
         },
         [question]
+    );
+
+    useEffect(
+        (e) => {
+            if (answerStatus) {
+                setRestart(false);
+                setCheck(true);
+                setStart(false);
+                startBtn.current.innerText = '重新作答';
+            }
+        },
+        [answerStatus]
     );
 
     function setNowQuestion(profileQuestion) {
@@ -253,7 +300,6 @@ export default function Video(props) {
                     <div ref={countDownDiv} style={{ display: 'none' }}>
                         <CountDownTimer seconds={seconds} onTimeUp={handleTimeup} className="countTime" isCount={isCount} setIsCount={setIsCount} />
                     </div>
-                    <div></div>
 
                     <Grid container spacing={2} col={{ xs: 12 }} className="display-video">
                         {answerStatus ? (
@@ -264,6 +310,8 @@ export default function Video(props) {
                                     profileQuestion={profileQuestion}
                                     nowQuestionNumber={nowQuestionNumber}
                                     setAnswerStatus={setAnswerStatus}
+                                    setRestart={setRestart}
+                                    restart={restart}
                                     blob={blob}
                                 />
                             </Grid>
@@ -273,7 +321,7 @@ export default function Video(props) {
                             <video type="video/webm" autoPlay controls ref={showAnswerDisplay} style={{ display: 'none' }} />
                         </Grid>
                     </Grid>
-                    <Button variant="contained" endIcon={<PlayCircleFilledIcon />} onClick={handleRecording} className="video-btn" size="large">
+                    <Button variant="contained" disabled={start} ref={startBtn} endIcon={<PlayCircleFilledIcon />} onClick={handleRecording} className="video-btn" size="large">
                         開始作答
                     </Button>
                     <Button
@@ -283,13 +331,16 @@ export default function Video(props) {
                             handleStop();
                             stopCountDown();
                         }}
+                        disabled={stop}
                         className="video-btn"
                         size="large"
+                        ref={finishBtn}
                     >
                         完成作答
                     </Button>
 
                     <Button
+                        disabled={check}
                         variant="contained"
                         endIcon={<SendIcon />}
                         onClick={() => {
@@ -297,6 +348,7 @@ export default function Video(props) {
                         }}
                         className="video-btn"
                         size="large"
+                        ref={checkBtn}
                     >
                         檢視答案
                     </Button>

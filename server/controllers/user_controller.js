@@ -10,12 +10,11 @@ var session = require('express-session');
 const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
 const signUp = async (req, res) => {
-    const { email, password, identity, provider } = req.body;
+    const { identity, name, email, password, provider } = req.body;
     if (!util.isValidEmail(email)) {
         res.status('400').send({ error: 'email format wrong' });
         return;
     }
-    const { identity, name, email, password } = req.body;
     if (!name || !email || !password) {
         res.status(400).send({ error: 'Request Error: name, email and password are required.' });
         return;

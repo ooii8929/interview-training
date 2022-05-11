@@ -29,14 +29,18 @@ export default function CourseResult() {
             nowUserId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
             let questionID = localStorage.getItem('question_id');
-            let response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/result`, {
+
+            let response = await axios({
+                method: 'GET',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/result`,
                 params: {
                     userID: nowUserId,
                     question_id: questionID,
                 },
             });
-            console.log('response[]', response['data']);
-            if (response['data'].length === 0) {
+
+            // if the questions is not finished yet
+            if (response['data'].length !== 0) {
                 await Swal.fire({
                     title: '尚未完成作答!別偷作弊',
                     text: '即將導回模擬訓練頁，請先檢查是否已完成題目',

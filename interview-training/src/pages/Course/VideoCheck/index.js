@@ -10,7 +10,16 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import './main.scss';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 export default function VideoCheck(props) {
+    const [open, setOpen] = React.useState(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleToggle = () => {
+        setOpen(!open);
+    };
     const { Constant } = useContext(AppContext);
     let tmpProfile;
     let navigate = useNavigate();
@@ -24,7 +33,7 @@ export default function VideoCheck(props) {
                 tmpChecked.push(props.check[i]);
             }
         }
-
+        handleToggle();
         let tmpProfile = props.profileQuestion;
         await handleSave();
         await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/video/answer/check`, {
@@ -35,12 +44,11 @@ export default function VideoCheck(props) {
         });
 
         tmpProfile.data.video.filter((e) => {
-            console.log('e', e);
             if (e.qid === props.nowQuestionNumber) {
                 e.status = 1;
             }
         });
-
+        handleClose();
         await Swal.fire({
             title: '已提交完成!',
             icon: 'success',
@@ -125,7 +133,10 @@ export default function VideoCheck(props) {
                 }
             />
             {children}
-            <Button variant="contained" endIcon={<SendIcon />} onClick={storeChecked} className="video-btn" size="large">
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <Button variant="contained" disabled={props.restart} endIcon={<SendIcon />} onClick={storeChecked} className="video-btn" size="large">
                 提交答案
             </Button>
         </div>
