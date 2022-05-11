@@ -17,21 +17,17 @@ const {
 
 router.route('/signup').post(wrapAsync(signUp));
 
-router.route('/user/login').post(wrapAsync(signIn));
+router.route('/login').post(wrapAsync(signIn));
 
-router.route('/user/logout').post(wrapAsync(signOut));
-
-router.route('/user/check').get(wrapAsync(signCheck));
-
-router.route('/user/profile/tmp').get(wrapAsync(getUserProfile));
+router.route('/logout').post(wrapAsync(signOut));
 
 router.route('/user/profile').get(authentication(), wrapAsync(getUserProfile));
 
 router.route('/user/profile/avator').get(wrapAsync(getUserPureProfile));
 // get upload url
-router.route('/user/avator').get(wrapAsync(getAvatorURL));
+router.route('/user/avator').get(authentication(), wrapAsync(getAvatorURL));
 
-router.route('/user/avator').post(wrapAsync(updateAvator));
+router.route('/user/avator').post(authentication(), wrapAsync(updateAvator));
 
 router.route('/user/code/log').get(wrapAsync(getUserCodeLog));
 

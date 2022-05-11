@@ -32,7 +32,7 @@ export default function LoginForm(props) {
                 withCredentials: true,
                 method: 'POST',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/login`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/login`,
                 data: {
                     identity: props.identity,
                     email: data.get('signEmail'),

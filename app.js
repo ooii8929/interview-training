@@ -64,7 +64,7 @@ app.use(
         store: new RedisStore({ client: Cache }),
         secret: 'secret$%^134',
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
             httpOnly: true,
             // secure: true,

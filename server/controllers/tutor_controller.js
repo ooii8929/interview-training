@@ -20,13 +20,6 @@ const createRoom = async (req, res) => {
         return;
     }
 
-    // const user = result.user;
-    // if (!user) {
-    //     res.status(500).send({ error: 'Database Query Error' });
-    //     return;
-    // }
-    // req.session.isLoggedIn = true;
-
     res.status(200).send({
         data: {
             room_URL: roomURL,

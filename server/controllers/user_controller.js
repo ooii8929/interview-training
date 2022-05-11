@@ -39,7 +39,7 @@ const signUp = async (req, res) => {
         res.status(500).send({ error: 'Database Query Error' });
         return;
     }
-    req.session.isLoggedIn = true;
+    // req.session.isLoggedIn = true;
 
     res.status(200).send({
         data: {
@@ -57,10 +57,9 @@ const signIn = async (req, res) => {
     if (Cache.ready) {
         try {
             var sess = req.session;
-            console.log(sess.user);
 
             const data = req.body;
-            console.log('data', data);
+
             let result;
             switch (data.provider) {
                 case 'native':
@@ -92,7 +91,7 @@ const signIn = async (req, res) => {
                 return;
             }
 
-            sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, create_dt: user.create_dt };
+            sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, create_dt: user.create_dt, identity: data.identity };
 
             sess.save((err) => {
                 if (err) {
@@ -111,7 +110,6 @@ const signIn = async (req, res) => {
 };
 
 const signOut = async (req, res) => {
-    console.log('run sign out');
     if (Cache.ready) {
         try {
             req.session.destroy((err) => {
@@ -119,7 +117,7 @@ const signOut = async (req, res) => {
                     console.log(err);
                     return res.status(400).send({ error: 'error' });
                 }
-
+                res.clearCookie('connect.sid');
                 return res.status(200).send({ msg: 'success' });
             });
         } catch (error) {
@@ -142,12 +140,11 @@ const getAvatorURL = async (req, res) => {
 
 const updateAvator = async (req, res) => {
     let { identity, userID, picture } = req.body;
-    console.log('updateAvator', updateAvator);
+
     try {
         let userUpdateAvator;
 
         userUpdateAvator = await User.updateAvator(identity, userID, picture);
-        console.log('userUpdateAvator', userUpdateAvator);
 
         return res.status(200).send({ userUpdateAvator });
     } catch (error) {
@@ -157,8 +154,8 @@ const updateAvator = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-    if (req.session.user) {
-        return res.status(200).send(req.session.user);
+    if (req.locals) {
+        return res.status(200).send(req.locals);
     }
 
     let { userID, userEmail, identity } = req.query;

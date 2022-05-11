@@ -27,8 +27,8 @@ function App() {
 
     const [profileQuestion, setProfileQuestion] = React.useState('');
     const [userId, setUserId] = React.useState('');
+    const [isLogin, setIsLogin] = React.useState(false);
     const [avatorURL, setAvatorURL] = React.useState('');
-    const [avatorResult, setAvatorResult] = React.useState('');
     const appContextValue = {
         userId,
         profileQuestion,
@@ -38,7 +38,6 @@ function App() {
     };
 
     React.useEffect((e) => {
-        console.log('0. get user id by session storage', localStorage.getItem('userid'), localStorage.getItem('useremail'));
         try {
             async function getAvator() {
                 let getAvatorResult = await axios({
@@ -48,48 +47,20 @@ function App() {
                     url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
                     headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
                 });
-                console.log('getAvatorResult', getAvatorResult);
-                setAvatorResult(getAvatorResult);
+                if (getAvatorResult.data.email) {
+                    setIsLogin(true);
+                    setAvatorURL(getAvatorResult['data']['picture']);
+                    localStorage.setItem('userid', getAvatorResult.data.id);
+                    localStorage.setItem('username', getAvatorResult.data.name);
+                    localStorage.setItem('useremail', getAvatorResult.data.email);
+                }
             }
 
-            if (localStorage.getItem('userid')) {
-                getAvator();
-            }
-
-            if (!userId && localStorage.getItem('userid')) console.log('0. get user id by session storage run');
-            setUserId(localStorage.getItem('userid'));
+            getAvator();
         } catch (error) {
             console.log('get avator fail', error);
         }
     }, []);
-
-    React.useEffect(
-        (e) => {
-            if (avatorResult) {
-                if (localStorage.getItem('identity') === 'student') {
-                    setAvatorURL(avatorResult['data']['picture']);
-                }
-                if (localStorage.getItem('identity') === 'teacher') {
-                    setAvatorURL(avatorResult['data']['picture']);
-                }
-            }
-        },
-        [avatorResult]
-    );
-
-    React.useEffect(
-        (e) => {
-            console.log('userId change');
-        },
-        [userId]
-    );
-
-    React.useEffect(
-        (e) => {
-            console.log('APP.js profileQuestion', profileQuestion);
-        },
-        [profileQuestion]
-    );
 
     return (
         <BrowserRouter>

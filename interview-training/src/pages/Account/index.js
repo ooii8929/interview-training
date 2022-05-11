@@ -7,15 +7,17 @@ import Card from './Card';
 import TutorCard from './TutorCard';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { Container } from '@mui/material';
 import Records from './Records';
 import ArrangeTime from './ArrangeTime';
 import './index.scss';
+import Swal from 'sweetalert2';
 
 let allTutors;
 
 function Tutor() {
+    let navigate = useNavigate();
     const { Constant } = useContext(AppContext);
 
     const userID = localStorage.getItem('userid');
@@ -26,49 +28,37 @@ function Tutor() {
     const [appointments, setAppointments] = React.useState('');
     const [allTraining, setAllTraining] = React.useState('');
     const [allTutorRecords, setAllTutorRecords] = React.useState('');
-
+    const [identity, setIdentity] = React.useState('');
+    const [avator, setAvator] = React.useState(null);
     const [time, setTime] = React.useState(null);
 
-    const [file, setFile] = React.useState();
-    const [fileContent, setFileContent] = React.useState();
-    const [fileType, setFileType] = React.useState();
-    const [fileName, setFileName] = React.useState();
     let location = useLocation();
     function handleChange(e) {
-        console.log('e.target.files', e.target.files[0]);
-        setFile(URL.createObjectURL(e.target.files[0]));
-        setFileType(e.target.files[0]['type']);
-        setFileName(e.target.files[0]['name']);
-        setFileContent(e.target.files[0]);
+        updateAvator(e.target.files[0]['name'], e.target.files[0]['type'], URL.createObjectURL(e.target.files[0]), e.target.files[0]);
+        setAvator(URL.createObjectURL(e.target.files[0]));
     }
 
-    async function updateAvator() {
+    async function updateAvator(avatorName, avatorType, avator, avatorContent) {
+        console.log('ava data', avatorName, avatorType, avator, avatorContent);
         let getAvatorURL = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, {
             params: {
-                file_name: fileName,
-                file_type: fileType,
+                file_name: avatorName,
+                file_type: avatorType,
             },
         });
-        console.log('getAvatorURL', fileName, getAvatorURL, file, fileType);
+        console.log('getAvatorURL', getAvatorURL);
 
-        let sendAvatorToS3 = await axios.put(getAvatorURL['data']['avatorURL'], fileContent, {
-            headers: { 'Content-Type': fileType },
+        await axios.put(getAvatorURL['data']['avatorURL'], avatorContent, {
+            headers: { 'Content-Type': avatorType },
         });
-
-        console.log('success file name before', sendAvatorToS3);
-        console.log('success file name', sendAvatorToS3.config.data.name);
 
         let data = {
             userID: userID,
-            identity: userIdentity,
-            picture: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/avator/` + fileName,
+            identity: identity,
+            picture: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/avator/` + avatorName,
         };
 
-        console.log('data', data);
-
-        let updateAvator = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, data);
-
-        console.log('updateAvator', updateAvator);
+        await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`, data);
     }
 
     React.useEffect(() => {
@@ -81,39 +71,42 @@ function Tutor() {
     //TODO: Get user profile
     async function getProfile() {
         try {
-            // console.log('responseProfile', responseProfile);
             let profile = await axios({
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
                 url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
-                params: {
-                    userID: userID,
-                    userEmail: userEmail,
-                    identity: userIdentity,
-                },
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
 
-            console.log('1. get profile', profile);
             let now = new Date();
             let createDT = new Date(profile['data']['create_dt']);
             const diffTime = Math.abs(now - createDT);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             setTime(diffDays);
-            setFile(profile['data']['picture']);
+            setAvator(profile['data']['picture']);
             setProfiles(profile['data']);
+            setIdentity(profile['data']['identity']);
 
             //TODO: get record
-            if (userIdentity === 'teacher') {
+            if (profile['data']['identity'] === 'teacher') {
                 await getTeacherTrainingRecords();
             }
 
-            if (userIdentity === 'student') {
+            if (profile['data']['identity'] === 'student') {
                 await getTraining();
                 await getUserAppointments();
             }
         } catch (error) {
+            console.log('error', error);
+            await Swal.fire({
+                title: '你還沒登入，對拔!',
+                text: '先登入讓我們好好認識你呀',
+                icon: 'error',
+                confirmButtonText: '好，立刻登入',
+            });
+            localStorage.setItem('returnPage', location.pathname);
+            navigate('/login');
             console.log(error);
         }
     }
@@ -179,15 +172,27 @@ function Tutor() {
     return (
         <>
             <div>
-                <div className="account-avator-container">
-                    <img src={file} className="account-avator" />
-                    <div className="upload_avator">
-                        <input type="file" onChange={handleChange} />
-                        <button onClick={updateAvator} className="upload_avator_check">
-                            確定更新大頭貼
-                        </button>
+                {profiles && profiles['picture'] ? (
+                    <div className="account-avator-container">
+                        <img src={avator} className="account-avator" />
+                        <div className="upload_avator">
+                            <input type="file" onChange={handleChange} />
+                            <button onClick={updateAvator} className="upload_avator_check">
+                                確定更新大頭貼
+                            </button>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="account-avator-container">
+                        <img src="https://truth.bahamut.com.tw/s01/201207/28a8513919088d3328aaa40284c6b13e.PNG" className="account-avator" />
+                        <div className="upload_avator">
+                            <input type="file" onChange={handleChange} />
+                            <button onClick={updateAvator} className="upload_avator_check">
+                                確定更新大頭貼
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {profiles ? (
                     <div className="account-info">
@@ -232,9 +237,6 @@ function Tutor() {
                     <Grid container columns={12} className="account-box-grid">
                         {allTutorRecords
                             ? allTutorRecords['data']['unappointed'].map((arrange, index) => {
-                                  console.log('====================================');
-                                  console.log('arrange', arrange);
-                                  console.log('====================================');
                                   return (
                                       <Grid item xs={4} key={index} className="account-box-grid-self">
                                           <ArrangeTime
@@ -276,9 +278,6 @@ function Tutor() {
                     <Grid container columns={12} className="account-box-grid-self">
                         {allTutorRecords
                             ? allTutorRecords['data']['appointed'].map((record, index) => {
-                                  console.log('====================================');
-                                  console.log('record', record);
-                                  console.log('====================================');
                                   return (
                                       <Grid item xs={4} key={index}>
                                           <Records href={record['course_url']} availableTime={record['available_time']} picture={record['picture']} />

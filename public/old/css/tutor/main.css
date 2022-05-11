@@ -1,8 +1,0 @@
-#chat-messages{
-    height: 70vh;
-    margin-bottom: 20px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE 10+ */
-}

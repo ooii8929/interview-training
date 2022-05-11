@@ -107,7 +107,7 @@ const Header = (props) => {
                                 </>
                             ) : (
                                 <MenuItem component={Link} to={'./login'} sx={{ my: 2, color: 'white', display: 'block' }} className="header-menu">
-                                    註冊
+                                    註冊/登入
                                 </MenuItem>
                             )}
                         </Box>

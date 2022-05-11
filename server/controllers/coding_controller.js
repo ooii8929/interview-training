@@ -405,7 +405,7 @@ const storeVideoAnswer = async (req, res) => {
 };
 
 const getProfileQuestions = async (req, res) => {
-    let { id } = req.session.user;
+    let { id } = req.locals;
     let { profession } = req.query;
     console.log('id', id, profession);
     if (!id || id == undefined || !profession || profession == undefined) {
