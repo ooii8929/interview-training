@@ -76,22 +76,15 @@ export default function LabTabs() {
                 </Box>
                 <div id="card-container" ref={cardContainer}>
                     <TabPanel value="1">
-                        {articles
-                            ? articles.map((article, index) => {
+                        {codeArticles
+                            ? Object.keys(codeArticles['articles']).map((qid, index) => {
                                   return (
                                       <Card
                                           key={index}
-                                          picture={article['picture']}
-                                          authorID={article['author_id']}
-                                          authors={authors}
-                                          reply={article['reply']}
-                                          liked={article['goods']}
-                                          postTime={article['post_time']}
-                                          authorName={article['author_name']}
-                                          title={article['title']}
-                                          description={article['description']}
-                                          href={article['_id']}
-                                          isArticle={setIsArticle}
+                                          title={codeArticles['articles'][qid][0]['title']}
+                                          description={codeArticles['articles'][qid][0]['description']}
+                                          qid={qid}
+                                          codeArticles={codeArticles}
                                       />
                                   );
                               })

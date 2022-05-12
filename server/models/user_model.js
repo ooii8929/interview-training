@@ -405,7 +405,7 @@ const getUsersProfileByUserID = async (userID) => {
         const [users] = await pool.query('SELECT * FROM users WHERE id IN (?)', [userID]);
         console.log('users', users);
         await conn.query('COMMIT');
-        return users[0];
+        return users;
     } catch (error) {
         await conn.query('ROLLBACK');
         return { error };

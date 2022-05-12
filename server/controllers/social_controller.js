@@ -22,11 +22,13 @@ const getCodeArticle = async (req, res) => {
         let articles = await SOCIAL.getCodeArticle();
         console.log('articles', articles);
         let groupAuthorArticle = _.groupBy(articles, 'author_id');
+        let groupQuestionArticle = _.groupBy(articles, 'question_id');
 
         let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
+        let groupAuthor = _.groupBy(authors, 'id');
         let articlesAndAuthors = {
-            authors: authors,
-            articles: articles,
+            authors: groupAuthor,
+            articles: groupQuestionArticle,
         };
         res.status(200).send(articlesAndAuthors);
     } catch (error) {

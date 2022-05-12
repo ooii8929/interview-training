@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
+import CodeEditor from '@uiw/react-textarea-code-editor';
 
 import './main.scss';
 export default function BasicCard(props) {
@@ -17,46 +18,39 @@ export default function BasicCard(props) {
     // }
 
     return (
-        <div
-            className="card"
-            onClick={() => {
-                props.isArticle(props.href);
-            }}
-        >
-            <Link to={`/social/${props.href}`}>
-                <div className="ovelay"> </div>
-                <header className="user">
-                    <img src={props.picture} alt="" />
-                    <div className="user-info">
-                        <h2 className="user-info-name">{props.authorName}</h2>
-                        <p className="user-info-time">{props.postTime.replace('T', ' ').replace('Z', ' ')}</p>
-                    </div>
-                </header>
-                <main>
-                    <h2>{props.title}</h2>
-                    <div className="social-desc" dangerouslySetInnerHTML={{ __html: props.description }}></div>
+        <div className="card">
+            <div className="ovelay"> </div>
+            <header className="user"></header>
+            <main>
+                <h2>{props.title}</h2>
 
-                    <p>{props.language}</p>
-                </main>
-                <section>
-                    <div className="users-avatars">
-                        <img
-                            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80"
-                            alt=""
-                        />
-                        <img
-                            src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-                            alt=""
-                        />
-                        <img
-                            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
-                            alt=""
-                        />
-                    </div>
-                    <p className="articles-goods">{props.liked.length} 人推薦這篇內容</p>
-                    <p className="comment">{props.reply.length} 人參與回覆</p>
-                </section>
-            </Link>
+                <div className="social-desc" dangerouslySetInnerHTML={{ __html: props.description }}></div>
+            </main>
+
+            {props.codeArticles
+                ? props.codeArticles['articles'][props.qid].map((e) => {
+                      return (
+                          <div className="card">
+                              <p>{props.codeArticles['authors'][e['author_id']][0]['name']}</p>
+                              <p>{}</p>
+                              <CodeEditor
+                                  value={e['code'][0]['javascript_answer']}
+                                  language={'javascript'}
+                                  placeholder="Please enter JS code."
+                                  padding={15}
+                                  className="codeeditor"
+                                  style={{
+                                      minHeight: '60vh',
+                                      fontSize: 16,
+                                      backgroundColor: '#161b22',
+                                      fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                                  }}
+                              />
+                              <a>{e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}</a>
+                          </div>
+                      );
+                  })
+                : null}
         </div>
     );
 }
