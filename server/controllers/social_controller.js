@@ -58,6 +58,42 @@ const insertCodeArticle = async (req, res) => {
     res.status(200).send(insertResult);
 };
 
+const insertVideoArticle = async (req, res) => {
+    // insert code post
+    const { user_id, article_id, qid, title, video_url } = req.body;
+
+    const userProfile = await USER.getUserProfileByUserID(user_id, req.locals.user.identity);
+    const questionProfile = await QUESTION.getQuestionsByID(question_id);
+    const { title, description, profession } = questionProfile['questions'][0][0];
+    if (!userProfile) {
+        res.status(500).send({ error: 'Database Query Error' });
+        return;
+    }
+    if (!questionProfile) {
+        res.status(500).send({ error: 'Database Query Error' });
+        return;
+    }
+
+    const postData = {
+        question_id: question_id,
+        picture: userProfile.picture,
+        title: title,
+        description: description,
+        author_id: userProfile.id,
+        author_name: userProfile.name,
+        code: code,
+        goods: [],
+        subscribe: 0,
+        post_time: new Date(),
+        category: profession,
+        language: language,
+        reply: [],
+    };
+    let insertResult = await SOCIAL.insertCodeArticle(postData);
+
+    res.status(200).send(insertResult);
+};
+
 const insertComments = async (req, res) => {
     // insert code post
     const { user_id, article_id, summerNote, identity, user_email } = req.body;

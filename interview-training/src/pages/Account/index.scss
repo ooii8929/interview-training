@@ -6,6 +6,9 @@
 
    }
 }
+.css-1n3h4wo{
+    height: auto !important;
+}
 
 .tutor-avator{
     border-radius: 50%;
@@ -44,14 +47,43 @@
     bottom: 0;
     display: flex;
     flex-direction: column;
+    z-index: 100 !important;
+    cursor: pointer !important;
     .upload_avator_check{
         margin-top: 5%;
         width: 64%;
         border: 1px solid gray;
     }
 }
+.history-title-div{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-bottom: 3% !important;
+}
+
+.share-btn{
+    position: relative !important;
+    top: 0px !important;
+    right: 0px !important;
+    border-radius: 50px !important;
+    width: 36px !important;
+    height: 36px !important;
+    text-align: center;
+    padding: 0px !important;
+    min-width:0px !important;
+    margin: 0px !important;
+    margin-left: 10px !important;
+
+    .MuiButton-endIco{
+        margin: 0px !important;
+    }
+
+}
 
 .update-avator-label{
+    z-index: 100 !important;
+    cursor: pointer !important;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -9,6 +9,7 @@ const {
     storeVideoAnswer,
     submitCompile,
     runCompile,
+    getQuestionByQuestionID,
     getVideoQuestionsByProfession,
     submitVideo,
     addLogicQuestion,
@@ -51,7 +52,11 @@ router.route('/training/profile/result').get(wrapAsync(getTrainingResultByQid));
 
 router.route('/training/python').post(wrapAsync(pythonCompile));
 
+// get question by id
 router.route('/training/questions').get(wrapAsync(getQuestionsByProfession));
+
+// get question result by question id
+router.route('/training/question/result').get(wrapAsync(getQuestionByQuestionID));
 
 router.route('/training/video/questions').get(wrapAsync(getVideoQuestionsByProfession));
 

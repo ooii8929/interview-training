@@ -7,7 +7,9 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
 import Accordion from './components/accordion';
 import './index.scss';
-import { useNavigate } from 'react-router-dom';
+
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+
 import Swal from 'sweetalert2';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -40,11 +42,14 @@ export default function Video(props) {
         setOpen(!open);
     };
     let navigate = useNavigate();
-    let userId = localStorage.getItem('userid');
+    const location = useLocation();
+
     const [userCodeLogs, setUserCodeLogs] = React.useState(null);
     const [questionID, setQuestionID] = React.useState(null);
 
-    let jobType = localStorage.getItem('jobType');
+    let profession = localStorage.getItem('profession');
+    let userId = localStorage.getItem('userid');
+
     const [profileQuestion, setProfileQuestion] = React.useState('');
     let languages = ['javascript', 'python'];
     const [answerStatus, setAnswerStatus] = useState(false);
@@ -56,6 +61,8 @@ export default function Video(props) {
     const defaultLanguage = 'javascript';
     const [language, setLanguage] = React.useState(defaultLanguage);
     const isInitialMount = React.useRef(true);
+
+    const [endQuestion, setEndQuestion] = React.useState(false);
 
     const [runCodeResponseInput, setRunCodeResponseInput] = React.useState(null);
     const [runCodeResponseOutput, setRunCodeResponseOutput] = React.useState(null);
@@ -75,23 +82,31 @@ export default function Video(props) {
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
     React.useEffect((e) => {
         async function getCodeQuestions() {
-            userId = localStorage.getItem('userid');
-            jobType = localStorage.getItem('jobType');
+            try {
+                let response = await axios({
+                    withCredentials: true,
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/questions`,
+                    params: {
+                        profession: profession || 'backend',
+                        userID: userId,
+                    },
+                    headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
+                });
+                console.log('1. get question response', response);
 
-            let response = await axios({
-                withCredentials: true,
-                method: 'GET',
-                credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/questions`,
-                params: {
-                    profession: jobType || 'backend',
-                    userID: userId,
-                },
-                headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
-            });
-            console.log('1. get question response', response);
-
-            setProfileQuestion(response);
+                setProfileQuestion(response);
+            } catch (error) {
+                await Swal.fire({
+                    title: `錯誤代碼${error.response.status}`,
+                    text: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '立刻登入',
+                });
+                localStorage.setItem('returnPage', location.pathname);
+                navigate('/login');
+            }
         }
         getCodeQuestions();
     }, []);
@@ -137,48 +152,66 @@ export default function Video(props) {
         }
         setRandomFun(getRandomInt(4));
         handleToggle();
-        response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/submit/compile/`, {
-            user_id: userId,
-            question_id: profileQuestion.data._id,
-            qid: nowQuestionNumber,
-            content: code,
-            language: language,
-        });
-        handleClose();
-        console.log('submitAnswer response', response);
-        setRunCodeResponse(response['data']);
-        if (response['data']['answer_status'] === -1) {
-            await Swal.fire({
-                title: '答錯了拉...',
-                text: '再想一下，想清楚，好嗎？',
-                icon: 'error',
-                confirmButtonText: '再試一次',
+        try {
+            response = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/submit/compile/`,
+                data: {
+                    user_id: userId,
+                    question_id: profileQuestion.data._id,
+                    qid: nowQuestionNumber,
+                    content: code,
+                    language: language,
+                },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
-            setRunCodeResponseStatus('Fail');
-        } else {
-            await Swal.fire({
-                title: '成功了！！！',
-                text: '太強了！你是鬼吧',
-                icon: 'success',
-                confirmButtonText: '查看狀態',
-            });
-            setRunCodeResponseStatus('Success');
-        }
-        setRunCodeResponseInput(response['data']['input']);
-        setRunCodeResponseOutput(response['data']['output']);
-        setRunCodeResponseExpect(response['data']['except']);
-        console.log('questionID', questionID);
-        await getUserCodeLog(questionID);
 
-        // count down
-        setSeconds(6);
-        setAnswerBtn(true);
-        setAnswerIsCount(true);
-        countDownDivAnswer.current.style.display = 'block ';
+            handleClose();
+            console.log('submitAnswer response', response);
+            setRunCodeResponse(response['data']);
+            if (response['data']['answer_status'] === -1) {
+                await Swal.fire({
+                    title: '答錯了拉...',
+                    text: '再想一下，想清楚，好嗎？',
+                    icon: 'error',
+                    confirmButtonText: '再試一次',
+                });
+                setRunCodeResponseStatus('Fail');
+            } else {
+                await Swal.fire({
+                    title: '成功了！！！',
+                    text: '太強了！你是鬼吧',
+                    icon: 'success',
+                    confirmButtonText: '查看狀態',
+                });
+                setRunCodeResponseStatus('Success');
+            }
+            setRunCodeResponseInput(response['data']['input']);
+            setRunCodeResponseOutput(response['data']['output']);
+            setRunCodeResponseExpect(response['data']['except']);
+            console.log('questionID', questionID);
+            await getUserCodeLog(questionID);
+
+            // count down
+            setSeconds(6);
+            setAnswerBtn(true);
+            setAnswerIsCount(true);
+            countDownDivAnswer.current.style.display = 'block ';
+        } catch (error) {
+            handleClose();
+            await Swal.fire({
+                title: `錯誤代碼${error.response.status}`,
+                text: `${error.response.data.error}`,
+                icon: 'error',
+                confirmButtonText: '再修改看看',
+            });
+        }
     }
 
     function nextQuestion() {
-        navigate(0);
+        if (endQuestion) window.location.href = '/course/result';
     }
 
     async function runCode() {
@@ -256,12 +289,26 @@ export default function Video(props) {
             });
             console.log('3. 找到尚未完成題目', notFinishedQuestion);
             // 如果題目都完成了，跳轉到結果頁
+            if (notFinishedQuestion.length === 1) {
+                localStorage.setItem('question_id', profileQuestion.data._id);
+                setEndQuestion(true);
+            }
+
             if (notFinishedQuestion.length === 0) {
                 // 發送答題結束的req
-                let endQuestionResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/end`, {
-                    user_id: userId,
-                    question_id: profileQuestion.data._id,
+
+                let endQuestionResponse = await axios({
+                    withCredentials: true,
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/end`,
+                    data: {
+                        user_id: userId,
+                        question_id: profileQuestion.data._id,
+                    },
+                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
                 });
+
                 localStorage.setItem('question_id', profileQuestion.data._id);
                 window.location.href = '/course/result';
             }

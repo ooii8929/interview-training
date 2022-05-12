@@ -277,31 +277,6 @@ export default function Video(props) {
         [changeStatus]
     );
 
-    async function shareAnswer(n) {
-        try {
-            response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`, {
-                user_id: userId,
-                question_id: questionID,
-                code: code,
-                language: language,
-                identity: localStorage.getItem('identity'),
-            });
-        } catch (error) {
-            console.error(error);
-        }
-
-        if (!response) {
-            console.log('share error');
-            //     document.querySelector(`#answer-${QuestionNumString}`).innerHTML = `
-            // <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
-        } else {
-            console.log('share reponse', response);
-            shareBtn.current.textContent = '分享成功';
-            shareBtn.current.disabled = true;
-            await getUserCodeLog(questionID);
-        }
-    }
-
     return (
         <>
             {question ? (

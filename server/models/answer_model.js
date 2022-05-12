@@ -17,9 +17,7 @@ const getQuestionAnswer = async (questionID) => {
     }
 };
 
-const getUserProfile = async (req, res) => {
-    let { userID } = req.query;
-
+const getUserProfile = async (userID) => {
     // Get records
     const dbConnect = dbo.getDb();
 
@@ -40,7 +38,11 @@ const getAllTraining = async (user_id) => {
     // Get records
     const dbConnect = await dbo.getDb();
 
-    let allTrainingResult = dbConnect.collection('training').find({ user_id: user_id }).limit(50).toArray();
+    let allTrainingResult = dbConnect
+        .collection('training')
+        .find({ user_id: Number(user_id) })
+        .limit(50)
+        .toArray();
     return allTrainingResult;
 };
 
@@ -55,6 +57,21 @@ const getCourseResultByQid = async (userID) => {
             .toArray();
         console.log('nowQuestionResult', nowQuestionResult);
         return nowQuestionResult;
+    } catch (err) {
+        res.status(400).send(err);
+    }
+};
+
+const questionByQid = async (user_id, question_id) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+    try {
+        const questionResult = await dbConnect
+            .collection('training')
+            .find({ _id: ObjectId(question_id) })
+            .toArray();
+        console.log('questionResult', questionResult);
+        return questionResult;
     } catch (err) {
         res.status(400).send(err);
     }
@@ -163,7 +180,7 @@ const submitCodeAnswer = async (user_id, question_id, qid, language, code_answer
         try {
             let updateAnswer = await dbConnect.collection('training').updateOne(
                 {
-                    user_id: `${user_id}`,
+                    user_id: Number(user_id),
                     _id: ObjectId(question_id),
                 },
                 {
@@ -199,7 +216,7 @@ const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
     try {
         let updateAnswer = await dbConnect.collection('training').updateOne(
             {
-                user_id: parseInt(user_id),
+                user_id: Number(user_id),
                 _id: ObjectId(question_id),
             },
             {
@@ -225,6 +242,22 @@ const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
     }
 };
 
+const getCourseResultByQuestionID = async (question_id) => {
+    try {
+        // Get records
+        const dbConnect = dbo.getDb();
+
+        const questionResult = await dbConnect
+            .collection('training')
+            .find({ _id: ObjectId(question_id) })
+            .toArray();
+        console.log('questionResult', questionResult);
+        return questionResult;
+    } catch (err) {
+        return { error: err };
+    }
+};
+
 const endTraining = async (user_id, question_id) => {
     console.log('endTraining', user_id, question_id);
     // Get records
@@ -233,7 +266,7 @@ const endTraining = async (user_id, question_id) => {
     try {
         let endTrainingResult = await dbConnect.collection('training').updateOne(
             {
-                user_id: `${user_id}`,
+                user_id: Number(user_id),
                 _id: ObjectId(question_id),
             },
             {
@@ -285,7 +318,7 @@ const submitVideoAnswerCheck = async (user_id, question_id, qid, checked) => {
 
 module.exports = {
     getQuestionAnswer,
-    getUserProfile,
+    questionByQid,
     insertVideoAnswer,
     getAllTraining,
     insertCodeAnswer,
@@ -295,4 +328,5 @@ module.exports = {
     getTutorTrainingRecords,
     endTraining,
     getCourseResultByQid,
+    getCourseResultByQuestionID,
 };

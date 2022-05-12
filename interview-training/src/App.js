@@ -109,7 +109,7 @@ function App() {
                     <Route path="/course/video" element={<CourseVideo />} />
                     <Route path="/course/code" element={<CourseCode />} />
                     <Route path="/arrange" element={<Arrange />} />
-                    <Route path="/account" element={<Account />} />
+                    <Route path="/account" element={<Account setAvatorURL={setAvatorURL} />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/course/result" element={<CourseResult />} />
                     <Route path="*" element={<NotFound />} />

@@ -3,16 +3,13 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
 
+const { v4: uuidv4 } = require('uuid');
 const Question = require('../models/question_model');
 const Answer = require('../models/answer_model');
 const fs = require('fs');
 const _ = require('lodash');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-}
 
 const submitCompile = async (req, res) => {
     const { user_id, content, question_id, qid, language } = req.body;
@@ -24,7 +21,7 @@ const submitCompile = async (req, res) => {
         let contenta = content + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
         let formalAnswerContent = answer['formal_answer'] + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
-        let specificNumber = getRandomInt(230240210412051);
+        let specificNumber = uuidv4();
 
         /*--- Run Formal Answer ---*/
 
@@ -91,9 +88,27 @@ const submitCompile = async (req, res) => {
             };
         }
 
+        // insert answer to training
         let codingAnswer = await Answer.submitCodeAnswer(user_id, question_id, qid, language, reply, content);
         console.log('codingAnswer', codingAnswer);
+
+        // insert answer to profile
         let updateAnswerRecord = await Answer.insertCodeAnswer(user_id, qid, reply, content);
+
+        // Get all code by qid
+        let [checkQuestion] = await Answer.questionByQid(user_id, question_id);
+        console.log('checkQuestion', checkQuestion);
+        // check answer if finish
+        let notFinishedQuestion = checkQuestion.code.filter((e) => {
+            console.log('e', e);
+            return e.status === 0;
+        });
+        console.log('3. 找到尚未完成題目', notFinishedQuestion);
+        // if length is 0 , all question are finished
+        if (notFinishedQuestion.length === 0) {
+            let endResult = await Answer.endTraining(user_id, question_id);
+        }
+
         res.status(200).send(reply);
     } else if (language == 'python') {
         console.log('submit python');
@@ -211,8 +226,9 @@ const runCompile = async (req, res) => {
         if (language == 'javascript') {
             let contenta = content + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
             let formalAnswerContent = answer['formal_answer'] + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
-
-            let specificNumber = getRandomInt(230240210412051);
+            console.log('2323');
+            console.log('uuidv4()', uuidv4());
+            let specificNumber = uuidv4();
 
             /*--- Run Formal Answer ---*/
 
@@ -381,6 +397,17 @@ const getQuestionsByProfession = async (req, res) => {
     return res.status(200).send(allQuestions);
 };
 
+const getQuestionByQuestionID = async (req, res) => {
+    let { question_id } = req.query;
+    try {
+        let [finishedAnswer] = await Answer.getCourseResultByQuestionID(question_id);
+
+        return res.status(200).send(finishedAnswer);
+    } catch (error) {
+        return res.status(400).send({ error: error });
+    }
+};
+
 const getVideoQuestionsByProfession = async (req, res) => {
     let { profession } = req.query;
     let questions = await Question.getVideoQuestions(profession);
@@ -509,4 +536,5 @@ module.exports = {
     getTrainingRecords,
     submitVideoAnswerCheck,
     getTrainingResultByQid,
+    getQuestionByQuestionID,
 };

@@ -14,10 +14,11 @@ import ArrangeTime from './ArrangeTime';
 import './index.scss';
 import Swal from 'sweetalert2';
 import Camera from './camera.png';
+import Tab from './Tab';
 
 let allTutors;
 
-function Tutor() {
+export default function Account(props) {
     let navigate = useNavigate();
     const { Constant } = useContext(AppContext);
 
@@ -37,6 +38,7 @@ function Tutor() {
     function handleChange(e) {
         updateAvator(e.target.files[0]['name'], e.target.files[0]['type'], URL.createObjectURL(e.target.files[0]), e.target.files[0]);
         setAvator(URL.createObjectURL(e.target.files[0]));
+        props.setAvatorURL(URL.createObjectURL(e.target.files[0]));
     }
 
     async function updateAvator(avatorName, avatorType, avator, avatorContent) {
@@ -286,34 +288,10 @@ function Tutor() {
                         </Typography>
                     )}
                     <Grid container columns={12} className="account-box-grid-self">
-                        {allTraining
-                            ? allTraining['data'].map((training, index) => {
-                                  return (
-                                      <>
-                                          <Grid item xs={4} key={index}>
-                                              <Card key={index} tID={training['video']['title']} availableTime={training['profesiion']} createDT={training['create_dt']} />
-                                          </Grid>
-                                      </>
-                                  );
-                              })
-                            : null}
-                    </Grid>
-
-                    <Grid container columns={12} className="account-box-grid-self">
-                        {allTutorRecords
-                            ? allTutorRecords['data']['appointed'].map((record, index) => {
-                                  return (
-                                      <Grid item xs={4} key={index}>
-                                          <Records href={record['course_url']} availableTime={record['available_time']} picture={record['picture']} />
-                                      </Grid>
-                                  );
-                              })
-                            : null}
+                        <Tab training={allTraining} />
                     </Grid>
                 </Container>
             </div>
         </>
     );
 }
-
-export default Tutor;

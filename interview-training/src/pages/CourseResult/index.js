@@ -14,6 +14,7 @@ export default function CourseResult() {
     const { Constant } = useContext(AppContext);
     // score
     const [codeSuccess, setCodeSuccess] = useState(null);
+    const [allCode, setAllCode] = useState(null);
     const [codeFail, setCodeFail] = useState(null);
     const [videoSuccess, setVideoSuccess] = useState(null);
     const [videoCheck, setVideoCheck] = useState(null);
@@ -23,8 +24,6 @@ export default function CourseResult() {
 
     // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
     React.useEffect((e) => {
-        console.log('1. profileQuestion', profileQuestion);
-
         async function getVideoQuestions() {
             nowUserId = localStorage.getItem('userid');
             jobType = localStorage.getItem('jobType');
@@ -32,15 +31,14 @@ export default function CourseResult() {
 
             let response = await axios({
                 method: 'GET',
-                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/profile/result`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/question/result`,
                 params: {
-                    userID: nowUserId,
                     question_id: questionID,
                 },
             });
-
+            console.log('response', response);
             // if the questions is not finished yet
-            if (response['data'].length !== 0) {
+            if (response['data']['status'] !== 1) {
                 await Swal.fire({
                     title: '尚未完成作答!別偷作弊',
                     text: '即將導回模擬訓練頁，請先檢查是否已完成題目',
@@ -55,31 +53,55 @@ export default function CourseResult() {
         getVideoQuestions();
     }, []);
 
+    // React.useEffect(
+    //     (e) => {
+    //         if (codeSuccess) {
+    //             setAllCode((prev) => prev + 1);
+    //         }
+    //     },
+    //     [codeSuccess]
+    // );
+
+    // React.useEffect(
+    //     (e) => {
+    //         if (codeFail) {
+    //             setAllCode((prev) => prev + 1);
+    //         }
+    //     },
+    //     [codeFail]
+    // );
     React.useEffect(
         (e) => {
-            if (!codeSuccess) {
-                console.log('profileQuestion', profileQuestion);
-                if (profileQuestion) {
-                    // calculate score
-                    // code
+            console.log('profileQuestion', profileQuestion);
+            if (profileQuestion) {
+                // calculate score
 
-                    profileQuestion['data'][0]['code'].map((e) => {
-                        if (e['javascript_answer_status']) {
-                            if (e['javascript_answer_status'].answer_status === 1) {
-                                setCodeSuccess((prev) => prev + 1);
-                            }
-                            if (e['javascript_answer_status'].answer_status === -1) {
-                                setCodeFail((prev) => prev + 1);
-                            }
+                // code
+                let tmpCodeSuccess = 0;
+                let tmpCodeFail = 0;
+                profileQuestion['data']['code'].map((e) => {
+                    if (e['javascript_answer_status']) {
+                        console.log('javascript_answer_status', e['javascript_answer_status']);
+                        if (e['javascript_answer_status'].answer_status === 1) {
+                            tmpCodeSuccess++;
                         }
-                    });
+                        if (e['javascript_answer_status'].answer_status === -1) {
+                            tmpCodeFail++;
+                        }
+                    }
+                    setAllCode(tmpCodeSuccess + tmpCodeFail);
+                });
 
-                    profileQuestion['data'][0]['video'].map((e) => {
-                        console.log('e.checked.length', e.checked.length);
-                        setVideoSuccess((prev) => prev + e.checked.length);
-                        return setVideoCheck((prev) => prev + e.check.length);
-                    });
-                }
+                // video
+                let tmpVideoSuccess = 0;
+                let tmpVideoCheck = 0;
+                profileQuestion['data']['video'].map((e) => {
+                    console.log('e.checked.length', e.checked.length);
+                    tmpVideoSuccess += e.checked.length;
+                    tmpVideoCheck += e.check.length;
+                });
+                setVideoSuccess(tmpVideoSuccess);
+                setVideoCheck(tmpVideoCheck);
             }
         },
         [profileQuestion]
@@ -90,26 +112,22 @@ export default function CourseResult() {
             <Row>
                 <Col xs="5" id="code-main">
                     <Lottie animationData={Finished} />
-                </Col>{' '}
+                </Col>
                 <Col xs="7">
                     <h2>恭喜完成！</h2>
                     {profileQuestion ? (
                         <div id="result-content">
                             <p>
-                                {' '}
-                                此次挑戰，你共獲得 <span className="special-font">
-                                    {((codeSuccess + videoSuccess) / (codeSuccess + codeFail + videoCheck)).toFixed(2) * 100}
-                                </span>{' '}
-                                分
+                                此次挑戰，你共獲得 <span className="special-font">{((codeSuccess + videoSuccess) / (codeSuccess + codeFail + videoCheck)).toFixed(2) * 100}</span>分
                             </p>
                             <p>
-                                在 {codeSuccess + codeFail} 題技術題中，你答對了 <span className="special-font">{codeSuccess}</span> 題
+                                在 {allCode ? allCode : 0} 題技術題中，你答對了 <span className="special-font">{codeSuccess ? codeSuccess : 0}</span> 題
                             </p>
                             <p>
-                                並在模擬實境中獲得{' '}
+                                並在模擬實境中獲得
                                 <span className="special-font">
-                                    {videoSuccess}/{videoCheck}
-                                </span>{' '}
+                                    {videoSuccess ? videoSuccess : 0}/{videoCheck ? videoCheck : 0}
+                                </span>
                                 的重點分數
                             </p>
                         </div>
