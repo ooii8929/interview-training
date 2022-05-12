@@ -39,6 +39,9 @@ const submitCompile = async (req, res) => {
                 if (err) console.log(err);
             });
         } catch (err) {
+            await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
+                if (err) console.log(err);
+            });
             return res.status(200).send(err);
         }
 
@@ -62,6 +65,9 @@ const submitCompile = async (req, res) => {
                 if (err) console.log(err);
             });
         } catch (err) {
+            await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
+                if (err) console.log(err);
+            });
             console.log('run compile err', err);
             return res.status(200).send(err);
         }
@@ -219,16 +225,14 @@ const runCompile = async (req, res) => {
     const { content, question_id, language } = req.body;
     console.log('runCompile', content, question_id, language);
     let answer = await Answer.getQuestionAnswer(question_id);
-
+    let specificNumber = uuidv4();
     let formalAnswer;
     try {
         // condition language
+
         if (language == 'javascript') {
             let contenta = content + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
             let formalAnswerContent = answer['formal_answer'] + `;\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
-            console.log('2323');
-            console.log('uuidv4()', uuidv4());
-            let specificNumber = uuidv4();
 
             /*--- Run Formal Answer ---*/
 
@@ -303,36 +307,44 @@ const runCompile = async (req, res) => {
         } else if (language == 'python') {
             console.log('run python');
             // get default answer from db
+
             let contenta = content + `\nprint(Solution().${answer['call_user_answer']}(${answer['test_answer']}))`;
-            let formalAnswerContent = answer['formal_answer'] + `${answer['call_user_answer']}(${answer['test_answer']}))`;
+            let formalAnswerContent = answer['formal_answer'] + `\nconsole.log(${answer['call_user_answer']}(${answer['test_answer']}))`;
 
-            // use js to test the answer
-            await fs.writeFile('./server/util/code-training/test.js', formalAnswerContent, (err) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-            });
-
-            // put user code
-            await fs.writeFile('./server/util/code-training/test.py', contenta, (err) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-            });
+            /*--- Run Formal Answer ---*/
+            var writeAnswerStream = await fs.createWriteStream(`./server/util/code-training/${specificNumber}-answer.js`);
+            await writeAnswerStream.write(formalAnswerContent);
+            await writeAnswerStream.end();
 
             try {
-                var { stdout, stderr } = await exec('./server/util/code-training/build-javascript-answer.sh');
+                var { stdout, stderr } = await exec(`./server/util/code-training/build-javascript-answer.sh ${specificNumber}-answer.js`, {
+                    shell: '/bin/bash',
+                });
                 formalAnswer = `${stdout}`;
+                await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
+                    if (err) console.log(err);
+                });
             } catch (err) {
+                await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
+                    if (err) console.log(err);
+                });
                 res.status(200).send(err);
             }
 
             try {
-                var { stdout, stderr } = await exec('./server/util/code-training/build-python.sh');
+                var writeQuestionStream = await fs.createWriteStream(`./server/util/code-training/${specificNumber}-question.py`);
+                await writeQuestionStream.write(contenta);
+                await writeAnswerStream.end();
+
+                var { stdout, stderr } = await exec(`./server/util/code-training/build-python.sh ${specificNumber}-question.py`);
                 ans = `${stdout}`;
+                await fs.unlink(`./server/util/code-training/${specificNumber}-question.py`, (err) => {
+                    if (err) console.log(err);
+                });
             } catch (err) {
+                await fs.unlink(`./server/util/code-training/${specificNumber}-question.py`, (err) => {
+                    if (err) console.log(err);
+                });
                 res.status(200).send(err);
             }
 
@@ -356,6 +368,9 @@ const runCompile = async (req, res) => {
             }
         }
     } catch (error) {
+        await fs.unlink(`./server/util/code-training/${specificNumber}-answer.js`, (err) => {
+            if (err) console.log(err);
+        });
         res.status(500).send({ error: 'Server Something wrong' });
     }
 };
@@ -364,7 +379,6 @@ const getTraining = async (req, res) => {
     let { user_id } = req.query;
     let allTraining = await Answer.getAllTraining(user_id);
 
-    console.log('allTraining', allTraining);
     return res.status(200).send(allTraining);
 };
 
@@ -384,7 +398,6 @@ const getTrainingResultByQid = async (req, res) => {
     let { userID, question_id } = req.query;
     let trainingResult = await Answer.getCourseResultByQid(userID, question_id);
 
-    console.log('trainingResult', trainingResult);
     return res.status(200).send(trainingResult);
 };
 

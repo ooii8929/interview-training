@@ -32,7 +32,7 @@ export default function Video(props) {
         '你知道嗎？在非洲，每一分鐘，就有６０秒過去',
         '你知道嗎？車子貼baby in car 是為了事故時讓救護人員救援時特別注意到',
         '你知道嗎？7-ELEVEn的最後一個n是小寫唷！',
-        '你知道嗎？加拿大有一座北極熊的專屬監獄。如果北極熊闖入民宅偷吃食物被抓到，就會被抓去坐牢。',
+        '你知道嗎？加拿大有一座北極熊的專屬監獄。\r\n如果北極熊闖入民宅偷吃食物被抓到，就會被抓去坐牢。',
     ];
     const loadingFunImg = ['', '', '', 'https://i1.wp.com/animal-friendly.co/wp-content/uploads/2019/08/jail3.jpg?w=1392&ssl=1'];
     const handleClose = () => {
@@ -60,7 +60,8 @@ export default function Video(props) {
     const [nowQuestionNumber, setNowQuestionNumber] = React.useState(null);
     const defaultLanguage = 'javascript';
     const [language, setLanguage] = React.useState(defaultLanguage);
-    const isInitialMount = React.useRef(true);
+    const isInitialMount = useRef(true);
+    const resultTest = useRef(null);
 
     const [endQuestion, setEndQuestion] = React.useState(false);
 
@@ -133,6 +134,12 @@ export default function Video(props) {
         }
     }, [language]);
 
+    React.useEffect(() => {
+        if (runCodeResponseStatus === 'Fail') {
+            resultTest.current.style.color = 'red';
+        }
+    }, [runCodeResponseStatus]);
+
     async function getUserCodeLog(questionID) {
         let codeLog = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/code/log`, {
             params: {
@@ -178,6 +185,7 @@ export default function Video(props) {
                     icon: 'error',
                     confirmButtonText: '再試一次',
                 });
+
                 setRunCodeResponseStatus('Fail');
             } else {
                 await Swal.fire({
@@ -186,6 +194,7 @@ export default function Video(props) {
                     icon: 'success',
                     confirmButtonText: '查看狀態',
                 });
+
                 setRunCodeResponseStatus('Success');
             }
             setRunCodeResponseInput(response['data']['input']);
@@ -426,7 +435,9 @@ export default function Video(props) {
                                     <p>測試結果</p>
                                 </Grid>
                                 <Grid item xs={4} className="runcode-result">
-                                    <div> {runCodeResponseStatus}</div>
+                                    <div>
+                                        <p ref={resultTest}>{runCodeResponseStatus}</p>
+                                    </div>
                                 </Grid>
                                 <Grid item xs={1} className="runcode-result-label">
                                     <p>測試數據</p>
@@ -478,7 +489,7 @@ export default function Video(props) {
                                     </>
                                 ) : null}
 
-                                <h2>{loadingFun[randomFun]}</h2>
+                                <span className="fun-div">{loadingFun[randomFun]}</span>
                             </div>
                         </Backdrop>
                         <Button

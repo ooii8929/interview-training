@@ -22,6 +22,9 @@
     font-size:20px !important;
 }
 
+.fun-div{
+    font-size: 1.8em;
+}
 
 .count-num{
 display: flex;
@@ -37,6 +40,7 @@ text-align: center;
      display: flex !important;
      flex-direction: column !important;
      align-items: center !important;
+     margin-left: 2%;
 }
 
 .css-1ji7omv-MuiBackdrop-root{
@@ -114,6 +118,7 @@ padding-top: 3%;
 .w-tc-editor{
     --color-prettylights-syntax-string:rgb(53, 100, 208) !important;
     color: rgb(54, 52, 50) !important;
+    --color-prettylights-syntax-entity-tag:rgb(53, 100, 208) !important;
 }
 
 .history-div{
