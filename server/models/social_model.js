@@ -21,6 +21,32 @@ const getAllArticle = async () => {
     }
 };
 
+const getCodeArticle = async () => {
+    // Get records
+    const dbConnect = await dbo.getDb();
+    try {
+        const cursor = await dbConnect.collection('code-article').find({}).toArray();
+
+        return cursor;
+    } catch (error) {
+        console.log('error', error);
+        return error;
+    }
+};
+
+const getVideoArticle = async () => {
+    // Get records
+    const dbConnect = await dbo.getDb();
+    try {
+        const cursor = await dbConnect.collection('video-article').find({}).toArray();
+
+        return cursor;
+    } catch (error) {
+        console.log('error', error);
+        return error;
+    }
+};
+
 const getArticleByID = async (article_id) => {
     // Get records
     const dbConnect = await dbo.getDb();
@@ -196,6 +222,8 @@ const updateArticleBad = async (article_id, user_id) => {
 };
 
 module.exports = {
+    getCodeArticle,
+    getVideoArticle,
     updateVideoShared,
     updateCodeShared,
     insertCodeArticle,

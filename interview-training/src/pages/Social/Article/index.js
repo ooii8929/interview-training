@@ -36,7 +36,6 @@ export default function Article(props) {
             <Grid item xs={8} className="article-container">
                 <div>
                     <Grid container spacing={4}>
-                        {' '}
                         <Grid item xs={2} className="article-main-left">
                             <Box
                                 component="img"
