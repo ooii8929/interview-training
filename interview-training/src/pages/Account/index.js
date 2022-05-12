@@ -288,7 +288,7 @@ export default function Account(props) {
                         </Typography>
                     )}
                     <Grid container columns={12} className="account-box-grid-self">
-                        <Tab training={allTraining} />
+                        <Tab training={allTraining} setAllTraining={setAllTraining} />
                     </Grid>
                 </Container>
             </div>

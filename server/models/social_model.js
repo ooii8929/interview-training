@@ -42,7 +42,7 @@ const insertCodeArticle = async (postData) => {
     // Get records
     const dbConnect = dbo.getDb();
 
-    let insertResult = await dbConnect.collection('article').insertOne(postData);
+    let insertResult = dbConnect.collection('video-article').insertOne(postData);
 
     return insertResult;
 };
@@ -113,6 +113,38 @@ const insertVideoArticle = async (postData) => {
     return insertResult;
 };
 
+const updateCodeShared = async (question_id, qid) => {
+    console.log(question_id, qid);
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    try {
+        let updateAnswer = await dbConnect.collection('training').updateOne(
+            {
+                _id: ObjectId(question_id),
+            },
+            {
+                $set: {
+                    'code.$[c].shared': true,
+                },
+            },
+            {
+                multi: true,
+                arrayFilters: [
+                    {
+                        'c.qid': Number(qid),
+                    },
+                ],
+            }
+        );
+        console.log('updateAnswer', updateAnswer);
+        return { msg: updateAnswer };
+    } catch (err) {
+        console.log('err', err);
+        return { err: err };
+    }
+};
+
 const updateVideoShared = async (question_id, qid) => {
     console.log(question_id, qid);
     // Get records
@@ -165,6 +197,7 @@ const updateArticleBad = async (article_id, user_id) => {
 
 module.exports = {
     updateVideoShared,
+    updateCodeShared,
     insertCodeArticle,
     insertVideoArticle,
     getAllArticle,

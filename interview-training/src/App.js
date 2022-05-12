@@ -77,10 +77,9 @@ function App() {
                     headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
                 });
                 setIsLogin(true);
-                console.log('2323');
+
                 return children;
             } catch (error) {
-                console.log('2323');
                 await Swal.fire({
                     title: 'Success Register!',
                     text: `${error.response.data.error}`,

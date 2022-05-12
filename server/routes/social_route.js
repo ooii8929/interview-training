@@ -6,7 +6,7 @@ const { getAllArticle, insertCodeArticle, updateArticleGood, getArticleByID, ins
 
 router.route('/article').get(wrapAsync(getAllArticle));
 router.route('/article/id').get(wrapAsync(getArticleByID));
-router.route('/article/code').post(wrapAsync(insertCodeArticle));
+router.route('/article/code').post(authentication(), wrapAsync(insertCodeArticle));
 router.route('/article/video').post(authentication(), wrapAsync(insertVideoArticle));
 router.route('/article/good').post(wrapAsync(updateArticleGood));
 router.route('/article/bad').post(wrapAsync(updateArticleBad));

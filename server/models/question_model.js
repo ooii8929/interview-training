@@ -45,6 +45,25 @@ const getQuestionsByID = async (q_id) => {
     }
 };
 
+const getCodeQuestionsByID = async (q_id) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.query('START TRANSACTION');
+
+        // test no random
+        const [questions] = await conn.query('SELECT * FROM questions WHERE id = ? ', [q_id]);
+
+        await conn.query('COMMIT');
+        return questions;
+    } catch (error) {
+        console.log(error);
+        await conn.query('ROLLBACK');
+        return { error: error };
+    } finally {
+        await conn.release();
+    }
+};
+
 const getVideoQuestions = async (profession) => {
     const conn = await pool.getConnection();
     try {
@@ -117,6 +136,6 @@ module.exports = {
     getVideoQuestions,
     getQuestionsByID,
     insertProfileTraining,
-
+    getCodeQuestionsByID,
     checkProfileQuestions,
 };

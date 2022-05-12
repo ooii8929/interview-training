@@ -10,17 +10,28 @@ import axios from 'axios';
 import SendIcon from '@mui/icons-material/Send';
 import ShareIcon from '@mui/icons-material/Share';
 import Swal from 'sweetalert2';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function BasicCard(props) {
+    const [open, setOpen] = React.useState(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleToggle = () => {
+        setOpen(!open);
+    };
     let userId = localStorage.getItem('userid');
     const defaultLanguage = 'javascript';
-    const refs = useRef([]);
     const [language, setLanguage] = React.useState(defaultLanguage);
     const shareBtn = useRef(null);
+
     let languages = ['javascript', 'python'];
     const [code, setCode] = React.useState(null);
     let shareResult;
+
     async function shareAnswer(e) {
+        handleToggle();
         e.preventDefault();
 
         if (e.currentTarget.dataset.category === 'video') {
@@ -40,6 +51,31 @@ export default function BasicCard(props) {
                     },
                     headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
                 });
+
+                async function getTraining() {
+                    try {
+                        let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training`, {
+                            params: {
+                                user_id: userId,
+                            },
+                        });
+
+                        if (responseAllTraining) {
+                            console.log('responseAllTraining', responseAllTraining);
+
+                            props.setAllTraining(responseAllTraining);
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                getTraining();
+                handleClose();
+                await Swal.fire({
+                    title: '成功了！！！',
+                    icon: 'success',
+                    confirmButtonText: '繼續查看',
+                });
             } catch (error) {
                 await Swal.fire({
                     title: '發生問題!',
@@ -49,32 +85,66 @@ export default function BasicCard(props) {
                 });
             }
         }
-        // try {
-        //     shareResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`, {
-        //         user_id: userId,
-        //         question_id: n.qid,
-        //         code: code,
-        //         language: language,
-        //         identity: localStorage.getItem('identity'),
-        //     });
-        // } catch (error) {
-        //     console.error(error);
-        // }
 
-        // if (!shareResult) {
-        //     console.log('share error');
-        //     //     document.querySelector(`#answer-${QuestionNumString}`).innerHTML = `
-        //     // <div class="answer-block"><div class="answer-title">error:</div><div id="answer-${QuestionNumString}-status" class="answer-reply">${response.data.stderr}</div></div>`;
-        // } else {
-        //     console.log('share reponse', shareResult);
-        //     shareBtn.current.textContent = '分享成功';
-        //     shareBtn.current.disabled = true;
-        // }
+        // share code topic
+        if (e.currentTarget.dataset.category === 'code') {
+            try {
+                let codeArticle = await axios({
+                    withCredentials: true,
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`,
+                    data: {
+                        user_id: userId,
+                        article_id: e.currentTarget.value,
+                        qid: e.currentTarget.dataset.qid,
+                        question_id: props.questionID,
+                        category: e.currentTarget.dataset.category,
+                    },
+                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+                });
+
+                async function getTraining() {
+                    try {
+                        let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training`, {
+                            params: {
+                                user_id: userId,
+                            },
+                        });
+
+                        if (responseAllTraining) {
+                            console.log('responseAllTraining', responseAllTraining);
+
+                            props.setAllTraining(responseAllTraining);
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                getTraining();
+                handleClose();
+                await Swal.fire({
+                    title: '成功了！！！',
+                    icon: 'success',
+                    confirmButtonText: '繼續查看',
+                });
+            } catch (error) {
+                await Swal.fire({
+                    title: '發生問題!',
+                    text: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '再試一次',
+                });
+            }
+        }
     }
 
     return (
         <Card sx={{ mb: 5 }}>
             <CardContent>
+                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open} onClick={handleClose}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 {props.video
                     ? props.video.map((e, index) => {
                           return (
@@ -82,20 +152,35 @@ export default function BasicCard(props) {
                                   <div className="history-title-div">
                                       <Typography variant="h5" component="div">
                                           {e.title}
-                                      </Typography>{' '}
-                                      <Button
-                                          variant="contained"
-                                          ref={shareBtn}
-                                          endIcon={<ShareIcon />}
-                                          className="share-btn"
-                                          size="large"
-                                          value={`${props.questionID}-video-${e.qid}`}
-                                          data-category={'video'}
-                                          data-qid={e.qid}
-                                          data-video={e.video_url}
-                                          onClick={shareAnswer}
-                                          sx={{ mt: 1, mr: 1 }}
-                                      ></Button>
+                                      </Typography>
+                                      {e.shared ? (
+                                          <Button
+                                              variant="contained"
+                                              endIcon={<ShareIcon />}
+                                              className="share-btn"
+                                              size="large"
+                                              value={`${props.questionID}-video-${e.qid}`}
+                                              data-category={'video'}
+                                              data-qid={e.qid}
+                                              data-video={e.video_url}
+                                              sx={{ mt: 1, mr: 1 }}
+                                              disabled="true"
+                                          ></Button>
+                                      ) : (
+                                          <Button
+                                              variant="contained"
+                                              ref={shareBtn}
+                                              endIcon={<ShareIcon />}
+                                              className="share-btn"
+                                              size="large"
+                                              value={`${props.questionID}-video-${e.qid}`}
+                                              data-category={'video'}
+                                              data-qid={e.qid}
+                                              data-video={e.video_url}
+                                              onClick={shareAnswer}
+                                              sx={{ mt: 1, mr: 1 }}
+                                          ></Button>
+                                      )}
                                   </div>
 
                                   <video type="video/webm" controls src={e.video_url} />
@@ -116,16 +201,32 @@ export default function BasicCard(props) {
                                       <Typography variant="h5" component="div">
                                           {c.title}
                                       </Typography>{' '}
-                                      <Button
-                                          variant="contained"
-                                          ref={shareBtn}
-                                          endIcon={<ShareIcon />}
-                                          className="share-btn"
-                                          size="large"
-                                          value={`${props.questionID}-code-${c.id}`}
-                                          onClick={(e) => shareAnswer(e)}
-                                          sx={{ mt: 1, mr: 1 }}
-                                      ></Button>
+                                      {c.shared ? (
+                                          <Button
+                                              variant="contained"
+                                              endIcon={<ShareIcon />}
+                                              className="share-btn"
+                                              size="large"
+                                              value={`${props.questionID}-code-${c.qid}`}
+                                              data-category={'code'}
+                                              data-qid={c.qid}
+                                              sx={{ mt: 1, mr: 1 }}
+                                              disabled="true"
+                                          ></Button>
+                                      ) : (
+                                          <Button
+                                              variant="contained"
+                                              ref={shareBtn}
+                                              endIcon={<ShareIcon />}
+                                              className="share-btn"
+                                              size="large"
+                                              value={`${props.questionID}-code-${c.qid}`}
+                                              data-category={'code'}
+                                              data-qid={c.qid}
+                                              onClick={shareAnswer}
+                                              sx={{ mt: 1, mr: 1 }}
+                                          ></Button>
+                                      )}
                                   </div>
                                   <Grid container spacing={2} style={{ background: '#fafafa' }}>
                                       <Grid item xs={6} style={{ padding: '3%' }}>

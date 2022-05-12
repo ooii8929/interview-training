@@ -24,38 +24,55 @@ const getArticleByID = async (req, res) => {
 };
 
 const insertCodeArticle = async (req, res) => {
-    // insert code post
-    const { question_id, user_id, code, language, identity } = req.body;
-    const userProfile = await USER.getUserProfileByUserID(user_id, identity);
-    const questionProfile = await QUESTION.getQuestionsByID(question_id);
-    const { title, description, profession } = questionProfile['questions'][0][0];
-    if (!userProfile) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
-    }
-    if (!questionProfile) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
-    }
+    try {
+        // insert code post
+        const { user_id, article_id, qid, category, question_id } = req.body;
 
-    const postData = {
-        question_id: question_id,
-        picture: userProfile.picture,
-        title: title,
-        description: description,
-        author_id: userProfile.id,
-        author_name: userProfile.name,
-        code: code,
-        goods: [],
-        subscribe: 0,
-        post_time: new Date(),
-        category: profession,
-        language: language,
-        reply: [],
-    };
-    let insertResult = await SOCIAL.insertCodeArticle(postData);
+        let [checkShared] = await SOCIAL.checkShared(question_id, qid);
 
-    res.status(200).send(insertResult);
+        let nowAnswer = checkShared.code.filter((e) => {
+            return e.qid === Number(qid);
+        });
+
+        if (nowAnswer[0].shared) {
+            return res.status(400).send({ error: '已經分享過囉' });
+        }
+
+        const userProfile = await USER.getUserProfileByUserID(user_id, req.locals.identity);
+
+        if (!userProfile) {
+            res.status(500).send({ error: 'Database Query Error' });
+            return;
+        }
+
+        const [questionProfile] = await QUESTION.getCodeQuestionsByID(qid);
+        if (!questionProfile) {
+            res.status(500).send({ error: 'Database Query Error' });
+            return;
+        }
+
+        const postData = {
+            article_id: article_id,
+            question_id: qid,
+            title: questionProfile.title,
+            description: questionProfile.description,
+            author_id: user_id,
+            subscribe: 0,
+            post_time: new Date(),
+            code: nowAnswer,
+            category: category,
+            goods: [],
+            comments: [],
+        };
+        let insertResult = await SOCIAL.insertCodeArticle(postData);
+
+        let updateResult = await SOCIAL.updateCodeShared(question_id, qid);
+
+        return res.status(200).send(insertResult);
+    } catch (error) {
+        console.log('error', error);
+        return res.status(400).send({ error: error });
+    }
 };
 
 const insertVideoArticle = async (req, res) => {

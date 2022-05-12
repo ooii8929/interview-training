@@ -61,7 +61,7 @@ export default function VerticalTabs(props) {
                 ? props.training['data'].map((e, index) => {
                       return (
                           <TabPanel value={value} index={index}>
-                              <Card video={e['video']} code={e['code']} questionID={e['_id']}></Card>
+                              <Card video={e['video']} code={e['code']} questionID={e['_id']} setAllTraining={props.setAllTraining}></Card>
                           </TabPanel>
                       );
                   })
