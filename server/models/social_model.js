@@ -47,6 +47,15 @@ const insertCodeArticle = async (postData) => {
     return insertResult;
 };
 
+// const insertVideoArticle = async (postData) => {
+//     // Get records
+//     const dbConnect = dbo.getDb();
+
+//     let insertResult = await dbConnect.collection('article').insertOne(postData);
+
+//     return insertResult;
+// };
+
 const insertComment = async (user_id, article_id, summerNote, userInfo) => {
     // Get records
     const dbConnect = dbo.getDb();
@@ -75,13 +84,65 @@ const insertComment = async (user_id, article_id, summerNote, userInfo) => {
     return insertResult;
 };
 
+const checkShared = async (question_id, qid) => {
+    console.log(question_id, qid);
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    try {
+        const getShared = await dbConnect
+            .collection('training')
+            .find({
+                _id: ObjectId(question_id),
+            })
+            .toArray();
+
+        return getShared;
+    } catch (err) {
+        console.log('err', err);
+        return { err: err };
+    }
+};
+
 const insertVideoArticle = async (postData) => {
     // Get records
     const dbConnect = dbo.getDb();
 
-    let insertResult = dbConnect.collection('article').insertOne(postData);
+    let insertResult = dbConnect.collection('video-article').insertOne(postData);
 
     return insertResult;
+};
+
+const updateVideoShared = async (question_id, qid) => {
+    console.log(question_id, qid);
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    try {
+        let updateAnswer = await dbConnect.collection('training').updateOne(
+            {
+                _id: ObjectId(question_id),
+            },
+            {
+                $set: {
+                    'video.$[v].shared': true,
+                },
+            },
+            {
+                multi: true,
+                arrayFilters: [
+                    {
+                        'v.qid': Number(qid),
+                    },
+                ],
+            }
+        );
+        console.log('updateAnswer', updateAnswer);
+        return { msg: updateAnswer };
+    } catch (err) {
+        console.log('err', err);
+        return { err: err };
+    }
 };
 
 const updateArticleGood = async (article_id, user_id) => {
@@ -103,10 +164,13 @@ const updateArticleBad = async (article_id, user_id) => {
 };
 
 module.exports = {
+    updateVideoShared,
     insertCodeArticle,
+    insertVideoArticle,
     getAllArticle,
     updateArticleGood,
     getArticleByID,
     insertComment,
     updateArticleBad,
+    checkShared,
 };

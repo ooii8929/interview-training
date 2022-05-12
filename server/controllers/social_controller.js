@@ -60,36 +60,47 @@ const insertCodeArticle = async (req, res) => {
 
 const insertVideoArticle = async (req, res) => {
     // insert code post
-    const { user_id, article_id, qid, title, video_url } = req.body;
+    const { user_id, article_id, qid, video_url, category, question_id } = req.body;
 
-    const userProfile = await USER.getUserProfileByUserID(user_id, req.locals.user.identity);
-    const questionProfile = await QUESTION.getQuestionsByID(question_id);
-    const { title, description, profession } = questionProfile['questions'][0][0];
+    let [checkShared] = await SOCIAL.checkShared(question_id, qid);
+
+    let a = checkShared.video.filter((e) => {
+        return e.qid === Number(qid);
+    });
+
+    if (a[0].shared) {
+        return res.status(400).send({ error: '已經分享過囉' });
+    }
+
+    const userProfile = await USER.getUserProfileByUserID(user_id, req.locals.identity);
+
     if (!userProfile) {
         res.status(500).send({ error: 'Database Query Error' });
         return;
     }
+
+    const [questionProfile] = await QUESTION.getQuestionsByID(qid);
     if (!questionProfile) {
         res.status(500).send({ error: 'Database Query Error' });
         return;
     }
 
     const postData = {
-        question_id: question_id,
-        picture: userProfile.picture,
-        title: title,
-        description: description,
-        author_id: userProfile.id,
-        author_name: userProfile.name,
-        code: code,
-        goods: [],
+        article_id: article_id,
+        question_id: qid,
+        title: questionProfile.title,
+        description: questionProfile.description,
+        author_id: user_id,
         subscribe: 0,
         post_time: new Date(),
-        category: profession,
-        language: language,
-        reply: [],
+        video_url: video_url,
+        category: category,
+        goods: [],
+        comments: [],
     };
-    let insertResult = await SOCIAL.insertCodeArticle(postData);
+    let insertResult = await SOCIAL.insertVideoArticle(postData);
+
+    let updateResult = await SOCIAL.updateVideoShared(question_id, qid);
 
     res.status(200).send(insertResult);
 };
@@ -144,6 +155,7 @@ const updateArticleBad = async (req, res) => {
 module.exports = {
     getAllArticle,
     insertCodeArticle,
+    insertVideoArticle,
     updateArticleGood,
     getArticleByID,
     insertComments,

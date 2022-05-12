@@ -318,6 +318,7 @@ const submitVideoAnswerCheck = async (user_id, question_id, qid, checked) => {
 
 module.exports = {
     getQuestionAnswer,
+
     questionByQid,
     insertVideoAnswer,
     getAllTraining,

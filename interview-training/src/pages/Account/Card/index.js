@@ -13,9 +13,8 @@ import Swal from 'sweetalert2';
 
 export default function BasicCard(props) {
     let userId = localStorage.getItem('userid');
-
     const defaultLanguage = 'javascript';
-
+    const refs = useRef([]);
     const [language, setLanguage] = React.useState(defaultLanguage);
     const shareBtn = useRef(null);
     let languages = ['javascript', 'python'];
@@ -30,13 +29,14 @@ export default function BasicCard(props) {
                     withCredentials: true,
                     method: 'POST',
                     credentials: 'same-origin',
-                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`,
+                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video`,
                     data: {
                         user_id: userId,
                         article_id: e.currentTarget.value,
-                        qid: e.currentTarget.qid,
-                        title: e.currentTarget.dataset.title,
+                        qid: e.currentTarget.dataset.qid,
+                        question_id: props.questionID,
                         video_url: e.currentTarget.dataset.video,
+                        category: e.currentTarget.dataset.category,
                     },
                     headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
                 });
@@ -91,7 +91,6 @@ export default function BasicCard(props) {
                                           size="large"
                                           value={`${props.questionID}-video-${e.qid}`}
                                           data-category={'video'}
-                                          data-title={e.title}
                                           data-qid={e.qid}
                                           data-video={e.video_url}
                                           onClick={shareAnswer}
