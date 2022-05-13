@@ -161,7 +161,12 @@ export default function Account(props) {
             if (responseAllTraining) {
                 console.log('responseAllTraining', responseAllTraining);
 
-                setAllTraining(responseAllTraining);
+                let allTrainingFilter = responseAllTraining['data'].filter((e) => {
+                    return e['status'] === 1;
+                });
+                console.log('allTrainingFilter', allTrainingFilter);
+
+                setAllTraining(allTrainingFilter);
             }
         } catch (error) {
             console.log(error);

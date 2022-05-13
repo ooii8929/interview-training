@@ -51,14 +51,14 @@ export default function VerticalTabs(props) {
                 sx={{ borderRight: 1, borderColor: 'divider' }}
             >
                 {props.training
-                    ? props.training['data'].map((e, index) => {
+                    ? props.training.map((e, index) => {
                           return <Tab label={e['create_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)} {...a11yProps(index)} />;
                       })
                     : null}
             </Tabs>
 
             {props.training
-                ? props.training['data'].map((e, index) => {
+                ? props.training.map((e, index) => {
                       return (
                           <TabPanel value={value} index={index}>
                               <Card video={e['video']} code={e['code']} questionID={e['_id']} setAllTraining={props.setAllTraining}></Card>

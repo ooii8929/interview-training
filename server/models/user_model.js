@@ -83,8 +83,8 @@ const getUserProfile = async (userID, userEmail) => {
     const conn = await pool.getConnection();
 
     // get all professions
-    const queryUserProfile = 'SELECT * FROM users WHERE email = ?';
-    const [userProfileResult] = await conn.query(queryUserProfile, [userEmail]);
+    const queryUserProfile = 'SELECT create_dt,email,id,last_login_dt,picture FROM users WHERE id = ?';
+    const [userProfileResult] = await conn.query(queryUserProfile, [userID]);
     let userProfileCombine = { userProfile: userProfileResult[0] };
 
     // get all professions

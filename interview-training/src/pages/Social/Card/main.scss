@@ -28,6 +28,28 @@
   margin-bottom: 3% !important;
   margin: auto;
 }
+.card-all-share{
+  
+
+display: flex;
+
+  border-radius: 20px !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  margin-top: 3% !important;
+  margin-bottom: 3% !important;
+  margin: auto;
+}
+
+.card-share{
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  border-radius: 20px !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  margin-top: 3% !important;
+  margin-bottom: 3% !important;
+  margin: auto;
+}
 
 .card header.user {
   display: flex;

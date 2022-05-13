@@ -40,8 +40,8 @@ function App() {
     };
 
     React.useEffect((e) => {
-        try {
-            async function getAvator() {
+        async function getAvator() {
+            try {
                 let getAvatorResult = await axios({
                     withCredentials: true,
                     method: 'GET',
@@ -57,12 +57,18 @@ function App() {
                     localStorage.setItem('useremail', getAvatorResult.data.email);
                     localStorage.setItem('identity', getAvatorResult.data.identity);
                 }
+            } catch (error) {
+                console.log('error.response', error);
+                await Swal.fire({
+                    title: 'Error Auth!',
+                    text: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '前往登入',
+                });
             }
-
-            getAvator();
-        } catch (error) {
-            console.log('get avator fail', error);
         }
+
+        getAvator();
     }, []);
     function RequireAuth({ children }) {
         let location = useLocation();
@@ -101,7 +107,7 @@ function App() {
                     <Route path="/code" element={<Code />} />
                     <Route path="/reserve" element={<Reserve />} />
                     <Route path="/social" element={<Social />} />
-                    <Route path="/social/:id" element={<SocialArticle />} />
+                    <Route path="/social/:category/:id" element={<SocialArticle />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/tutor" element={<Tutor />} />
                     <Route path="/course" element={<Course />} />

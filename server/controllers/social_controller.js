@@ -42,6 +42,23 @@ const getArticleByID = async (req, res) => {
     res.status(200).send(articles);
 };
 
+const getCodeArticleByID = async (req, res) => {
+    let { article_id } = req.query;
+    let articles = await SOCIAL.getCodeArticleByID(article_id);
+
+    let authorInfo = await USER.getUserProfile(articles[0]['author_id']);
+
+    articles[0].author = authorInfo.userProfile;
+
+    res.status(200).send(articles);
+};
+
+const getVideoArticleByID = async (req, res) => {
+    let { article_id } = req.query;
+    let articles = await SOCIAL.getVideoArticleByID(article_id);
+    res.status(200).send(articles);
+};
+
 const insertCodeArticle = async (req, res) => {
     try {
         // insert code post
@@ -141,25 +158,29 @@ const insertVideoArticle = async (req, res) => {
     res.status(200).send(insertResult);
 };
 
-const insertComments = async (req, res) => {
+const insertCodeComments = async (req, res) => {
+    if (!req.locals.id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
     // insert code post
-    const { user_id, article_id, summerNote, identity, user_email } = req.body;
+    const { article_id, summerNote } = req.body;
     let userInfo;
-    if (identity == 'student') {
-        userInfo = await USER.getUserPureProfile(user_id, user_email);
+    if (req.locals.identity == 'student') {
+        userInfo = await USER.getUserPureProfile(req.locals.id, req.locals.email);
     }
 
-    if (identity == 'teacher') {
-        userInfo = await USER.getTeacherProfile(user_id, user_email);
+    if (req.locals.identity == 'teacher') {
+        userInfo = await USER.getTeacherProfile(req.locals.id, req.locals.email);
     }
-    let insertResult = await SOCIAL.insertComment(user_id, article_id, summerNote, userInfo[0][0]);
+    let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
 
     return res.status(200).send(insertResult);
 };
 
 const updateArticleGood = async (req, res) => {
     // insert code post
-    const { article_id, user_id } = req.body;
+    const { article_id, user_id } = req.body.data;
     console.log('user_id', user_id);
 
     if (!user_id) {
@@ -175,7 +196,7 @@ const updateArticleGood = async (req, res) => {
 
 const updateArticleBad = async (req, res) => {
     // insert code post
-    const { article_id, user_id } = req.body;
+    const { article_id } = req.body.data;
     console.log('user_id', user_id);
     if (!user_id) {
         console.log('未登入');
@@ -188,6 +209,49 @@ const updateArticleBad = async (req, res) => {
     res.status(200).send(updateResult);
 };
 
+const updateArticleCodeGood = async (req, res) => {
+    // insert code post
+
+    const { article_id } = req.body;
+
+    if (!req.locals.id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
+
+    let getNowGoods = await SOCIAL.getArticleCodeGood(article_id);
+
+    if (getNowGoods[0]['goods'].includes(req.locals.id)) {
+        console.log('already clicked');
+        return res.status(401).send({ error: '已經點過讚' });
+    }
+
+    let updateResult = await SOCIAL.updateArticleGood(article_id, req.locals.id);
+    console.log('updateResult', updateResult);
+
+    res.status(200).send(updateResult);
+};
+
+const updateArticleCodeBad = async (req, res) => {
+    // insert code post
+    const { article_id } = req.body;
+
+    if (!req.locals.id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
+    let getNowGoods = await SOCIAL.getArticleCodeGood(article_id);
+    if (!getNowGoods[0]['goods'].includes(req.locals.id)) {
+        console.log('not include');
+        return res.status(401).send({ error: '沒有點過讚' });
+    }
+
+    let updateResult = await SOCIAL.updateArticleCodeBad(article_id, req.locals.id);
+    console.log('updateResult', updateResult);
+
+    res.status(200).send(updateResult);
+};
+
 module.exports = {
     getCodeArticle,
     getAllArticle,
@@ -195,6 +259,10 @@ module.exports = {
     insertVideoArticle,
     updateArticleGood,
     getArticleByID,
-    insertComments,
+    getCodeArticleByID,
+    getVideoArticleByID,
+    insertCodeComments,
     updateArticleBad,
+    updateArticleCodeGood,
+    updateArticleCodeBad,
 };

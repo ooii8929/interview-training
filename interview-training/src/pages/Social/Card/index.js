@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import CodeEditor from '@uiw/react-textarea-code-editor';
-
+import Grid from '@mui/material/Grid';
 import './main.scss';
 export default function BasicCard(props) {
     // let authorPicture;
@@ -26,31 +26,37 @@ export default function BasicCard(props) {
 
                 <div className="social-desc" dangerouslySetInnerHTML={{ __html: props.description }}></div>
             </main>
-
-            {props.codeArticles
-                ? props.codeArticles['articles'][props.qid].map((e) => {
-                      return (
-                          <div className="card">
-                              <p>{props.codeArticles['authors'][e['author_id']][0]['name']}</p>
-                              <p>{}</p>
-                              <CodeEditor
-                                  value={e['code'][0]['javascript_answer']}
-                                  language={'javascript'}
-                                  placeholder="Please enter JS code."
-                                  padding={15}
-                                  className="codeeditor"
-                                  style={{
-                                      minHeight: '60vh',
-                                      fontSize: 16,
-                                      backgroundColor: '#161b22',
-                                      fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                                  }}
-                              />
-                              <a>{e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}</a>
-                          </div>
-                      );
-                  })
-                : null}
+            <div className="card-all-share">
+                <Grid container spacing={2}>
+                    {props.codeArticles
+                        ? props.codeArticles['articles'][props.qid].map((e) => {
+                              return (
+                                  <Grid item xs={6}>
+                                      <Link to={`/social/${e.category}/${e._id}`}>
+                                          <div className="card-share">
+                                              <p>{props.codeArticles['authors'][e['author_id']][0]['name']}</p>
+                                              <CodeEditor
+                                                  value={e['code'][0]['javascript_answer']}
+                                                  language={'javascript'}
+                                                  placeholder="Please enter JS code."
+                                                  padding={15}
+                                                  className="codeeditor"
+                                                  style={{
+                                                      minHeight: '60vh',
+                                                      fontSize: 16,
+                                                      backgroundColor: '#161b22',
+                                                      fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                                                  }}
+                                              />
+                                              <a>{e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}</a>
+                                          </div>
+                                      </Link>
+                                  </Grid>
+                              );
+                          })
+                        : null}
+                </Grid>
+            </div>
         </div>
     );
 }

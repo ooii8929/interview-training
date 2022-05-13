@@ -64,6 +64,37 @@ const getArticleByID = async (article_id) => {
     }
 };
 
+const getCodeArticleByID = async (article_id) => {
+    // Get records
+    const dbConnect = await dbo.getDb();
+    try {
+        const cursor = await dbConnect
+            .collection('code-article')
+            .find({ _id: ObjectId(article_id) })
+            .toArray();
+        return cursor;
+    } catch (error) {
+        return error;
+    }
+};
+
+const getVideoArticleByID = async (article_id) => {
+    // Get records
+    const dbConnect = await dbo.getDb();
+    try {
+        console.log('article_id', article_id);
+        const cursor = await dbConnect
+            .collection('video-article')
+            .find({ _id: ObjectId(article_id) })
+            .toArray();
+        console.log('cursor', cursor);
+        return cursor;
+    } catch (error) {
+        console.log('error', error);
+        return error;
+    }
+};
+
 const insertCodeArticle = async (postData) => {
     // Get records
     const dbConnect = dbo.getDb();
@@ -82,7 +113,7 @@ const insertCodeArticle = async (postData) => {
 //     return insertResult;
 // };
 
-const insertComment = async (user_id, article_id, summerNote, userInfo) => {
+const insertCodeComment = async (user_id, article_id, summerNote, userInfo) => {
     // Get records
     const dbConnect = dbo.getDb();
     let commentInfo = {
@@ -98,7 +129,7 @@ const insertComment = async (user_id, article_id, summerNote, userInfo) => {
         commentInfo.experience = userInfo.experience1;
     }
 
-    let insertResult = await dbConnect.collection('article').update(
+    let insertResult = await dbConnect.collection('code-article').update(
         { _id: ObjectId(article_id) },
         {
             $push: {
@@ -207,16 +238,44 @@ const updateArticleGood = async (article_id, user_id) => {
     // Get records
     const dbConnect = dbo.getDb();
     console.log('good', article_id, user_id);
-    let insertResult = await dbConnect.collection('article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
+    let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
     console.log('insertResult', insertResult);
     return insertResult;
 };
 
-const updateArticleBad = async (article_id, user_id) => {
+const updateArticleCodeGood = async (article_id, user_id) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+    console.log('good', article_id, user_id);
+    let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+};
+
+const getArticleCodeGood = async (article_id) => {
+    // Get records
+    const dbConnect = dbo.getDb();
+    console.log('article_id', article_id);
+    try {
+        const goods = await dbConnect
+            .collection('code-article')
+            .find({
+                _id: ObjectId(article_id),
+            })
+            .toArray();
+
+        return goods;
+    } catch (err) {
+        console.log('err', err);
+        return { err: err };
+    }
+};
+
+const updateArticleCodeBad = async (article_id, user_id) => {
     // Get records
     const dbConnect = dbo.getDb();
 
-    let insertResult = await dbConnect.collection('article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
+    let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
     console.log('insertResult', insertResult);
     return insertResult;
 };
@@ -230,8 +289,13 @@ module.exports = {
     insertVideoArticle,
     getAllArticle,
     updateArticleGood,
+    updateArticleCodeBad,
+    updateArticleCodeGood,
     getArticleByID,
-    insertComment,
-    updateArticleBad,
+    getCodeArticleByID,
+    getVideoArticleByID,
+    insertCodeComment,
+
     checkShared,
+    getArticleCodeGood,
 };

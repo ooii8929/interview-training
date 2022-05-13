@@ -25,6 +25,8 @@ const Main = () => {
     const [audioSource, setAudioSource] = useState('');
     const [videoSourceArray, setVideoSourceArray] = useState([]);
     const [videoSource, setVideoSource] = useState('');
+    const [videoSourceDeviceId, setVideoSourceDeviceId] = useState('');
+    const [audioSourceDeviceId, setAudioSourceDeviceId] = useState('');
     // const [localStream, setLocalStream] = useState("");
     const [localScreenStream, setLocalScreenStream] = useState('');
     const [useScreenStream, setUseScreenStream] = useState(false);
@@ -58,6 +60,20 @@ const Main = () => {
 
     useEffect(() => {
         if (ws) {
+            async function getDevice() {
+                let deviceArr = await navigator.mediaDevices.enumerateDevices();
+                let audioDeviceArr = deviceArr.filter((e) => {
+                    return e.kind === 'audioinput';
+                });
+
+                setAudioSourceArray(audioDeviceArr);
+                let videoDeviceArr = deviceArr.filter((e) => {
+                    return e.kind === 'videoinput';
+                });
+                console.log(videoDeviceArr);
+                setVideoSourceArray(videoDeviceArr);
+            }
+            getDevice();
             // async function initLocalStream() {
             //     console.log('2. Init Local Stream');
             //     let tmpLocalStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
@@ -106,7 +122,36 @@ const Main = () => {
             console.log('data', data);
             addChat(data, 'remote');
         });
+
+        ws.on('bye', () => {
+            console.log('收到 bye');
+            hangup();
+        });
+
+        ws.on('leaved', () => {
+            console.log('收到 leaved');
+            pc.oniceconnectionstatechange = function () {
+                if (pc.iceConnectionState === 'disconnected') {
+                    pc.close();
+                    pc = null;
+                    remoteVideo.current.display = 'none';
+                    console.log('Disconnected');
+                }
+            };
+            closeLocalMedia();
+        });
     };
+    /**
+     * close user stream
+     */
+    function closeLocalMedia() {
+        if (localStream && localStream.getTracks()) {
+            localStream.getTracks().forEach((track) => {
+                track.stop();
+            });
+        }
+        localStream = null;
+    }
 
     async function makeCall() {
         await createPeerConnection();
@@ -139,10 +184,19 @@ const Main = () => {
             ws.emit('ice_candidate', room, message);
         };
 
+        // if connect fail ,then log
+        pc.oniceconnectionstatechange = function () {
+            if (pc.iceConnectionState === 'disconnected') {
+                pc.close();
+                pc = null;
+                remoteVideo.current.display = 'none';
+                console.log('Disconnected');
+            }
+        };
+
         console.log('run remoteVideo before', pc);
         pc.ontrack = (e) => {
             console.log('e', e.streams[0]);
-
             remoteVideo.current.srcObject = e.streams[0];
         };
         console.log('run remoteVideo after', pc);
@@ -150,6 +204,33 @@ const Main = () => {
         localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
         setIsPC(true);
     }
+
+    useEffect(() => {
+        console.log('shareScreenIsUse', shareScreenIsUse);
+        if (shareScreenIsUse) {
+            async function display() {
+                let screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                });
+                await screenStream.getTracks().forEach((track) => pc.addTrack(track, screenStream));
+            }
+            display();
+        }
+    }, [shareScreenIsUse]);
+
+    useEffect(() => {
+        if (videoSource) {
+            setAudioSourceDeviceId(videoSource.deviceId);
+            console.log(videoSource);
+        }
+    }, [videoSource]);
+
+    useEffect(() => {
+        if (audioSource) {
+            setAudioSourceDeviceId(audioSource.deviceId);
+            console.log(audioSource);
+        }
+    }, [audioSource]);
 
     async function handleOffer(offer) {
         console.log('handleOffer', offer);
@@ -229,7 +310,8 @@ const Main = () => {
         setNewMessage(event.target.value);
     }
 
-    const handleSendMessage = () => {
+    const handleSendMessage = (e) => {
+        e.preventDefault();
         sendMsg(newMessage);
         setNewMessage('');
     };
@@ -295,7 +377,7 @@ const Main = () => {
                                 ? audioSourceArray.map((e, index) => {
                                       return (
                                           <MenuItem value={e} key={index}>
-                                              {e}
+                                              {e.label}
                                           </MenuItem>
                                       );
                                   })
@@ -312,15 +394,14 @@ const Main = () => {
                             value={videoSource}
                             defaultValue={videoSource}
                             onChange={(e) => {
-                                console.log('e.target.value', e.target.value);
                                 setVideoSource(e.target.value);
                             }}
                         >
                             {videoSourceArray
                                 ? videoSourceArray.map((e, index) => {
                                       return (
-                                          <MenuItem value={e} key={index}>
-                                              {e}
+                                          <MenuItem value={e} key={index} data-deviceid={e.deviceId}>
+                                              {e.label}
                                           </MenuItem>
                                       );
                                   })
@@ -342,8 +423,8 @@ const Main = () => {
                     className="btn btn-dark rounded-0 border-info btn-no-effect"
                     onClick={async () => {
                         localStream = await navigator.mediaDevices.getUserMedia({
-                            audio: true,
-                            video: true,
+                            audio: true || { deviceId: audioSource },
+                            video: true || { deviceId: videoSource },
                         });
                         localVideo.current.srcObject = localStream;
 
@@ -359,7 +440,7 @@ const Main = () => {
                     ref={hangupButton}
                     onClick={() => {
                         if (ws) {
-                            ws.emit('leave', room);
+                            ws.emit('leaved', room);
                         }
                         hangup();
                     }}
@@ -389,7 +470,7 @@ const Main = () => {
                             : null}
                     </div>
 
-                    <form className="chat-input">
+                    <form className="chat-input" onSubmit={handleSendMessage}>
                         <div className="input-group">
                             <input
                                 type="text"
@@ -400,7 +481,7 @@ const Main = () => {
                                 onChange={handleChange}
                             ></input>
                             <div className="input-group-append" id="chat-input-btn">
-                                <button type="button" className="btn btn-dark rounded-0 border-info btn-no-effect" onClick={handleSendMessage}>
+                                <button type="submit" className="btn btn-dark rounded-0 border-info btn-no-effect">
                                     Send
                                 </button>
                             </div>

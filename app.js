@@ -131,7 +131,8 @@ io.on('connection', (socket) => {
     });
 
     // 離開房間
-    socket.on('leave', (room) => {
+    socket.on('leaved', (room) => {
+        console.log('leave room', room);
         socket.to(room).emit('bye');
         socket.emit('leaved');
     });

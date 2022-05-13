@@ -6,16 +6,27 @@ import Constant from './Constant.js';
 export default function RequireAuth({ Component }) {
     let location = useLocation();
     let profile;
+
     async function getProfile() {
-        profile = await axios({
-            withCredentials: true,
-            method: 'GET',
-            credentials: 'same-origin',
-            url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
-            headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-        });
+        try {
+            profile = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
+        } catch (error) {
+            await Swal.fire({
+                title: 'Success Register!',
+                text: `${error.response.data.error}`,
+                icon: 'error',
+                confirmButtonText: 'Cool',
+            });
+        }
     }
     getProfile();
+
     if (!profile) {
         Swal.fire({
             title: '你還沒登入，對拔!',

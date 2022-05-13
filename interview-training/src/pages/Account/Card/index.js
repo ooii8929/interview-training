@@ -62,8 +62,11 @@ export default function BasicCard(props) {
 
                         if (responseAllTraining) {
                             console.log('responseAllTraining', responseAllTraining);
-
-                            props.setAllTraining(responseAllTraining);
+                            let allTrainingFilter = responseAllTraining['data'].filter((e) => {
+                                return e['status'] === 1;
+                            });
+                            console.log('allTrainingFilter', allTrainingFilter);
+                            props.setAllTraining(allTrainingFilter);
                         }
                     } catch (error) {
                         console.log(error);
@@ -114,8 +117,11 @@ export default function BasicCard(props) {
 
                         if (responseAllTraining) {
                             console.log('responseAllTraining', responseAllTraining);
-
-                            props.setAllTraining(responseAllTraining);
+                            let allTrainingFilter = responseAllTraining['data'].filter((e) => {
+                                return e['status'] === 1;
+                            });
+                            console.log('allTrainingFilter', allTrainingFilter);
+                            props.setAllTraining(allTrainingFilter);
                         }
                     } catch (error) {
                         console.log(error);

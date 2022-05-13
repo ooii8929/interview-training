@@ -8,19 +8,28 @@ const {
     insertCodeArticle,
     updateArticleGood,
     getArticleByID,
+    getCodeArticleByID,
+    getVideoArticleByID,
     insertComments,
     updateArticleBad,
+    updateArticleCodeGood,
+    updateArticleCodeBad,
     insertVideoArticle,
+    insertCodeComments,
 } = require('../controllers/social_controller');
 
 router.route('/article').get(wrapAsync(getAllArticle));
 router.route('/article/id').get(wrapAsync(getArticleByID));
+router.route('/article/code/id').get(wrapAsync(getCodeArticleByID));
+router.route('/article/video/id').get(wrapAsync(getVideoArticleByID));
+
 router.route('/article/code').post(authentication(), wrapAsync(insertCodeArticle));
 router.route('/article/code').get(wrapAsync(getCodeArticle));
 router.route('/article/video').post(authentication(), wrapAsync(insertVideoArticle));
-router.route('/article/good').post(wrapAsync(updateArticleGood));
-router.route('/article/bad').post(wrapAsync(updateArticleBad));
+router.route('/article/code/good').post(authentication(), wrapAsync(updateArticleCodeGood));
+router.route('/article/code/bad').post(authentication(), wrapAsync(updateArticleCodeBad));
 router.route('/article/subscribe').post(wrapAsync());
 router.route('/article/comment').post(wrapAsync(insertComments));
+router.route('/article/code/comment').post(authentication(), wrapAsync(insertCodeComments));
 
 module.exports = router;
