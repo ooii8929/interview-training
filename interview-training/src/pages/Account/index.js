@@ -28,6 +28,8 @@ export default function Account(props) {
 
     const [profiles, setProfiles] = React.useState(null);
     const [appointments, setAppointments] = React.useState('');
+    const [appointmentsFinished, setAppointmentsFinished] = React.useState('');
+
     const [allTraining, setAllTraining] = React.useState('');
     const [allTutorRecords, setAllTutorRecords] = React.useState('');
     const [identity, setIdentity] = React.useState('');
@@ -142,8 +144,21 @@ export default function Account(props) {
                 },
             });
             if (responseAppoint['data'].length !== 0) {
-                console.log('responseAppoint', responseAppoint);
-                setAppointments(responseAppoint['data']);
+                let responseAppointFilterUpTONow = responseAppoint['data'].filter((e) => {
+                    return new Date(e.available_time) > Date.now();
+                });
+
+                let finalRecentClass = responseAppointFilterUpTONow.sort((a, b) => new Date(a.available_time) - new Date(b.available_time));
+
+                setAppointments(finalRecentClass);
+
+                let responseAppointFilterDownTONow = responseAppoint['data'].filter((e) => {
+                    return new Date(e.available_time) <= Date.now();
+                });
+
+                let finalPastClass = responseAppointFilterDownTONow.sort((a, b) => new Date(b.available_time) - new Date(a.available_time));
+
+                setAppointmentsFinished(finalPastClass);
             }
         } catch (error) {
             console.log(error);
@@ -236,34 +251,57 @@ export default function Account(props) {
 
                 <Container className="account-box">
                     {allTraining ? (
-                        <Typography variant="h4" component="h2">
-                            近期課程
-                        </Typography>
+                        <>
+                            <Typography variant="h4" component="h2">
+                                近期課程
+                            </Typography>
+                            <Grid container columns={12} className="account-box-grid">
+                                {appointments
+                                    ? appointments.map((appointment, index) => {
+                                          return (
+                                              <Grid item xs={4} key={index} className="account-box-grid-self">
+                                                  <TutorCard
+                                                      key={index}
+                                                      teacher={appointment['name']}
+                                                      profession={appointment['profession']}
+                                                      picture={appointment['picture']}
+                                                      tID={appointment['question_id']}
+                                                      createDT={appointment['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                                      href={appointment['course_url']}
+                                                  />
+                                              </Grid>
+                                          );
+                                      })
+                                    : null}
+                            </Grid>
+                            <hr style={{ margin: '3%' }} />
+                            <Typography variant="h4" component="h2" m={4}>
+                                過去課程
+                            </Typography>
+                            {appointmentsFinished ? (
+                                <Grid container columns={12} className="account-box-grid">
+                                    {appointmentsFinished.map((appointment, index) => {
+                                        return (
+                                            <Grid item xs={4} key={index} className="account-box-grid-self">
+                                                <TutorCard
+                                                    key={index}
+                                                    teacher={appointment['name']}
+                                                    profession={appointment['profession']}
+                                                    picture={appointment['picture']}
+                                                    tID={appointment['question_id']}
+                                                    createDT={appointment['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                                />
+                                            </Grid>
+                                        );
+                                    })}
+                                </Grid>
+                            ) : null}
+                        </>
                     ) : (
                         <Typography variant="h4" component="h2">
                             已安排時間
                         </Typography>
                     )}
-
-                    <Grid container columns={12} className="account-box-grid">
-                        {appointments
-                            ? appointments.map((appointment, index) => {
-                                  return (
-                                      <Grid item xs={4} key={index} className="account-box-grid-self">
-                                          <TutorCard
-                                              key={index}
-                                              teacher={appointment['name']}
-                                              profession={appointment['profession']}
-                                              picture={appointment['picture']}
-                                              tID={appointment['question_id']}
-                                              createDT={appointment['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
-                                              href={appointment['course_url']}
-                                          />
-                                      </Grid>
-                                  );
-                              })
-                            : null}
-                    </Grid>
 
                     <Grid container columns={12} className="account-box-grid">
                         {allTutorRecords

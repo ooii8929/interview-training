@@ -10,13 +10,44 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import logo from './logo2.png';
+import Fade from '@mui/material/Fade';
+
 import './index.scss';
+import Button from '@mui/material/Button';
+
+import MenuList from '@mui/material/MenuList';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 const settings = { 個人資料: '/account', 登出: '/logout' };
 
 const Header = (props) => {
+    const location = useLocation();
+    const checkedMenu = React.useRef('');
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [getChecked, setGetChecked] = React.useState(false);
+    let navigate = useNavigate();
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = (e) => {
+        setAnchorEl(null);
+    };
+
+    React.useEffect(
+        (e) => {
+            if (getChecked) {
+                console.log('232');
+                console.log(checkedMenu.current);
+            }
+        },
+        [getChecked]
+    );
+
+    const anchorRef = React.useRef(null);
+
     let pages;
     // const [pages, setPages] = React.useState(null);
     // console.log('props.identity', props.identity);
@@ -86,7 +117,14 @@ const Header = (props) => {
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                             {pages
                                 ? Object.keys(pages).map((page) => (
-                                      <MenuItem key={page} component={Link} to={pages[page]} sx={{ my: 2, color: 'white', display: 'block' }} className="header-menu">
+                                      <MenuItem
+                                          key={page}
+                                          // ref={location.pathname === pages[page] ? checkedMenu : null}
+                                          component={Link}
+                                          to={pages[page]}
+                                          sx={{ my: 2, color: 'white', display: 'block', backgroundColor: location.pathname === pages[page] ? '#0f5090' : 'none' }}
+                                          className="header-menu"
+                                      >
                                           {page}
                                       </MenuItem>
                                   ))
@@ -96,30 +134,34 @@ const Header = (props) => {
                         <Box sx={{ flexGrow: 0 }}>
                             {props.avator ? (
                                 <>
-                                    <Tooltip title="Open settings">
-                                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                            <Avatar alt="Remy Sharp" src={props.avator} className="header-avator" />
-                                        </IconButton>
-                                    </Tooltip>
+                                    <Button
+                                        id="fade-button"
+                                        aria-controls={open ? 'fade-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleClick}
+                                    >
+                                        <Avatar alt="Remy Sharp" src={props.avator} className="header-avator" />
+                                    </Button>
                                     <Menu
-                                        sx={{ mt: '45px' }}
-                                        id="menu-appbar"
-                                        anchorEl={anchorElUser}
-                                        anchorOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'right',
+                                        id="fade-menu"
+                                        MenuListProps={{
+                                            'aria-labelledby': 'fade-button',
                                         }}
-                                        keepMounted
-                                        transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'right',
-                                        }}
-                                        open={Boolean(anchorElUser)}
-                                        onClose={handleCloseUserMenu}
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        TransitionComponent={Fade}
                                     >
                                         {Object.keys(settings).map((setting) => (
-                                            <MenuItem key={setting} component={Link} to={settings[setting]}>
-                                                <Typography textAlign="center">{setting}</Typography>
+                                            <MenuItem
+                                                key={setting}
+                                                value={settings[setting]}
+                                                onClick={() => {
+                                                    window.location.href = `${settings[setting]}`;
+                                                }}
+                                            >
+                                                {setting}
                                             </MenuItem>
                                         ))}
                                     </Menu>

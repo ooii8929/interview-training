@@ -13,6 +13,6 @@ router.route('/tutor/teacher/information').get(wrapAsync(getTeacherInfomation));
 
 router.route('/tutor/user/appoint').get(wrapAsync(getAppointmentURL));
 
-router.route('/tutor/user/appoint').post(wrapAsync(makeAppointment));
+router.route('/tutor/user/appoint').post(authentication(), wrapAsync(makeAppointment));
 
 module.exports = router;

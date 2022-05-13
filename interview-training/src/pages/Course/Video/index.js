@@ -11,6 +11,8 @@ import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
 import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
+import ProgressBar from '../ProgressBar';
+import Swal from 'sweetalert2';
 
 export default function Video(props) {
     const { Constant } = useContext(AppContext);
@@ -31,7 +33,9 @@ export default function Video(props) {
     const finishBtn = useRef(null);
 
     const checkBtn = useRef(null);
+    const [progressBarTitleArr, setProgressBarTitleArr] = useState('');
 
+    const [progressBarNumber, setProgressBarNumber] = useState('');
     let timeWarning = useRef(null);
     const [nowQuestionNumber, setNowQuestionNumber] = React.useState(null);
     const display = useRef(null);
@@ -182,7 +186,12 @@ export default function Video(props) {
             if (profileQuestion) {
                 console.log('3. 找出當前題目並set', profileQuestion);
                 setNowQuestion(profileQuestion);
-                console.log('setNowQuestion after axios');
+                let progressBarTitle = [];
+                profileQuestion['data']['video'].map((e) => {
+                    progressBarTitle.push(e.title);
+                });
+                console.log('progressBarTitle', progressBarTitle);
+                setProgressBarTitleArr(progressBarTitle);
             }
             async function initStream(params) {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -255,6 +264,14 @@ export default function Video(props) {
         },
         [answerStatus]
     );
+    async function handleBack() {
+        await Swal.fire({
+            title: '前往社群聊聊天吧！',
+            icon: 'success',
+            confirmButtonText: '立刻前往',
+        });
+        window.location.href = '/social';
+    }
 
     function setNowQuestion(profileQuestion) {
         if (profileQuestion) {
@@ -264,10 +281,13 @@ export default function Video(props) {
                 console.log('e', e);
                 return e.status === 0;
             });
+
             console.log('4. 找到尚未完成題目', notFinishedQuestion);
             if (notFinishedQuestion.length === 0) {
                 window.location.href = '/course/code';
             }
+
+            setProgressBarNumber(notFinishedQuestion.length);
             // 4. 如果有，設定題號
             if (notFinishedQuestion) setNowQuestionNumber(notFinishedQuestion[0]['qid']);
         }
@@ -291,6 +311,12 @@ export default function Video(props) {
 
     return (
         <>
+            {progressBarTitleArr ? (
+                <div style={{ width: '70%', margin: 'auto', marginTop: '3%' }}>
+                    <ProgressBar title={progressBarTitleArr} num={progressBarNumber} />
+                </div>
+            ) : null}
+
             <div ref={timeWarning}></div>
             {question ? (
                 <div className="video_container">
@@ -354,6 +380,9 @@ export default function Video(props) {
                     </Button>
                 </div>
             ) : null}
+            <Button color="inherit" onClick={handleBack} sx={{ mr: 1, position: 'fixed', bottom: 0, right: 0 }}>
+                暫時放棄
+            </Button>
         </>
     );
 }

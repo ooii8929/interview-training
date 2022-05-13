@@ -29,9 +29,9 @@ export default function BasicCard(props) {
             <div className="card-all-share">
                 <Grid container spacing={2}>
                     {props.codeArticles
-                        ? props.codeArticles['articles'][props.qid].map((e) => {
+                        ? props.codeArticles['articles'][props.qid].map((e, index) => {
                               return (
-                                  <Grid item xs={6}>
+                                  <Grid item xs={6} key={index}>
                                       <Link to={`/social/${e.category}/${e._id}`}>
                                           <div className="card-share">
                                               <p>{props.codeArticles['authors'][e['author_id']][0]['name']}</p>
@@ -48,7 +48,7 @@ export default function BasicCard(props) {
                                                       fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                                                   }}
                                               />
-                                              <a>{e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}</a>
+                                              <span>{e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}</span>
                                           </div>
                                       </Link>
                                   </Grid>

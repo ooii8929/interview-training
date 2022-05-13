@@ -55,6 +55,11 @@
         border: 1px solid gray;
     }
 }
+
+.tutor-card-speci{
+       display: flex;
+    justify-content: center;
+}
 .history-title-div{
     display: flex !important;
     justify-content: center !important;
@@ -75,7 +80,7 @@
     margin: 0px !important;
     margin-left: 10px !important;
 
-    .MuiButton-endIco{
+    .MuiButton-endIcon{
         margin: 0px !important;
     }
     .css-z4rqyd-MuiButton-endIcon{
