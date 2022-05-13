@@ -292,9 +292,30 @@ export default function Account(props) {
                             已預約課程
                         </Typography>
                     )}
-                    <Grid container columns={12} className="account-box-grid-self">
-                        <Tab training={allTraining} setAllTraining={setAllTraining} />
-                    </Grid>
+                    {allTraining ? (
+                        <Grid container columns={12} className="account-box-grid-self">
+                            <Tab training={allTraining} setAllTraining={setAllTraining} />
+                        </Grid>
+                    ) : (
+                        <Grid container columns={12} className="account-box-grid">
+                            {allTutorRecords
+                                ? allTutorRecords['data']['appointed'].map((arrange, index) => {
+                                      return (
+                                          <Grid item xs={4} key={index} className="account-box-grid-self">
+                                              <TutorCard
+                                                  key={index}
+                                                  picture={arrange['picture']}
+                                                  teacher={arrange['name']}
+                                                  href={arrange['course_url']}
+                                                  time={arrange['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                                  createDT={arrange['update_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                              />
+                                          </Grid>
+                                      );
+                                  })
+                                : null}
+                        </Grid>
+                    )}
                 </Container>
             </div>
         </>
