@@ -59,12 +59,6 @@ function App() {
                 }
             } catch (error) {
                 console.log('error.response', error);
-                await Swal.fire({
-                    title: 'Error Auth!',
-                    text: `${error.response.data.error}`,
-                    icon: 'error',
-                    confirmButtonText: '前往登入',
-                });
             }
         }
 
