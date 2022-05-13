@@ -36,6 +36,25 @@ const getCodeArticle = async (req, res) => {
     }
 };
 
+const getVideoArticle = async (req, res) => {
+    try {
+        let articles = await SOCIAL.getVideoArticle();
+
+        let groupAuthorArticle = _.groupBy(articles, 'author_id');
+        let groupQuestionArticle = _.groupBy(articles, 'question_id');
+
+        let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
+        let groupAuthor = _.groupBy(authors, 'id');
+        let articlesAndAuthors = {
+            authors: groupAuthor,
+            articles: groupQuestionArticle,
+        };
+        res.status(200).send(articlesAndAuthors);
+    } catch (error) {
+        res.status(400).send({ error: error });
+    }
+};
+
 const getArticleByID = async (req, res) => {
     let { article_id } = req.query;
     let articles = await SOCIAL.getArticleByID(article_id);
@@ -56,6 +75,9 @@ const getCodeArticleByID = async (req, res) => {
 const getVideoArticleByID = async (req, res) => {
     let { article_id } = req.query;
     let articles = await SOCIAL.getVideoArticleByID(article_id);
+    let authorInfo = await USER.getUserProfile(articles[0]['author_id']);
+    articles[0].author = authorInfo.userProfile;
+
     res.status(200).send(articles);
 };
 
@@ -232,6 +254,49 @@ const updateArticleCodeGood = async (req, res) => {
     res.status(200).send(updateResult);
 };
 
+const updateArticleVideoGood = async (req, res) => {
+    // insert code post
+
+    const { article_id } = req.body;
+
+    if (!req.locals.id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
+
+    let getNowGoods = await SOCIAL.getArticleVideoGood(article_id);
+
+    if (getNowGoods[0]['goods'].includes(req.locals.id)) {
+        console.log('already clicked');
+        return res.status(401).send({ error: '已經點過讚' });
+    }
+
+    let updateResult = await SOCIAL.updateArticleVideoGood(article_id, req.locals.id);
+    console.log('updateResult', updateResult);
+
+    res.status(200).send(updateResult);
+};
+
+const updateArticleVideoBad = async (req, res) => {
+    // insert code post
+    const { article_id } = req.body;
+
+    if (!req.locals.id) {
+        console.log('未登入');
+        return res.status(400).send({ error: 'need login' });
+    }
+    let getNowGoods = await SOCIAL.getArticleVideoGood(article_id);
+    if (!getNowGoods[0]['goods'].includes(req.locals.id)) {
+        console.log('not include');
+        return res.status(401).send({ error: '沒有點過讚' });
+    }
+
+    let updateResult = await SOCIAL.updateArticleVideoBad(article_id, req.locals.id);
+    console.log('updateResult', updateResult);
+
+    res.status(200).send(updateResult);
+};
+
 const updateArticleCodeBad = async (req, res) => {
     // insert code post
     const { article_id } = req.body;
@@ -255,6 +320,7 @@ const updateArticleCodeBad = async (req, res) => {
 module.exports = {
     getCodeArticle,
     getAllArticle,
+    getVideoArticle,
     insertCodeArticle,
     insertVideoArticle,
     updateArticleGood,
@@ -265,4 +331,6 @@ module.exports = {
     updateArticleBad,
     updateArticleCodeGood,
     updateArticleCodeBad,
+    updateArticleVideoBad,
+    updateArticleVideoGood,
 };

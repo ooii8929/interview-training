@@ -22,29 +22,28 @@ import CodeEditor from '@uiw/react-textarea-code-editor';
 
 let allArticles;
 
-export default function SocialArticle() {
+export default function SocialCodeArticle() {
     let navigate = useNavigate();
 
     const [message, setMessage] = React.useState(null);
-    const { category, id } = useParams();
+    const { id } = useParams();
     const { Constant } = useContext(AppContext);
     const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
     const tringleGood = useRef(null);
     const tringleBad = useRef(null);
-    const [articles, setArticles] = React.useState(null);
+    const [articles, setArticles] = React.useState('');
     // this article info
-    const [articleInfo, setArticleInfo] = React.useState(null);
-    const baseCodeURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code/id`;
+    const [articleInfo, setArticleInfo] = React.useState('');
     const baseVideoURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video/id`;
-
+    const display = useRef(null);
     const jobType = localStorage.getItem('jobType');
     const userId = localStorage.getItem('userid');
     const userName = localStorage.getItem('username');
     const userEmail = localStorage.getItem('useremail');
     const identity = localStorage.getItem('identity');
-
+    const [authorInfo, setAuthorInfo] = React.useState('');
     const [goods, setGoods] = React.useState(null);
-    const [language, setLanguage] = React.useState(null);
+    const [language, setLanguage] = React.useState('');
     const [isGood, setIsGood] = React.useState(false);
     const [authorPicture, setAuthorPicture] = React.useState('');
     const [comments, setComments] = React.useState('');
@@ -54,37 +53,18 @@ export default function SocialArticle() {
     React.useEffect(() => {
         async function getSpecificArticle() {
             try {
-                let tmpArticleInfo;
-                if (category === 'code') {
-                    tmpArticleInfo = await axios.get(baseCodeURL, {
-                        params: {
-                            article_id: id,
-                        },
-                    });
-                }
-
-                if (category === 'video') {
-                    tmpArticleInfo = await axios.get(baseVideoURL, {
-                        params: {
-                            article_id: id,
-                        },
-                    });
-                }
-
-                console.log('tmpArticleInfo', tmpArticleInfo);
-                setGoods(tmpArticleInfo['data'][0]['goods'].length);
-                let goodsClickedUser = tmpArticleInfo['data'][0]['goods'].filter(function (e) {
-                    return e === userId;
+                let tmpArticleInfo = await axios.get(baseVideoURL, {
+                    params: {
+                        article_id: id,
+                    },
                 });
-                console.log('goodsClickedUser', goodsClickedUser);
-                if (goodsClickedUser.length > 0) {
-                    tringleGood.current.classList.add('good-clicked');
-                    tringleGood.current.disable = true;
-                }
+                console.log('first tmpArticleInfo', tmpArticleInfo);
                 setArticleInfo(tmpArticleInfo['data'][0]);
-                setLanguage(tmpArticleInfo['data'][0]['language']);
+                setAuthorInfo(tmpArticleInfo['data'][0]['author']);
+                setLanguage('javascript');
+                display.current.src = tmpArticleInfo['data'][0]['video_url'];
             } catch (error) {
-                console.log(error);
+                console.log('getSpecificArticle', error);
             }
         }
         getSpecificArticle();
@@ -93,8 +73,15 @@ export default function SocialArticle() {
     useEffect(
         (e) => {
             if (articleInfo) {
-                console.log('articleInfo success');
-                setAuthorPicture(articleInfo['picture']);
+                setGoods(articleInfo['goods'].length);
+                let goodsClickedUser = articleInfo['goods'].filter(function (e) {
+                    return e === Number(userId);
+                });
+
+                if (goodsClickedUser.length > 0) {
+                    tringleGood.current.classList.add('good-clicked');
+                    tringleGood.current.disable = true;
+                }
             }
         },
         [articleInfo]
@@ -105,60 +92,99 @@ export default function SocialArticle() {
             return;
         }
         let postDetail = {
-            user_id: userId,
             article_id: id,
         };
 
         try {
-            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/good`, postDetail);
+            let res = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video/good`,
+                data: postDetail,
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
+
             e.target.classList.add('good-clicked');
             tringleBad.current.classList.remove('good-clicked');
             setGoods((prev) => prev + 1);
         } catch (error) {
-            console.log(error);
-            alert('你需要先登入');
-            localStorage.setItem('returnPage', location.pathname);
-            // window.location.assign("/login");
+            console.log(error.response);
+            if (error.response.status === 401) {
+                await Swal.fire({
+                    title: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '繼續瀏覽',
+                });
+            }
+
+            if (error.response.status === 400) {
+                await Swal.fire({
+                    title: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '前往登入',
+                });
+                localStorage.setItem('returnPage', location.pathname);
+                window.location.assign('/login');
+            }
         }
     }
 
     async function postBad(e) {
         let postDetail = {
-            user_id: userId,
             article_id: id,
         };
         try {
-            let res = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/bad`, postDetail);
-            console.log('e', e.target);
+            let res = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video/bad`,
+                data: postDetail,
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
+
             e.target.classList.remove('good-clicked');
             tringleGood.current.classList.remove('good-clicked');
-
+            tringleGood.current.disable = false;
             setGoods((prev) => prev - 1);
+        } catch (error) {
+            if (error.response.status === 401) {
+                await Swal.fire({
+                    title: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '繼續瀏覽',
+                });
+            }
 
-            console.log('post bad', res);
+            if (error.response.status === 400) {
+                await Swal.fire({
+                    title: `${error.response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: '前往登入',
+                });
+                localStorage.setItem('returnPage', location.pathname);
+                window.location.assign('/login');
+            }
+        }
+    }
+    async function getArticles() {
+        try {
+            let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video`, {
+                params: {
+                    profession: language,
+                },
+            });
+            console.log('tmpAllArticles["data"]', tmpAllArticles['data']);
+            setArticles(tmpAllArticles['data']);
         } catch (error) {
             console.log(error);
-            alert('你需要先登入');
-            localStorage.setItem('returnPage', location.pathname);
-            // window.location.assign("/login");
         }
     }
 
     useEffect(
         (e) => {
-            async function getArticles() {
-                try {
-                    let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article`, {
-                        params: {
-                            profession: language,
-                        },
-                    });
-                    console.log('tmpAllArticles["data"]', tmpAllArticles['data']);
-                    setArticles(tmpAllArticles['data']);
-                } catch (error) {
-                    console.log(error);
-                }
-            }
+            console.log('language', language);
             if (language) {
                 getArticles();
             }
@@ -167,14 +193,9 @@ export default function SocialArticle() {
     );
     useEffect(
         (e) => {
-            // if (articles)
-            //     if (Array.isArray(articles['authors'])) {
-            //         let tmpAuthor = articles['authors'].filter((e) => (e.id = articles['authors'].authorID));
-            //         setAuthorPicture(tmpAuthor);
-            //     } else {
-            //         let tmpAuthor = articles['authors']['picture'];
-            //         setAuthorPicture(tmpAuthor);
-            //     }
+            if (articles) {
+                console.log('articles', articles);
+            }
         },
         [articles]
     );
@@ -199,44 +220,27 @@ export default function SocialArticle() {
                 withCredentials: true,
                 method: 'POST',
                 credentials: 'same-origin',
-                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/comment`,
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code/comment`,
                 data: {
-                    user_id: userId,
-                    user_name: userName,
                     article_id: id,
                     summerNote: msg,
-                    identity: identity,
-                    user_email: userEmail,
                 },
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
 
             console.log('postCommentResult', postCommentResult);
             let tmpArticleInfo;
-            if (category === 'code') {
-                tmpArticleInfo = await axios({
-                    withCredentials: true,
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    url: baseCodeURL,
-                    params: {
-                        article_id: id,
-                    },
-                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-                });
-            }
-            if (category === 'video') {
-                tmpArticleInfo = await axios({
-                    withCredentials: true,
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    url: baseVideoURL,
-                    params: {
-                        article_id: id,
-                    },
-                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-                });
-            }
+
+            tmpArticleInfo = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: baseVideoURL,
+                params: {
+                    article_id: id,
+                },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
 
             setArticleInfo(tmpArticleInfo['data'][0]);
         } catch (error) {
@@ -268,12 +272,12 @@ export default function SocialArticle() {
                                             width: 50,
                                         }}
                                         alt="The house from the offer."
-                                        src={authorPicture}
+                                        src={authorInfo.picture}
                                     />
 
                                     <div className="goods-container">
                                         <div className="tringle good" onClick={postGood} ref={tringleGood}></div>
-                                        {articles ? <div className="now-goods">{goods}</div> : null}
+                                        <div className="now-goods">{goods ? goods : 0}</div>
                                         <div className="tringle-bad good" onClick={postBad} ref={tringleBad}></div>
                                     </div>
                                 </Grid>
@@ -283,10 +287,7 @@ export default function SocialArticle() {
                                             <h1>{articleInfo.title}</h1>
                                             <hr />
                                             <div dangerouslySetInnerHTML={{ __html: articleInfo.description }}></div>
-
-                                            <SyntaxHighlighter language={language} style={docco}>
-                                                {articleInfo.code}
-                                            </SyntaxHighlighter>
+                                            <video type="video/webm" autoPlay controls ref={display} />
                                         </div>
                                         <div className="reply-container">
                                             {articleInfo['comments']
@@ -309,9 +310,7 @@ export default function SocialArticle() {
                                                                       <Grid item xs={10} className="comment-specfic-avator-right">
                                                                           <div className="comment-specfic-title">
                                                                               <div dangerouslySetInnerHTML={{ __html: e.name }}></div>
-                                                                              <div dangerouslySetInnerHTML={{ __html: e.experience }}></div>
                                                                           </div>
-                                                                          <div dangerouslySetInnerHTML={{ __html: e.profession }}></div>
                                                                       </Grid>
                                                                   </Grid>
                                                               </div>
@@ -350,20 +349,9 @@ export default function SocialArticle() {
                     <div className="article-side">
                         <h3>其他相關回答</h3>
                         {articles
-                            ? articles['articles'].map((e, index) => {
+                            ? articles['articles'][articleInfo['question_id']].map((e, index) => {
                                   return (
                                       <div key={index}>
-                                          <CodeEditor
-                                              value={e.code}
-                                              language={language}
-                                              placeholder="Please enter JS code."
-                                              padding={15}
-                                              style={{
-                                                  fontSize: 12,
-                                                  backgroundColor: '#e4e4e4',
-                                                  fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                                              }}
-                                          />
                                           <div className="article-relate">
                                               提交人：{e.author_name}
                                               <br />
