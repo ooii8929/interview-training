@@ -527,7 +527,7 @@ async function submitCodeAnswer(req, res) {
 
 async function submitVideoAnswerCheck(req, res) {
     const { user_id, question_id, qid, checked } = req.body;
-    console.log('submitVideoAnswer', user_id, question_id, qid, checked);
+    console.log('submitVideoAnswerCheck', user_id, question_id, qid, checked);
     let afterSubmit = await Answer.submitVideoAnswerCheck(user_id, question_id, qid, checked);
 
     return res.status(200).send(afterSubmit);

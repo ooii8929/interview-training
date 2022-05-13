@@ -282,6 +282,16 @@ const Main = () => {
     //     [isCandidate]
     // );
 
+    //    <button
+    //        type="button"
+    //        className="btn btn-dark rounded-0 border-info btn-no-effect"
+    //        onClick={() => {
+    //            setShareScreenIsUse(!shareScreenIsUse);
+    //        }}
+    //    >
+    //        Share screen
+    //    </button>;
+
     async function handleAnswer(answer) {
         if (!pc) {
             console.error('no peerconnection');
@@ -409,15 +419,7 @@ const Main = () => {
                         </Select>
                     </FormControl>
                 </div>
-                <button
-                    type="button"
-                    className="btn btn-dark rounded-0 border-info btn-no-effect"
-                    onClick={() => {
-                        setShareScreenIsUse(!shareScreenIsUse);
-                    }}
-                >
-                    Share screen
-                </button>
+
                 <button
                     type="button"
                     className="btn btn-dark rounded-0 border-info btn-no-effect"

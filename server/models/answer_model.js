@@ -291,7 +291,7 @@ const submitVideoAnswerCheck = async (user_id, question_id, qid, checked) => {
     try {
         let updateAnswer = await dbConnect.collection('training').updateOne(
             {
-                user_id: `${user_id}`,
+                user_id: Number(user_id),
                 _id: ObjectId(question_id),
             },
             {

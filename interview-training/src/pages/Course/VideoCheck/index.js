@@ -85,9 +85,17 @@ export default function VideoCheck(props) {
                 qid: props.nowQuestionNumber,
                 answer_url: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/` + success.config.data.name,
             };
-            console.log('data', data);
-            let submitAnswer = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/video/answer`, data);
 
+            console.log('data', data);
+
+            let submitAnswer = await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/video/answer`,
+                data: data,
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
             console.log('tmpProfile after', submitAnswer);
         } catch (error) {
             console.log(error);

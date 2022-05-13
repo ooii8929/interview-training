@@ -152,8 +152,6 @@ export default function Video(props) {
     }
     // submit answer
     async function submitAnswer(e) {
-        setNextBtn(false);
-
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
         }
@@ -208,6 +206,7 @@ export default function Video(props) {
             setAnswerBtn(true);
             setAnswerIsCount(true);
             countDownDivAnswer.current.style.display = 'block ';
+            setNextBtn(false);
         } catch (error) {
             handleClose();
             await Swal.fire({
@@ -220,7 +219,11 @@ export default function Video(props) {
     }
 
     function nextQuestion() {
-        if (endQuestion) window.location.href = '/course/result';
+        if (endQuestion) {
+            window.location.href = '/course/result';
+        } else {
+            navigate(0);
+        }
     }
 
     async function runCode() {
