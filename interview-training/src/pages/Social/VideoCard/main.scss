@@ -11,19 +11,14 @@
    overflow: hidden;
   display: -webkit-box;
   text-overflow: ellipsis;
-<<<<<<< HEAD
-  -webkit-line-clamp: 2; /*行數*/
-=======
+
   -webkit-line-clamp: 5; /*行數*/
->>>>>>> hotfix
+
   -webkit-box-orient: vertical;
   white-space: normal;
 }
 
-<<<<<<< HEAD
-.card {
-  width: 70%;
-=======
+
 .runcode-container-social{
 display: flex;
 align-items: center;
@@ -42,7 +37,6 @@ margin: 0px !important;
 .card {
   width: 70%;
 
->>>>>>> hotfix
   overflow: hidden;
   padding: 20px;
   position: relative;
@@ -53,34 +47,7 @@ margin: 0px !important;
   margin: auto;
 }
 .card-all-share{
-<<<<<<< HEAD
   display: flex;
-  border-radius: 20px !important;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  margin-top: 3% !important;
-  margin-bottom: 3% !important;
-  margin: auto;
-}
-
-.card-all-share-video{
-  display: flex;
-  border-radius: 20px !important;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  margin-top: 3% !important;
-  margin-bottom: 3% !important;
-  margin: auto;
-}
-
-.card-share-video{
-  overflow: hidden;
-  padding: 20px;
-  position: relative;
-=======
-  
-
-display: flex;
-
->>>>>>> hotfix
   border-radius: 20px !important;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   margin-top: 3% !important;

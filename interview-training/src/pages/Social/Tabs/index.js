@@ -19,10 +19,7 @@ export default function LabTabs() {
 
     const [codeArticles, setCodeArticles] = React.useState(null);
     const [videoArticles, setVideoArticles] = React.useState(null);
-<<<<<<< HEAD
 
-=======
->>>>>>> hotfix
     const [authors, setAuthors] = React.useState(null);
     const [videoAuthors, setVideoAuthors] = React.useState(null);
 
@@ -55,11 +52,6 @@ export default function LabTabs() {
             try {
                 allArticles = await axios.get(videoURL);
 
-<<<<<<< HEAD
-                console.log('getVideoArticles', allArticles);
-=======
-                console.log('video articles', allArticles);
->>>>>>> hotfix
                 setVideoArticles(allArticles['data']);
                 setVideoAuthors(allArticles['data']['authors']);
             } catch (error) {
