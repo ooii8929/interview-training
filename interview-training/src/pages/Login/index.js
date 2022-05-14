@@ -102,7 +102,7 @@ export default function SignUp() {
 
     return (
         <div className="login-page-container">
-            <Toggle></Toggle>
+            <Toggle />
         </div>
     );
 }

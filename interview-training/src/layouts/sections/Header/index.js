@@ -8,7 +8,6 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import logo from './logo2.png';
@@ -17,9 +16,6 @@ import Fade from '@mui/material/Fade';
 import './index.scss';
 import Button from '@mui/material/Button';
 
-import MenuList from '@mui/material/MenuList';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-
 const settings = { 個人資料: '/account', 登出: '/logout' };
 
 const Header = (props) => {
@@ -27,7 +23,6 @@ const Header = (props) => {
     const checkedMenu = React.useRef('');
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [getChecked, setGetChecked] = React.useState(false);
-    let navigate = useNavigate();
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);

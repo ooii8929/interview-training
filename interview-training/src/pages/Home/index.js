@@ -9,9 +9,12 @@ import SelectAutoWidth from './components/Select';
 import IconLabelButtons from './components/ButtonGoTraining';
 import './index.scss';
 
-function Home() {
+export default function Home(props) {
     const [jobType, setJobType] = useState('');
     const [clicked, setClicked] = useState(true);
+    useEffect(() => {
+        if (props.title) document.title = props.title;
+    }, []);
 
     function changeJobType(event) {
         setJobType(event.target.value);
@@ -44,5 +47,3 @@ function Home() {
         </>
     );
 }
-
-export default Home;

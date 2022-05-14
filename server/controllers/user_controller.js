@@ -125,8 +125,8 @@ const signOut = async (req, res) => {
                     console.log(err);
                     return res.status(400).send({ error: 'error' });
                 }
-                res.clearCookie('connect.sid');
-                return res.status(200).send({ msg: 'success' });
+
+                res.clearCookie('connect.sid', { path: '/' }).status(200).send('Ok.');
             });
         } catch (error) {
             console.log('error', error);

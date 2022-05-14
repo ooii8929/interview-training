@@ -57,7 +57,6 @@ export default function Article(props) {
                                         {card.title}
                                         {card.description}
                                         <SyntaxHighlighter language="javascript" style={docco}>
-                                            {' '}
                                             {card.code}
                                         </SyntaxHighlighter>
                                     </Grid>

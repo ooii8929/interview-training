@@ -13,7 +13,9 @@
 .tutor-avator{
     border-radius: 50%;
 }
-
+.all-tutor-card-container div{
+    word-break: break-all !important; 
+    }
 .update-avator{
     width: 60px !important;
     height: 60px  !important;
@@ -22,6 +24,11 @@
     padding: 5%;
     border-radius: 50px;
 
+}
+
+.runcode-container{
+    display: flex;
+    align-items: center;
 }
 .update-avator-icon{
      width: 30px !important;

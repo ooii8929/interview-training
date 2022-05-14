@@ -16,19 +16,17 @@
 );
 }
 
+
+
 .runcode-container{
-    padding: 20px 30px;
-    background-color: #fff;
-    width:100% !important;
-    margin: 0px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
 }
 
-.runcode-result-label{
-    padding: 0% !important;
-    
-    margin-bottom: 3% !important;
-  
-   }
+
+
 .runcode-result{
     padding: 0% !important;
     padding-left: 2% !important;

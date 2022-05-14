@@ -36,6 +36,25 @@ const getCodeArticle = async (req, res) => {
     }
 };
 
+const getVideoArticle = async (req, res) => {
+    try {
+        let articles = await SOCIAL.getVideoArticle();
+        console.log('articles', articles);
+        let groupAuthorArticle = _.groupBy(articles, 'author_id');
+        let groupQuestionArticle = _.groupBy(articles, 'question_id');
+
+        let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
+        let groupAuthor = _.groupBy(authors, 'id');
+        let articlesAndAuthors = {
+            authors: groupAuthor,
+            articles: groupQuestionArticle,
+        };
+        res.status(200).send(articlesAndAuthors);
+    } catch (error) {
+        res.status(400).send({ error: error });
+    }
+};
+
 const getArticleByID = async (req, res) => {
     let { article_id } = req.query;
     let articles = await SOCIAL.getArticleByID(article_id);
@@ -254,6 +273,7 @@ const updateArticleCodeBad = async (req, res) => {
 
 module.exports = {
     getCodeArticle,
+    getVideoArticle,
     getAllArticle,
     insertCodeArticle,
     insertVideoArticle,

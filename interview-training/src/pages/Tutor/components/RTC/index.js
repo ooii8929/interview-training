@@ -6,11 +6,24 @@ import Moment from 'react-moment';
 import { Card, CardContent, Typography } from '@mui/material';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import moment from 'moment';
+import Grid from '@mui/material/Grid';
 import { useSearchParams } from 'react-router-dom';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
+import SpeakerNotesOffIcon from '@mui/icons-material/SpeakerNotesOff';
 let pc;
 let localStream;
 
 const Main = () => {
+    // btn hover
+    const [hover, setHover] = useState(false);
+    const [focus, setFocus] = useState(false);
+    const [start, setStart] = useState(false);
+    // Note appear
+    const [noteStart, setNoteStart] = useState(false);
+    const [noteHover, setNoteHover] = useState(false);
+
     // const [pc, setPC] = useState('');
     const { Constant } = useContext(AppContext);
     let userName = localStorage.getItem('username');
@@ -355,7 +368,21 @@ const Main = () => {
     /*-------------------------------------*/
     /*----------------Utils----------------*/
     /*-------------------------------------*/
+    const buttonStyle = ({ hover, focus }) => ({
+        color: hover ? 'rgb(18 87 156)' : '#1976d2',
+    });
 
+    const stopButtonStyle = ({ hover, focus }) => ({
+        color: hover ? 'rgb(133 15 35)' : 'rgb(210 25 56)',
+    });
+
+    const noteButtonStyle = ({ noteHover, focus }) => ({
+        color: noteHover ? '#1976d2' : 'black',
+    });
+
+    const noteStopButtonStyle = ({ noteHover, focus }) => ({
+        color: noteHover ? 'rgb(18 87 156)' : '#1976d2',
+    });
     function hangup() {
         if (pc) {
             pc.close();
@@ -363,67 +390,134 @@ const Main = () => {
         }
     }
 
+    // <div className="select-device">
+    //     <div className="select-device-option">
+    //         <FormControl fullWidth>
+    //             <InputLabel>切換麥克風:</InputLabel>
+    //             <Select
+    //                 id="audioSource"
+    //                 value={audioSource}
+    //                 defaultValue={audioSource}
+    //                 onChange={(e) => {
+    //                     setAudioSource(e.target.value);
+    //                 }}
+    //             >
+    //                 {audioSourceArray
+    //                     ? audioSourceArray.map((e, index) => {
+    //                           return (
+    //                               <MenuItem value={e} key={index}>
+    //                                   {e.label}
+    //                               </MenuItem>
+    //                           );
+    //                       })
+    //                     : null}
+    //             </Select>
+    //         </FormControl>
+    //     </div>
+
+    //     <div className="select-device-option">
+    //         <FormControl fullWidth>
+    //             <InputLabel>切換攝影機:</InputLabel>
+    //             <Select
+    //                 id="videoSource"
+    //                 value={videoSource}
+    //                 defaultValue={videoSource}
+    //                 onChange={(e) => {
+    //                     setVideoSource(e.target.value);
+    //                 }}
+    //             >
+    //                 {videoSourceArray
+    //                     ? videoSourceArray.map((e, index) => {
+    //                           return (
+    //                               <MenuItem value={e} key={index} data-deviceid={e.deviceId}>
+    //                                   {e.label}
+    //                               </MenuItem>
+    //                           );
+    //                       })
+    //                     : null}
+    //             </Select>
+    //         </FormControl>
+    //     </div>
+    // </div>;
+
     return (
-        <div>
-            <div>
-                <video ref={localVideo} autoPlay playsInline className="video-screen localVideo"></video>
-                <video ref={localScreenVideo} autoPlay playsInline className="video-screen"></video>
-            </div>
-            <video ref={remoteVideo} autoPlay playsInline className="video-screen remoteVideo"></video>
-            <video ref={remoteScreenVideo} autoPlay playsInline className="video-screen"></video>
-            <div className="select-device">
-                <div className="select-device-option">
-                    <FormControl fullWidth>
-                        <InputLabel>切換麥克風:</InputLabel>
-                        <Select
-                            id="audioSource"
-                            value={audioSource}
-                            defaultValue={audioSource}
-                            onChange={(e) => {
-                                setAudioSource(e.target.value);
-                            }}
-                        >
-                            {audioSourceArray
-                                ? audioSourceArray.map((e, index) => {
-                                      return (
-                                          <MenuItem value={e} key={index}>
-                                              {e.label}
-                                          </MenuItem>
-                                      );
-                                  })
-                                : null}
-                        </Select>
-                    </FormControl>
+        <Grid container spacing={2}>
+            <Grid item xs={3}>
+                <div>
+                    <video ref={localVideo} autoPlay playsInline className="video-screen localVideo"></video>
                 </div>
+            </Grid>
+            <Grid item xs={7}>
+                <video ref={remoteVideo} autoPlay playsInline className="video-screen remoteVideo"></video>
+            </Grid>
+            <Grid item xs={2}>
+                {noteStart ? (
+                    <div id="note-container">
+                        <div className=" chat-col d-print-none  bg-info chat-opened" id="chat-pane" style={{ display: 'block' }}>
+                            <div>
+                                <div className="chat-title">備忘錄</div>
+                            </div>
 
-                <div className="select-device-option">
-                    <FormControl fullWidth>
-                        <InputLabel>切換攝影機:</InputLabel>
-                        <Select
-                            id="videoSource"
-                            value={videoSource}
-                            defaultValue={videoSource}
-                            onChange={(e) => {
-                                setVideoSource(e.target.value);
-                            }}
-                        >
-                            {videoSourceArray
-                                ? videoSourceArray.map((e, index) => {
-                                      return (
-                                          <MenuItem value={e} key={index} data-deviceid={e.deviceId}>
-                                              {e.label}
-                                          </MenuItem>
-                                      );
-                                  })
-                                : null}
-                        </Select>
-                    </FormControl>
+                            <div id="chat-messages">
+                                {chatArray
+                                    ? chatArray.map((e, index) => {
+                                          return (
+                                              <Card key={index} className="chat-block">
+                                                  <CardContent>
+                                                      <Typography variant="h5">{e.msg}</Typography>
+                                                      <Typography variant="h5">{e.time}</Typography>
+                                                      <Typography variant="h5">{e.sender}</Typography>
+                                                  </CardContent>
+                                              </Card>
+                                          );
+                                      })
+                                    : null}
+                            </div>
+
+                            <form className="chat-input" onSubmit={handleSendMessage}>
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="chat-input"
+                                        className="form-control rounded-0 chat-box border-info"
+                                        placeholder="Type here..."
+                                        value={newMessage}
+                                        onChange={handleChange}
+                                    ></input>
+                                    <div className="input-group-append" id="chat-input-btn">
+                                        <button type="submit" className="btn btn-dark rounded-0 border-info btn-no-effect">
+                                            Send
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                ) : null}
+            </Grid>
+
+            {start ? (
+                <div
+                    onPointerOver={() => setHover(true)}
+                    onPointerOut={() => setHover(false)}
+                    style={{ position: 'fixed', bottom: 20, left: '50%', fontSize: '70px' }}
+                    onClick={() => {
+                        setStart(false);
+                        if (ws) {
+                            ws.emit('leaved', room);
+                        }
+                        hangup();
+                    }}
+                >
+                    <StopCircleIcon fontSize="inherit" style={stopButtonStyle({ hover, focus })} />
                 </div>
-
-                <button
-                    type="button"
-                    className="btn btn-dark rounded-0 border-info btn-no-effect"
+            ) : (
+                <div
+                    onPointerOver={() => setHover(true)}
+                    onPointerOut={() => setHover(false)}
+                    style={{ position: 'fixed', bottom: 20, left: '50%', fontSize: '70px' }}
                     onClick={async () => {
+                        setStart(true);
                         localStream = await navigator.mediaDevices.getUserMedia({
                             audio: true || { deviceId: audioSource },
                             video: true || { deviceId: videoSource },
@@ -434,64 +528,33 @@ const Main = () => {
                         ws.emit('join', room);
                     }}
                 >
-                    Start
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-dark rounded-0 border-info btn-no-effect"
-                    ref={hangupButton}
+                    <PlayCircleIcon fontSize="inherit" style={buttonStyle({ hover, focus })} />
+                </div>
+            )}
+            {noteStart ? (
+                <div
+                    onPointerOver={() => setNoteHover(true)}
+                    onPointerOut={() => setNoteHover(false)}
+                    style={{ position: 'fixed', bottom: 40, left: '60%', fontSize: '40px' }}
                     onClick={() => {
-                        if (ws) {
-                            ws.emit('leaved', room);
-                        }
-                        hangup();
+                        setNoteStart(false);
                     }}
                 >
-                    Hang up
-                </button>
-            </div>
-            <div id="note-container">
-                <div className=" chat-col d-print-none  bg-info chat-opened" id="chat-pane" style={{ display: 'block' }}>
-                    <div>
-                        <div className="chat-title">備忘錄</div>
-                    </div>
-
-                    <div id="chat-messages">
-                        {chatArray
-                            ? chatArray.map((e, index) => {
-                                  return (
-                                      <Card key={index} className="chat-block">
-                                          <CardContent>
-                                              <Typography variant="h5">{e.msg}</Typography>
-                                              <Typography variant="h5">{e.time}</Typography>
-                                              <Typography variant="h5">{e.sender}</Typography>
-                                          </CardContent>
-                                      </Card>
-                                  );
-                              })
-                            : null}
-                    </div>
-
-                    <form className="chat-input" onSubmit={handleSendMessage}>
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                id="chat-input"
-                                className="form-control rounded-0 chat-box border-info"
-                                placeholder="Type here..."
-                                value={newMessage}
-                                onChange={handleChange}
-                            ></input>
-                            <div className="input-group-append" id="chat-input-btn">
-                                <button type="submit" className="btn btn-dark rounded-0 border-info btn-no-effect">
-                                    Send
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    <SpeakerNotesIcon fontSize="inherit" style={noteStopButtonStyle({ noteHover, focus })} />
                 </div>
-            </div>
-        </div>
+            ) : (
+                <div
+                    onPointerOver={() => setNoteHover(true)}
+                    onPointerOut={() => setNoteHover(false)}
+                    style={{ position: 'fixed', bottom: 40, left: '60%', fontSize: '40px' }}
+                    onClick={async () => {
+                        setNoteStart(true);
+                    }}
+                >
+                    <SpeakerNotesOffIcon fontSize="inherit" style={noteButtonStyle({ noteHover, focus })} />
+                </div>
+            )}
+        </Grid>
     );
 };
 

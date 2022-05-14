@@ -30,6 +30,16 @@ function Tutor() {
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
             console.log('allTutors', allTutors);
+
+            if (Object.keys(allTutors['data']).length === 0) {
+                await Swal.fire({
+                    title: '目前尚無老師預約，先自主練習',
+                    icon: 'error',
+                    confirmButtonText: '前往模擬面試',
+                });
+
+                window.location.href = '/';
+            }
             setTutors(allTutors['data']);
         } catch (error) {
             console.log(error);

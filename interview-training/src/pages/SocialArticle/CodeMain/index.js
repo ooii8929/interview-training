@@ -11,8 +11,9 @@ import { AppContext } from '../../../App';
 import './../components/main.css';
 // import { Editor, EditorState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
+import Button from '@mui/material/Button';
 
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
 
 import { Grid, Box } from '@mui/material';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -366,10 +367,9 @@ export default function SocialCodeArticle() {
                                               }}
                                           />
                                           <div className="article-relate">
-                                              提交人：{e.author_name}
-                                              <br />
-                                              {e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                                              <Link to={`/social/${e.category}/${e._id}`}>參與討論</Link>
                                           </div>
+                                          <p style={{ textAlign: 'center' }}>發布時間： {e.post_time.replace('T', ' ').replace('Z', ' ').split('.', 1)} </p>
                                       </div>
                                   );
                               })

@@ -110,8 +110,26 @@ display: flex;
   margin: 3% 0%;
   padding: 2% 4%;
   width: 100%;
-  color:#fff;
+  color:#fff !important;
   text-align: center;
+  a{
+    color:#fff !important;
+  }
+}
+
+.article-relate:hover{
+  background-color:#fff;
+  border-radius: 50px;
+  border:1px solid;
+  border-color: rgb(58, 112, 214);
+  margin: 3% 0%;
+  padding: 2% 4%;
+  width: 100%;
+
+  text-align: center;
+  a{
+    color:rgb(58, 112, 214)!important;
+  }
 }
 
 .tringle-bad:hover{

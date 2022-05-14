@@ -263,6 +263,53 @@ export default function BasicCard(props) {
                                               }}
                                           />
                                       </Grid>
+                                      <Grid item xs={12} style={{ padding: '3%' }}>
+                                          {c.javascript_answer_status ? (
+                                              <>
+                                                  <Grid container spacing={{ md: 4 }} columns={{ md: 12 }} className="runcode-container">
+                                                      <Grid item xs={2} className="runcode-result-label">
+                                                          <p>測試結果</p>
+                                                      </Grid>
+                                                      <Grid item xs={4} className="runcode-result">
+                                                          <div>
+                                                              <p>{c.javascript_answer_status.answer_status}</p>
+                                                          </div>
+                                                      </Grid>
+                                                      <Grid item xs={2} className="runcode-result-label">
+                                                          <p>測試數據</p>
+                                                      </Grid>
+                                                      <Grid item xs={4} className="runcode-result">
+                                                          <div>
+                                                              <p>{c.javascript_answer_status.input}</p>
+                                                          </div>
+                                                      </Grid>
+                                                  </Grid>
+                                                  <Grid container spacing={{ md: 4 }} columns={{ md: 12 }} className="runcode-container">
+                                                      <Grid item xs={2} className="runcode-result-label">
+                                                          <div>
+                                                              <p>期待答案</p>
+                                                          </div>
+                                                      </Grid>
+                                                      <Grid item xs={4} className="runcode-result">
+                                                          <div>
+                                                              <p>{c.javascript_answer_status.except}</p>
+                                                          </div>
+                                                      </Grid>
+                                                      <Grid item xs={2} className="runcode-result-label">
+                                                          <div>
+                                                              <p>你的答案</p>
+                                                          </div>
+                                                      </Grid>
+
+                                                      <Grid item xs={4} className="runcode-result">
+                                                          <div>
+                                                              <p>{c.javascript_answer_status.output}</p>
+                                                          </div>
+                                                      </Grid>
+                                                  </Grid>
+                                              </>
+                                          ) : null}
+                                      </Grid>
                                   </Grid>
                                   <hr />
                               </div>

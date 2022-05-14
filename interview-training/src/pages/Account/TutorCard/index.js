@@ -11,11 +11,11 @@ export default function BasicCard(props) {
     return (
         <Card sx={{ maxWidth: 345 }}>
             <CardMedia component="img" height="140" image={props.picture} alt="green iguana" />
-            <CardContent>
+            <CardContent className="all-tutor-card-container">
                 <Typography gutterBottom variant="h5" component="div">
                     {props.teacher}
                 </Typography>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="p" component="div">
                     {props.profession}
                 </Typography>
                 <Typography gutterBottom variant="h5" component="div">
