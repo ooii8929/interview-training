@@ -15,6 +15,7 @@ import './index.scss';
 import Swal from 'sweetalert2';
 import Camera from './camera.png';
 import Tab from './Tab';
+import CourseTabs from './CourseTabs';
 
 let allTutors;
 
@@ -251,52 +252,7 @@ export default function Account(props) {
 
                 <Container className="account-box">
                     {allTraining ? (
-                        <>
-                            <Typography variant="h4" component="h2">
-                                近期課程
-                            </Typography>
-                            <Grid container columns={12} className="account-box-grid">
-                                {appointments
-                                    ? appointments.map((appointment, index) => {
-                                          return (
-                                              <Grid item xs={4} key={index} className="account-box-grid-self">
-                                                  <TutorCard
-                                                      key={index}
-                                                      teacher={appointment['name']}
-                                                      profession={appointment['profession']}
-                                                      picture={appointment['picture']}
-                                                      tID={appointment['question_id']}
-                                                      createDT={appointment['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
-                                                      href={appointment['course_url']}
-                                                  />
-                                              </Grid>
-                                          );
-                                      })
-                                    : null}
-                            </Grid>
-                            <hr style={{ margin: '3%' }} />
-                            <Typography variant="h4" component="h2" m={4}>
-                                過去課程
-                            </Typography>
-                            {appointmentsFinished ? (
-                                <Grid container columns={12} className="account-box-grid">
-                                    {appointmentsFinished.map((appointment, index) => {
-                                        return (
-                                            <Grid item xs={4} key={index} className="account-box-grid-self">
-                                                <TutorCard
-                                                    key={index}
-                                                    teacher={appointment['name']}
-                                                    profession={appointment['profession']}
-                                                    picture={appointment['picture']}
-                                                    tID={appointment['question_id']}
-                                                    createDT={appointment['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
-                                                />
-                                            </Grid>
-                                        );
-                                    })}
-                                </Grid>
-                            ) : null}
-                        </>
+                        <CourseTabs appointments={appointments} appointmentsFinished={appointmentsFinished} />
                     ) : (
                         <Typography variant="h4" component="h2">
                             已安排時間
