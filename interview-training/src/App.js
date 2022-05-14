@@ -64,39 +64,13 @@ function App() {
 
         getAvator();
     }, []);
-    function RequireAuth({ children }) {
-        let location = useLocation();
-
-        let getAvatorResult = async () => {
-            try {
-                let loginInfo = await axios({
-                    withCredentials: true,
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
-                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-                });
-                setIsLogin(true);
-
-                return children;
-            } catch (error) {
-                await Swal.fire({
-                    title: 'Success Register!',
-                    text: `${error.response.data.error}`,
-                    icon: 'error',
-                    confirmButtonText: 'Cool',
-                });
-            }
-        };
-        getAvatorResult();
-    }
 
     return (
         <BrowserRouter>
             <AppContext.Provider value={appContextValue}>
                 <Header avator={avatorURL} identity={identity} />
                 <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<Home title="面面-為你的面試加分" />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/code" element={<Code />} />
                     <Route path="/reserve" element={<Reserve />} />

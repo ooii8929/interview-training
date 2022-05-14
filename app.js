@@ -66,7 +66,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            httpOnly: true,
+            //httpOnly: true,
             // secure: true,
             // sameSite: 'none',
             maxAge: parseInt(8600000), // if true prevent client side JS from reading the cookie

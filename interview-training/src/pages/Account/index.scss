@@ -13,7 +13,9 @@
 .tutor-avator{
     border-radius: 50%;
 }
-
+.all-tutor-card-container div{
+    word-break: break-all !important; 
+    }
 .update-avator{
     width: 60px !important;
     height: 60px  !important;
@@ -22,6 +24,11 @@
     padding: 5%;
     border-radius: 50px;
 
+}
+
+.runcode-container{
+    display: flex;
+    align-items: center;
 }
 .update-avator-icon{
      width: 30px !important;
@@ -55,6 +62,11 @@
         border: 1px solid gray;
     }
 }
+
+.tutor-card-speci{
+       display: flex;
+    justify-content: center;
+}
 .history-title-div{
     display: flex !important;
     justify-content: center !important;
@@ -75,7 +87,7 @@
     margin: 0px !important;
     margin-left: 10px !important;
 
-    .MuiButton-endIco{
+    .MuiButton-endIcon{
         margin: 0px !important;
     }
     .css-z4rqyd-MuiButton-endIcon{

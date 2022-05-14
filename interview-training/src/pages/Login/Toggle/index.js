@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 const theme = createTheme();
 
 export default function ColorToggleButton(props) {
-    const [alignment, setAlignment] = React.useState('');
+    const [alignment, setAlignment] = React.useState('student');
 
     const handleChange = (event, newAlignment) => {
         setAlignment(newAlignment);

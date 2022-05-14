@@ -5,21 +5,11 @@
     border-radius: 5px;
 }
 .localVideo{
-    position: absolute;
-    top:85px;
-    height: auto !important;
-    width: 300px !important;
-    z-index: -100 !important;
-    left: 0px;
+  
+    
 }
 .remoteVideo {
-    position: absolute !important;
-    top:85px !important;
-    width: 50vw !important;
-    z-index: -100 !important;
-    margin: auto !important;
-    left: 25% !important;
-    height: auto !important;
+  
 }
 
 
@@ -44,9 +34,7 @@ position: absolute !important;
 bottom: 0px !important;
 }
 
-.video-screen{
-    width: 30%;
-}
+
 
 .chat-input{
     position: absolute;
@@ -70,7 +58,7 @@ bottom: 0px !important;
       display: flex;
      float:right;                         
      overflow:auto;                    
-     height:88vh; 
+     height:80vh; 
     }
 
     .bg-info{

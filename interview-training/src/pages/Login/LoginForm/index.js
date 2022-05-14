@@ -59,7 +59,7 @@ export default function LoginForm(props) {
                 localStorage.removeItem('returnPage');
                 window.location.href = returnPageURL;
             } else {
-                window.location.href = '/account';
+                window.location.href = './account';
             }
         } catch (error) {
             await Swal.fire({

@@ -4,6 +4,7 @@ const { wrapAsync, authentication } = require('../util/util');
 
 const {
     getCodeArticle,
+    getVideoArticle,
     getAllArticle,
     insertCodeArticle,
     updateArticleGood,
@@ -28,6 +29,8 @@ router.route('/article/video/id').get(wrapAsync(getVideoArticleByID));
 
 router.route('/article/code').post(authentication(), wrapAsync(insertCodeArticle));
 router.route('/article/code').get(wrapAsync(getCodeArticle));
+router.route('/article/video').get(wrapAsync(getVideoArticle));
+
 router.route('/article/video').post(authentication(), wrapAsync(insertVideoArticle));
 router.route('/article/video').get(wrapAsync(getVideoArticle));
 

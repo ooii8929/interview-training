@@ -39,7 +39,11 @@ const getCodeArticle = async (req, res) => {
 const getVideoArticle = async (req, res) => {
     try {
         let articles = await SOCIAL.getVideoArticle();
+<<<<<<< HEAD
 
+=======
+        console.log('articles', articles);
+>>>>>>> hotfix
         let groupAuthorArticle = _.groupBy(articles, 'author_id');
         let groupQuestionArticle = _.groupBy(articles, 'question_id');
 
@@ -319,6 +323,7 @@ const updateArticleCodeBad = async (req, res) => {
 
 module.exports = {
     getCodeArticle,
+    getVideoArticle,
     getAllArticle,
     getVideoArticle,
     insertCodeArticle,

@@ -118,7 +118,7 @@ export default function CourseResult() {
                     {profileQuestion ? (
                         <div id="result-content">
                             <p>
-                                此次挑戰，你共獲得 <span className="special-font">{((codeSuccess + videoSuccess) / (codeSuccess + codeFail + videoCheck)).toFixed(2) * 100}</span>分
+                                此次挑戰，你共獲得 <span className="special-font">{((codeSuccess + videoSuccess) / (codeSuccess + codeFail + videoCheck)).toFixed(1) * 100}</span>分
                             </p>
                             <p>
                                 在 {allCode ? allCode : 0} 題技術題中，你答對了 <span className="special-font">{codeSuccess ? codeSuccess : 0}</span> 題

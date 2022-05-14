@@ -72,12 +72,7 @@ text-align: center;
     margin: 0px !important;
 }
 
-.runcode-result-label{
-    padding: 0% !important;
-    
-    margin-bottom: 3% !important;
-  
-   }
+
 .runcode-result{
     padding: 0% !important;
     padding-left: 2% !important;
@@ -119,6 +114,9 @@ padding-top: 3%;
     --color-prettylights-syntax-string:rgb(53, 100, 208) !important;
     color: rgb(54, 52, 50) !important;
     --color-prettylights-syntax-entity-tag:rgb(53, 100, 208) !important;
+        overflow: hidden;
+    overflow-y: scroll !important;
+    max-height: 40vh;
 }
 
 .history-div{

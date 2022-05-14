@@ -30,7 +30,11 @@ const createRoom = async (req, res) => {
 const getAllTeacherSchedule = async (req, res) => {
     const result = await Tutor.getAllTeacherSchedule();
 
-    let groupByResult = _.groupBy(result, 't_id');
+    let resultFilter = result.filter((e) => {
+        new Date(e.available_time) > Date.now();
+    });
+
+    let groupByResult = _.groupBy(resultFilter, 't_id');
     if (result.error) {
         res.status(403).send({ error: result.error });
         return;
@@ -40,9 +44,9 @@ const getAllTeacherSchedule = async (req, res) => {
 };
 
 const makeAppointment = async (req, res) => {
-    let { user_id, course_id } = req.body;
-    console.log('make appointment', user_id, course_id);
-    const result = await Tutor.makeAppointment(course_id, user_id);
+    let { course_id } = req.body;
+    console.log('make appointment', course_id);
+    const result = await Tutor.makeAppointment(course_id, req.locals.id);
 
     if (result.error) {
         res.status(403).send({ error: result.error });

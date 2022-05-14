@@ -16,10 +16,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import CountDownTimer from './components/CountDownTimer';
 import CountDownTimerAnswer from './components/CountDownTimerAnswer';
+import ProgressBar from '../ProgressBar';
+
 let response;
 let isPause = false;
 
 export default function Video(props) {
+    // Progress Bar
+    const [progressBarTitleArr, setProgressBarTitleArr] = useState('');
+
+    const [progressBarNumber, setProgressBarNumber] = useState('');
+
     // Button Choose
     const [startBtn, setStartBtn] = useState(false);
     const [answerBtn, setAnswerBtn] = useState(false);
@@ -118,6 +125,12 @@ export default function Video(props) {
             if (profileQuestion) {
                 console.log('2. 找出當前題目並set', profileQuestion);
                 setNowQuestion(profileQuestion);
+                let progressBarTitle = [];
+                profileQuestion['data']['code'].map((e) => {
+                    progressBarTitle.push(e.title);
+                });
+                console.log('progressBarTitle', progressBarTitle);
+                setProgressBarTitleArr(progressBarTitle);
             }
         },
         [profileQuestion]
@@ -305,7 +318,7 @@ export default function Video(props) {
                 localStorage.setItem('question_id', profileQuestion.data._id);
                 setEndQuestion(true);
             }
-
+            setProgressBarNumber(notFinishedQuestion.length);
             if (notFinishedQuestion.length === 0) {
                 // 發送答題結束的req
 
@@ -378,6 +391,15 @@ export default function Video(props) {
         [question]
     );
 
+    //  <div className="user-log-container">
+    //      {userCodeLogs ? (
+    //          <>
+    //              <h3>過往答題紀錄</h3>
+    //              <Accordion userLogs={userCodeLogs} />
+    //          </>
+    //      ) : null}
+    //  </div>;
+
     React.useEffect(
         (e) => {
             if (changeStatus) {
@@ -389,6 +411,11 @@ export default function Video(props) {
 
     return (
         <>
+            {progressBarTitleArr ? (
+                <div style={{ width: '70%', margin: 'auto', marginTop: '3%' }}>
+                    <ProgressBar title={progressBarTitleArr} num={progressBarNumber} />
+                </div>
+            ) : null}
             {question ? (
                 <div className="code_container">
                     <div className="code_title">
@@ -433,8 +460,8 @@ export default function Video(props) {
                     </Grid>
                     {runCodeResponse ? (
                         <>
-                            <Grid container spacing={{ md: 4 }} columns={{ md: 12 }} className="runcode-container">
-                                <Grid item xs={1} className="runcode-result-label">
+                            <Grid container columns={{ md: 12 }} className="runcode-container">
+                                <Grid item className="runcode-result-label">
                                     <p>測試結果</p>
                                 </Grid>
                                 <Grid item xs={4} className="runcode-result">
@@ -442,26 +469,32 @@ export default function Video(props) {
                                         <p ref={resultTest}>{runCodeResponseStatus}</p>
                                     </div>
                                 </Grid>
-                                <Grid item xs={1} className="runcode-result-label">
+                                <Grid item className="runcode-result-label">
                                     <p>測試數據</p>
                                 </Grid>
                                 <Grid item xs={4} className="runcode-result">
-                                    <div>{runCodeResponseInput}</div>
+                                    <div>
+                                        <p>{runCodeResponseInput}</p>
+                                    </div>
                                 </Grid>
                             </Grid>
-                            <Grid container spacing={{ md: 4 }} columns={{ md: 12 }} className="runcode-container">
-                                <Grid item xs={1} className="runcode-result-label">
+                            <Grid container columns={{ md: 12 }} className="runcode-container">
+                                <Grid item className="runcode-result-label">
                                     <p>期待答案</p>
                                 </Grid>
                                 <Grid item xs={4} className="runcode-result">
-                                    <div>{runCodeResponseExpect}</div>
+                                    <div>
+                                        <p>{runCodeResponseExpect} </p>
+                                    </div>
                                 </Grid>
-                                <Grid item xs={1} className="runcode-result-label">
+                                <Grid item className="runcode-result-label">
                                     <p>你的答案</p>
                                 </Grid>
 
                                 <Grid item xs={4} className="runcode-result">
-                                    <div>{runCodeResponseOutput}</div>
+                                    <div>
+                                        <p>{runCodeResponseOutput} </p>
+                                    </div>
                                 </Grid>
                             </Grid>
                         </>
@@ -514,23 +547,6 @@ export default function Video(props) {
                         <Button disabled={nextBtn} variant="contained" endIcon={<SendIcon />} className="run-answer" size="large" onClick={nextQuestion} sx={{ mt: 1, mr: 1 }}>
                             <span className="btn-text">前往下一題</span>
                         </Button>
-                    </div>
-                    {answerStatus ? (
-                        <VideoCheck
-                            check={question[0].check}
-                            setChangeStatus={setChangeStatus}
-                            profileQuestion={profileQuestion}
-                            nowQuestionNumber={nowQuestionNumber}
-                            setAnswerStatus={setAnswerStatus}
-                        />
-                    ) : null}
-                    <div className="user-log-container">
-                        {userCodeLogs ? (
-                            <>
-                                <h3>過往答題紀錄</h3>
-                                <Accordion userLogs={userCodeLogs} />
-                            </>
-                        ) : null}
                     </div>
                 </div>
             ) : null}

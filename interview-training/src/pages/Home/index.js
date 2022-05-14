@@ -9,10 +9,17 @@ import SelectAutoWidth from './components/Select';
 import IconLabelButtons from './components/ButtonGoTraining';
 import './index.scss';
 
-function Home() {
+export default function Home(props) {
     const [jobType, setJobType] = useState('');
+    const [clicked, setClicked] = useState(true);
+    useEffect(() => {
+        if (props.title) document.title = props.title;
+    }, []);
+
     function changeJobType(event) {
         setJobType(event.target.value);
+
+        setClicked(false);
     }
 
     useEffect(() => {
@@ -31,8 +38,8 @@ function Home() {
                             <h1>面面培訓系統</h1>
                         </div>
                         <div id="go-to-training">
-                            <SelectAutoWidth onJobChange={changeJobType} jobType={jobType} />
-                            <IconLabelButtons href="/course" />
+                            <SelectAutoWidth onJobChange={changeJobType} jobType={jobType} className="select-profession" onSelect={setClicked} />
+                            <IconLabelButtons href="/course" clicked={clicked} />
                         </div>
                     </Col>
                 </Row>
@@ -40,5 +47,3 @@ function Home() {
         </>
     );
 }
-
-export default Home;

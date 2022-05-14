@@ -22,8 +22,24 @@ function Tutor() {
 
     async function getTutors() {
         try {
-            allTutors = await axios.get(baseURL);
+            allTutors = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: baseURL,
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
             console.log('allTutors', allTutors);
+
+            if (Object.keys(allTutors['data']).length === 0) {
+                await Swal.fire({
+                    title: '目前尚無老師預約，先自主練習',
+                    icon: 'error',
+                    confirmButtonText: '前往模擬面試',
+                });
+
+                window.location.href = '/';
+            }
             setTutors(allTutors['data']);
         } catch (error) {
             console.log(error);
@@ -42,10 +58,17 @@ function Tutor() {
         } else {
             async function sendAppointment(course_id) {
                 try {
-                    let response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/user/appoint`, {
-                        user_id: userID,
-                        course_id: course_id,
+                    let response = await axios({
+                        withCredentials: true,
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/user/appoint`,
+                        data: {
+                            course_id: course_id,
+                        },
+                        headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
                     });
+                    console.log('response', response);
                     await Swal.fire({
                         title: '預約成功！',
                         icon: 'success',
@@ -54,7 +77,13 @@ function Tutor() {
 
                     window.location.href = '/account';
                 } catch (error) {
-                    alert(error.response.data.error);
+                    await Swal.fire({
+                        title: `${error.response.status}`,
+                        text: `${error.response.data.error}`,
+                        icon: 'error',
+                        confirmButtonText: '前往登入',
+                    });
+                    window.location.href = '/login';
                 }
             }
             sendAppointment(appointment);
