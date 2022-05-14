@@ -1,6 +1,8 @@
-require('dotenv').config();
+#! /usr/bin/env node
+
+require('dotenv').config({ path: `${__dirname}/.env` });
 const got = require('got');
-const { pool } = require('./server/models/mysqlcon');
+const { pool } = require(`${__dirname}/server/models/mysqlcon`);
 const { TOKEN_EXPIRE, TOKEN_SECRET } = process.env; // 30 days by seconds
 
 const checkTime = async () => {

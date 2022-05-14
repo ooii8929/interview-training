@@ -17,7 +17,6 @@ const {
     updateArticleCodeBad,
     insertVideoArticle,
     insertCodeComments,
-    getVideoArticle,
     updateArticleVideoBad,
     updateArticleVideoGood,
 } = require('../controllers/social_controller');

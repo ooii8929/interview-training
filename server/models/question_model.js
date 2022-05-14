@@ -1,5 +1,5 @@
 require('dotenv').config();
-const got = require('got');
+
 const { pool } = require('./mysqlcon');
 const { TOKEN_EXPIRE, TOKEN_SECRET } = process.env; // 30 days by seconds
 const axios = require('axios');
