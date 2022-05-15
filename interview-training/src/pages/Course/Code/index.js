@@ -151,6 +151,9 @@ export default function Video(props) {
         if (runCodeResponseStatus === 'Fail') {
             resultTest.current.style.color = 'red';
         }
+        if (runCodeResponseStatus === 'Success') {
+            resultTest.current.style.color = 'green';
+        }
     }, [runCodeResponseStatus]);
 
     async function getUserCodeLog(questionID) {
@@ -198,15 +201,21 @@ export default function Video(props) {
                 });
 
                 setRunCodeResponseStatus('Fail');
-            } else {
+            } else if (response['data']['answer_status'] === 1) {
                 await Swal.fire({
                     title: '成功了！！！',
-                    text: '太強了！你是鬼吧',
+                    text: '太棒了！再往下一題邁進吧',
                     icon: 'success',
-                    confirmButtonText: '查看狀態',
+                    confirmButtonText: '查看結果',
                 });
 
                 setRunCodeResponseStatus('Success');
+            } else {
+                await Swal.fire({
+                    title: '未知問題',
+                    icon: 'error',
+                    confirmButtonText: '再試一次',
+                });
             }
             setRunCodeResponseInput(response['data']['input']);
             setRunCodeResponseOutput(response['data']['output']);
@@ -271,10 +280,10 @@ export default function Video(props) {
             }
 
             setRunCodeResponse(response['data']);
-            if (response['data']['answer_status'] === -1) {
-                setRunCodeResponseStatus('Fail');
-            } else {
+            if (response['data']['answer_status'] === 1) {
                 setRunCodeResponseStatus('Success');
+            } else {
+                setRunCodeResponseStatus('Fail');
             }
 
             setRunCodeResponseInput(response['data']['input']);

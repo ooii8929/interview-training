@@ -88,3 +88,4 @@ midterm*
 # sh file
 deploy-current.sh
 deploy-develop.sh
+deploy.sh
