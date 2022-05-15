@@ -29,13 +29,14 @@ app.use(cookieParser());
 app.disable('X-Powered-By');
 
 app.set('trust proxy', 1);
-app.use(
-    cors({
-        credentials: true,
-        origin: [`${process.env.REACT_APP_BASE_URL}`, 'http://localhost:3001'],
-        methods: 'GET, POST, PUT, DELETE',
-    })
-);
+// app.use(
+//     cors({
+//         credentials: true,
+//         origin: [`${process.env.REACT_APP_BASE_URL}`, 'http://localhost:3001'],
+//         methods: 'GET, POST, PUT, DELETE',
+//     })
+// );
+app.use(cors());
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
