@@ -31,6 +31,10 @@ const Header = (props) => {
         setAnchorEl(null);
     };
 
+    React.useEffect(() => {
+        if (props.title) document.title = props.title;
+    }, []);
+
     React.useEffect(
         (e) => {
             if (getChecked) {

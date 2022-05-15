@@ -68,9 +68,9 @@ function App() {
     return (
         <BrowserRouter>
             <AppContext.Provider value={appContextValue}>
-                <Header avator={avatorURL} identity={identity} />
+                <Header avator={avatorURL} identity={identity} title="面面-為你的面試加分" />
                 <Routes>
-                    <Route path="/" element={<Home title="面面-為你的面試加分" />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/code" element={<Code />} />
                     <Route path="/reserve" element={<Reserve />} />

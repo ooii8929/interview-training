@@ -31,7 +31,6 @@ router.route('/article/code').get(wrapAsync(getCodeArticle));
 router.route('/article/video').get(wrapAsync(getVideoArticle));
 
 router.route('/article/video').post(authentication(), wrapAsync(insertVideoArticle));
-router.route('/article/video').get(wrapAsync(getVideoArticle));
 
 router.route('/article/code/good').post(authentication(), wrapAsync(updateArticleCodeGood));
 router.route('/article/code/bad').post(authentication(), wrapAsync(updateArticleCodeBad));

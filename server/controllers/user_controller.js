@@ -43,7 +43,19 @@ const signUp = async (req, res) => {
         res.status(500).send({ error: 'Database Query Error' });
         return;
     }
+    console.log('user', user);
     // req.session.isLoggedIn = true;
+    sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, create_dt: user.create_dt, identity: identity };
+
+    sess.save((err) => {
+        if (err) {
+            return res.status(400).send('fail');
+        } else {
+            console.log('save', sess);
+            res.header('Content-Type', 'application/json');
+            return res.status(200).send(sess.user);
+        }
+    });
 
     res.status(200).send({
         data: {

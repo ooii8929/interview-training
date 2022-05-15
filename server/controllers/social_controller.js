@@ -159,7 +159,7 @@ const insertVideoArticle = async (req, res) => {
         res.status(500).send({ error: 'Database Query Error' });
         return;
     }
-
+    console.log('video_url', video_url);
     const postData = {
         article_id: article_id,
         question_id: qid,
