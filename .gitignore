@@ -84,3 +84,6 @@ midterm*
 
 # Mac
 .DS_Store
+
+# sh file
+deploy-current.sh
