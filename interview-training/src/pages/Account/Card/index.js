@@ -14,6 +14,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function BasicCard(props) {
+    console.log('first', props.video);
     const [open, setOpen] = React.useState(false);
     const handleClose = () => {
         setOpen(false);
@@ -46,7 +47,7 @@ export default function BasicCard(props) {
                         article_id: e.currentTarget.value,
                         qid: e.currentTarget.dataset.qid,
                         question_id: props.questionID,
-                        video_url: e.currentTarget.dataset.video,
+                        answer_url: e.currentTarget.dataset.video,
                         category: e.currentTarget.dataset.category,
                     },
                     headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
@@ -168,7 +169,7 @@ export default function BasicCard(props) {
                                               value={`${props.questionID}-video-${e.qid}`}
                                               data-category={'video'}
                                               data-qid={e.qid}
-                                              data-video={e.video_url}
+                                              data-video={e.answer_url}
                                               sx={{ mt: 1, mr: 1 }}
                                               disabled="true"
                                           ></Button>
@@ -182,14 +183,14 @@ export default function BasicCard(props) {
                                               value={`${props.questionID}-video-${e.qid}`}
                                               data-category={'video'}
                                               data-qid={e.qid}
-                                              data-video={e.video_url}
+                                              data-video={e.answer_url}
                                               onClick={shareAnswer}
                                               sx={{ mt: 1, mr: 1 }}
                                           ></Button>
                                       )}
                                   </div>
 
-                                  <video type="video/webm" controls src={e.video_url} />
+                                  <video type="video/webm" controls src={e.answer_url} />
                                   <Typography sx={{ mb: 1.5 }} color="text.secondary">
                                       {e.description}
                                   </Typography>
