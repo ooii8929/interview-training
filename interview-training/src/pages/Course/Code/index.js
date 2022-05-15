@@ -212,9 +212,10 @@ export default function Video(props) {
                 setRunCodeResponseStatus('Success');
             } else {
                 await Swal.fire({
-                    title: '未知問題',
+                    title: '錯誤囉',
+                    text: response['data']['stderr'],
                     icon: 'error',
-                    confirmButtonText: '再試一次',
+                    confirmButtonText: '再修改看看',
                 });
             }
             setRunCodeResponseInput(response['data']['input']);
@@ -237,6 +238,7 @@ export default function Video(props) {
                 icon: 'error',
                 confirmButtonText: '再修改看看',
             });
+            setRunCodeResponseStatus('Fail');
         }
     }
 
@@ -283,6 +285,12 @@ export default function Video(props) {
             if (response['data']['answer_status'] === 1) {
                 setRunCodeResponseStatus('Success');
             } else {
+                await Swal.fire({
+                    title: '錯誤囉',
+                    text: response['data']['stderr'],
+                    icon: 'error',
+                    confirmButtonText: '再修改看看',
+                });
                 setRunCodeResponseStatus('Fail');
             }
 

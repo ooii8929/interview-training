@@ -60,6 +60,7 @@ export default function VideoCheck(props) {
     }
 
     const handleSave = async () => {
+        console.log('handleSave', props.blob);
         var file = new File([props.blob], getFileName('webm'), {
             type: 'video/webm',
         });
@@ -70,11 +71,13 @@ export default function VideoCheck(props) {
                     filename: file.name,
                 },
             });
+            console.log('file', file);
+
             let success = await axios.put(presignedUrl['data'], file, {
                 headers: { 'Content-Type': 'video/webm' },
             });
 
-            console.log('success file name', success.config.data.name);
+            console.log('success file name', success.config.data);
 
             tmpProfile = props.profileQuestion;
             console.log('提交答案');

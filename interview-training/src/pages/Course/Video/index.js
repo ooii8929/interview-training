@@ -90,7 +90,7 @@ export default function Video(props) {
             display.current.style.display = 'none';
             showAnswerDisplay.current.style.display = 'block';
             showAnswerDisplay.current.src = window.URL.createObjectURL(recorderRef.current.getBlob());
-            //setBlob(recorderRef.current.getBlob());
+            setBlob(recorderRef.current.getBlob());
         });
 
         // display.current.srcObject = false;
@@ -106,6 +106,7 @@ export default function Video(props) {
     useEffect(() => {
         if (blob) {
             display.current.src = URL.createObjectURL(blob);
+            console.log('blob first', blob);
         }
     }, [blob]);
 
