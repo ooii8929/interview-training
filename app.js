@@ -207,6 +207,7 @@ app.use('/api/' + API_VERSION, [
     require('./server/routes/social_route'),
     require('./server/routes/tutor_route'),
 ]);
+
 // Page not found
 app.use(function (req, res, next) {
     res.sendStatus(404);
