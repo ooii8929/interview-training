@@ -449,13 +449,16 @@ async function submitVideoAnswerCheck(req, res) {
 }
 
 module.exports = {
+  runCompile,
+  submitCompile,
+
   addLogicQuestion,
   endTraining,
   getQuestionsByProfession,
   storeVideoAnswer,
-  submitCompile,
+
   getTraining,
-  runCompile,
+
   getVideoQuestionsByProfession,
   submitVideo,
   getProfileQuestions,

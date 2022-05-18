@@ -1,337 +1,56 @@
 require('dotenv').config();
-const SOCIAL = require('../models/social_model');
-const USER = require('../models/user_model');
-const QUESTION = require('../models/question_model');
-const _ = require('lodash');
+const AWS = require('aws-sdk');
 
-const getAllArticle = async (req, res) => {
-    let articles = await SOCIAL.getAllArticle();
-    console.log('articles', articles);
-    let groupAuthorArticle = _.groupBy(articles, 'author_id');
+const Record = require('../models/record_model');
 
-    let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
-    let articlesAndAuthors = {
-        authors: authors,
-        articles: articles,
-    };
-    res.status(200).send(articlesAndAuthors);
+// Get s3 upload url
+const getRecordUploadAnswerUrl = async (req, res) => {
+  AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_ACCESS_PASSWORD,
+    region: 'ap-northeast-1',
+    signatureVersion: 'v4',
+  });
+
+  const s3 = new AWS.S3();
+
+  const myBucket = 'interview-appworks';
+  const signedUrlExpireSeconds = 600 * 5;
+
+  s3.getSignedUrl(
+    'putObject',
+    {
+      Bucket: myBucket,
+      Key: req.query.filename,
+      Expires: signedUrlExpireSeconds,
+      ContentType: 'video/webm',
+    },
+    function (err, url) {
+      return res.status(200).send(url);
+    }
+  );
 };
 
-const getCodeArticle = async (req, res) => {
-    try {
-        let articles = await SOCIAL.getCodeArticle();
-        console.log('articles', articles);
-        let groupAuthorArticle = _.groupBy(articles, 'author_id');
-        let groupQuestionArticle = _.groupBy(articles, 'question_id');
+async function submitRecordAnswer(req, res) {
+  const { user_id } = req.locals;
+  const { exam_id, qid, answer_url } = req.body;
 
-        let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
-        let groupAuthor = _.groupBy(authors, 'id');
-        let articlesAndAuthors = {
-            authors: groupAuthor,
-            articles: groupQuestionArticle,
-        };
-        res.status(200).send(articlesAndAuthors);
-    } catch (error) {
-        res.status(400).send({ error: error });
-    }
-};
+  let afterSubmit = await Record.submitVideoAnswer(user_id, exam_id, qid, answer_url);
 
-const getVideoArticle = async (req, res) => {
-    try {
-        let articles = await SOCIAL.getVideoArticle();
+  return res.status(200).send(afterSubmit);
+}
 
-        let groupAuthorArticle = _.groupBy(articles, 'author_id');
-        let groupQuestionArticle = _.groupBy(articles, 'question_id');
+async function submitRecordAnswerCheck(req, res) {
+  const { user_id } = req.locals;
+  const { question_id, qid, checked } = req.body;
 
-        let authors = await USER.getUsersProfileByUserID(Object.keys(groupAuthorArticle));
-        let groupAuthor = _.groupBy(authors, 'id');
-        let articlesAndAuthors = {
-            authors: groupAuthor,
-            articles: groupQuestionArticle,
-        };
-        res.status(200).send(articlesAndAuthors);
-    } catch (error) {
-        res.status(400).send({ error: error });
-    }
-};
+  let afterSubmit = await Record.submitVideoAnswerCheck(user_id, question_id, qid, checked);
 
-const getArticleByID = async (req, res) => {
-    let { article_id } = req.query;
-    let articles = await SOCIAL.getArticleByID(article_id);
-    res.status(200).send(articles);
-};
-
-const getCodeArticleByID = async (req, res) => {
-    let { article_id } = req.query;
-    let articles = await SOCIAL.getCodeArticleByID(article_id);
-
-    let authorInfo = await USER.getUserProfile(articles[0]['author_id']);
-
-    articles[0].author = authorInfo.userProfile;
-
-    res.status(200).send(articles);
-};
-
-const getVideoArticleByID = async (req, res) => {
-    let { article_id } = req.query;
-    let articles = await SOCIAL.getVideoArticleByID(article_id);
-    let authorInfo = await USER.getUserProfile(articles[0]['author_id']);
-    articles[0].author = authorInfo.userProfile;
-
-    res.status(200).send(articles);
-};
-
-const insertCodeArticle = async (req, res) => {
-    try {
-        // insert code post
-        const { user_id, article_id, qid, category, question_id } = req.body;
-
-        let [checkShared] = await SOCIAL.checkShared(question_id, qid);
-
-        let nowAnswer = checkShared.code.filter((e) => {
-            return e.qid === Number(qid);
-        });
-
-        if (nowAnswer[0].shared) {
-            return res.status(400).send({ error: '已經分享過囉' });
-        }
-
-        const userProfile = await USER.getUserProfileByUserID(user_id, req.locals.identity);
-
-        if (!userProfile) {
-            res.status(500).send({ error: 'Database Query Error' });
-            return;
-        }
-
-        const [questionProfile] = await QUESTION.getCodeQuestionsByID(qid);
-        if (!questionProfile) {
-            res.status(500).send({ error: 'Database Query Error' });
-            return;
-        }
-
-        const postData = {
-            article_id: article_id,
-            question_id: qid,
-            title: questionProfile.title,
-            description: questionProfile.description,
-            author_id: user_id,
-            subscribe: 0,
-            post_time: new Date(),
-            code: nowAnswer,
-            category: category,
-            goods: [],
-            comments: [],
-        };
-        let insertResult = await SOCIAL.insertCodeArticle(postData);
-
-        let updateResult = await SOCIAL.updateCodeShared(question_id, qid);
-
-        return res.status(200).send(insertResult);
-    } catch (error) {
-        console.log('error', error);
-        return res.status(400).send({ error: error });
-    }
-};
-
-const insertVideoArticle = async (req, res) => {
-    // insert code post
-    const { user_id, article_id, qid, video_url, category, question_id } = req.body;
-
-    let [checkShared] = await SOCIAL.checkShared(question_id, qid);
-
-    let a = checkShared.video.filter((e) => {
-        return e.qid === Number(qid);
-    });
-
-    if (a[0].shared) {
-        return res.status(400).send({ error: '已經分享過囉' });
-    }
-
-    const userProfile = await USER.getUserProfileByUserID(user_id, req.locals.identity);
-
-    if (!userProfile) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
-    }
-
-    const [questionProfile] = await QUESTION.getQuestionsByID(qid);
-    if (!questionProfile) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
-    }
-    console.log('video_url', video_url);
-    const postData = {
-        article_id: article_id,
-        question_id: qid,
-        title: questionProfile.title,
-        description: questionProfile.description,
-        author_id: user_id,
-        subscribe: 0,
-        post_time: new Date(),
-        video_url: video_url,
-        category: category,
-        goods: [],
-        comments: [],
-    };
-    let insertResult = await SOCIAL.insertVideoArticle(postData);
-
-    await SOCIAL.updateVideoShared(question_id, qid);
-
-    res.status(200).send(insertResult);
-};
-
-const insertCodeComments = async (req, res) => {
-    if (!req.locals.id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-    // insert code post
-    const { article_id, summerNote } = req.body;
-    let userInfo;
-    if (req.locals.identity == 'student') {
-        userInfo = await USER.getUserPureProfile(req.locals.id, req.locals.email);
-    }
-
-    if (req.locals.identity == 'tutor') {
-        userInfo = await USER.gettutorProfile(req.locals.id, req.locals.email);
-    }
-    let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
-
-    return res.status(200).send(insertResult);
-};
-
-const updateArticleGood = async (req, res) => {
-    // insert code post
-    const { article_id, user_id } = req.body.data;
-    console.log('user_id', user_id);
-
-    if (!user_id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-
-    let updateResult = await SOCIAL.updateArticleGood(article_id, user_id);
-    console.log('updateResult', updateResult);
-
-    res.status(200).send(updateResult);
-};
-
-const updateArticleBad = async (req, res) => {
-    // insert code post
-    const { article_id } = req.body.data;
-    console.log('user_id', user_id);
-    if (!user_id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-
-    let updateResult = await SOCIAL.updateArticleBad(article_id, user_id);
-    console.log('updateResult', updateResult);
-
-    res.status(200).send(updateResult);
-};
-
-const updateArticleCodeGood = async (req, res) => {
-    // insert code post
-
-    const { article_id } = req.body;
-
-    if (!req.locals.id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-
-    let getNowGoods = await SOCIAL.getArticleCodeGood(article_id);
-
-    if (getNowGoods[0]['goods'].includes(req.locals.id)) {
-        console.log('already clicked');
-        return res.status(401).send({ error: '已經點過讚' });
-    }
-
-    let updateResult = await SOCIAL.updateArticleGood(article_id, req.locals.id);
-    console.log('updateResult', updateResult);
-
-    res.status(200).send(updateResult);
-};
-
-const updateArticleVideoGood = async (req, res) => {
-    // insert code post
-
-    const { article_id } = req.body;
-
-    if (!req.locals.id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-
-    let getNowGoods = await SOCIAL.getArticleVideoGood(article_id);
-
-    if (getNowGoods[0]['goods'].includes(req.locals.id)) {
-        console.log('already clicked');
-        return res.status(401).send({ error: '已經點過讚' });
-    }
-
-    let updateResult = await SOCIAL.updateArticleVideoGood(article_id, req.locals.id);
-    console.log('updateResult', updateResult);
-
-    res.status(200).send(updateResult);
-};
-
-const updateArticleVideoBad = async (req, res) => {
-    // insert code post
-    const { article_id } = req.body;
-
-    if (!req.locals.id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-    let getNowGoods = await SOCIAL.getArticleVideoGood(article_id);
-    if (!getNowGoods[0]['goods'].includes(req.locals.id)) {
-        console.log('not include');
-        return res.status(401).send({ error: '沒有點過讚' });
-    }
-
-    let updateResult = await SOCIAL.updateArticleVideoBad(article_id, req.locals.id);
-    console.log('updateResult', updateResult);
-
-    res.status(200).send(updateResult);
-};
-
-const updateArticleCodeBad = async (req, res) => {
-    // insert code post
-    const { article_id } = req.body;
-
-    if (!req.locals.id) {
-        console.log('未登入');
-        return res.status(400).send({ error: 'need login' });
-    }
-    let getNowGoods = await SOCIAL.getArticleCodeGood(article_id);
-    if (!getNowGoods[0]['goods'].includes(req.locals.id)) {
-        console.log('not include');
-        return res.status(401).send({ error: '沒有點過讚' });
-    }
-
-    let updateResult = await SOCIAL.updateArticleCodeBad(article_id, req.locals.id);
-    console.log('updateResult', updateResult);
-
-    res.status(200).send(updateResult);
-};
+  return res.status(200).send(afterSubmit);
+}
 
 module.exports = {
-    getCodeArticle,
-    getVideoArticle,
-    getAllArticle,
-    getVideoArticle,
-    insertCodeArticle,
-    insertVideoArticle,
-    updateArticleGood,
-    getArticleByID,
-    getCodeArticleByID,
-    getVideoArticleByID,
-    insertCodeComments,
-    updateArticleBad,
-    updateArticleCodeGood,
-    updateArticleCodeBad,
-    updateArticleVideoBad,
-    updateArticleVideoGood,
+  getRecordUploadAnswerUrl,
+  submitRecordAnswer,
+  submitRecordAnswerCheck,
 };

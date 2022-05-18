@@ -10,23 +10,23 @@ import Question from './components/Question';
 import Prepare from './components/Prepare';
 
 function Code() {
-    const [jobType, setJobType] = useState('');
-    function changeJobType(event) {
-        setJobType(event.target.value);
-    }
+  const [profession, setprofession] = useState('');
+  function changeprofession(event) {
+    setprofession(event.target.value);
+  }
 
-    useEffect(() => {
-        localStorage.setItem('jobType', jobType);
-    }, [jobType]);
-    return (
-        <>
-            <Row>
-                <Col xs="10" id="code-main">
-                    <StepperSection prepare={<Prepare />} question={<Question />} />
-                </Col>
-            </Row>
-        </>
-    );
+  useEffect(() => {
+    localStorage.setItem('profession', profession);
+  }, [profession]);
+  return (
+    <>
+      <Row>
+        <Col xs="10" id="code-main">
+          <StepperSection prepare={<Prepare />} question={<Question />} />
+        </Col>
+      </Row>
+    </>
+  );
 }
 
 export default Code;
