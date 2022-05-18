@@ -13,8 +13,8 @@ const updateAvator = async (identity, userID, picture) => {
     try {
         await conn.query('START TRANSACTION');
         let updateAvatorResult;
-        if (identity == 'teacher') {
-            updateAvatorResult = await conn.query('UPDATE teachers SET picture = ? WHERE id = ?', [picture, userID]);
+        if (identity == 'tutor') {
+            updateAvatorResult = await conn.query('UPDATE tutors SET picture = ? WHERE id = ?', [picture, userID]);
         }
         if (identity == 'student') {
             updateAvatorResult = await conn.query('UPDATE users SET picture = ? WHERE id = ?', [picture, userID]);
@@ -33,16 +33,16 @@ const updateAvator = async (identity, userID, picture) => {
     }
 };
 
-const teacherSignUp = async (identity, name, email, password) => {
+const tutorSignUp = async (identity, name, email, password) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
         let emails;
 
-        // if teacher
-        if (identity == 'teacher') {
-            emails = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
+        // if tutor
+        if (identity == 'tutor') {
+            emails = await conn.query('SELECT email FROM tutors WHERE email = ? FOR UPDATE', [email]);
         }
 
         console.log('emails', emails);
@@ -64,10 +64,10 @@ const teacherSignUp = async (identity, name, email, password) => {
             picture: null,
         };
 
-        const queryStr = 'INSERT INTO teachers SET ?';
-        const [teacherResult] = await conn.query(queryStr, user);
-        console.log('teacherResult', teacherResult);
-        user.id = teacherResult.insertId;
+        const queryStr = 'INSERT INTO tutors SET ?';
+        const [tutorResult] = await conn.query(queryStr, user);
+        console.log('tutorResult', tutorResult);
+        user.id = tutorResult.insertId;
         await conn.query('COMMIT');
         return { user };
     } catch (error) {
@@ -83,7 +83,7 @@ const getUserAppointments = async (userID, userEmail) => {
     const conn = await pool.getConnection();
 
     const queryUserAppointments =
-        'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id INNER JOIN teachers ON teachers_time.t_id = teachers.id  WHERE users.email = ?';
+        'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
     const [userAppointments] = await conn.query(queryUserAppointments, [userEmail]);
 
     return userAppointments;
@@ -99,7 +99,7 @@ const getUserProfileAndAppointments = async (userID, userEmail) => {
 
     // get all professions
     const queryUserAppointments =
-        'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id INNER JOIN teachers ON teachers_time.t_id = teachers.id  WHERE users.email = ?';
+        'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
     const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [userEmail]);
 
     userProfileCombine.appointments = userProfileResultAppointments;
@@ -117,24 +117,23 @@ const getUserProfile = async (userID, userEmail) => {
     return userProfileResult;
 };
 
-const getTeacherProfile = async (teacherID, userEmail) => {
+const gettutorProfile = async (tutorID, userEmail) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
-        // get all teacher profile
-        const queryTeacherProfile = 'SELECT * FROM teachers WHERE email = ?';
-        const [teacherProfileResult] = await conn.query(queryTeacherProfile, [userEmail]);
-        let teacherProfileCombine = { userProfile: teacherProfileResult[0] };
+        // get all tutor profile
+        const querytutorProfile = 'SELECT * FROM tutors WHERE email = ?';
+        const [tutorProfileResult] = await conn.query(querytutorProfile, [userEmail]);
+        let tutorProfileCombine = { userProfile: tutorProfileResult[0] };
 
         // get all appointments
-        const queryUserAppointments =
-            'SELECT * FROM appointments ap INNER JOIN teachers_time tt ON tt.id=ap.teacher_time_id INNER JOIN users ON users.id=ap.user_id WHERE tt.t_id = ?';
-        const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [teacherID]);
-        teacherProfileCombine.appointments = userProfileResultAppointments;
+        const queryUserAppointments = 'SELECT * FROM appointments ap INNER JOIN tutors_time tt ON tt.id=ap.tutor_time_id INNER JOIN users ON users.id=ap.user_id WHERE tt.t_id = ?';
+        const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [tutorID]);
+        tutorProfileCombine.appointments = userProfileResultAppointments;
         await conn.query('COMMIT');
 
-        return teacherProfileCombine;
+        return tutorProfileCombine;
     } catch (error) {
         await conn.query('ROLLBACK');
         console.log('error', error);
@@ -144,15 +143,15 @@ const getTeacherProfile = async (teacherID, userEmail) => {
     }
 };
 
-const signUpToTeacher = async (name, email, password, experience1, experience2, experience3, introduce, profession, provider) => {
+const signUpTotutor = async (name, email, password, experience1, experience2, experience3, introduce, profession, provider) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
-        // check teacher exist
-        let [findTeacherByEmail] = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
+        // check tutor exist
+        let [findtutorByEmail] = await conn.query('SELECT email FROM tutors WHERE email = ? FOR UPDATE', [email]);
 
-        if (findTeacherByEmail.length > 0) {
+        if (findtutorByEmail.length > 0) {
             await conn.query('COMMIT');
             return { error: 'Email Already Exists' };
         }
@@ -172,18 +171,18 @@ const signUpToTeacher = async (name, email, password, experience1, experience2, 
             introduce: introduce,
         };
 
-        // insert into teachers table
+        // insert into tutors table
 
-        const queryStr = 'INSERT INTO teachers SET ?';
-        const [teacherResult] = await conn.query(queryStr, user);
+        const queryStr = 'INSERT INTO tutors SET ?';
+        const [tutorResult] = await conn.query(queryStr, user);
         console.log(typeof profession);
-        console.log([teacherResult['insertId'], profession.replace("'", '').split(',')]);
-        // insert profession and teacher
-        const queryInsertProfession = `INSERT INTO teachers_professions (profession_id,teacher_id)
+        console.log([tutorResult['insertId'], profession.replace("'", '').split(',')]);
+        // insert profession and tutor
+        const queryInsertProfession = `INSERT INTO tutors_professions (profession_id,tutor_id)
         SELECT id,?
         FROM professions
         WHERE profession IN (?)`;
-        await conn.query(queryInsertProfession, [teacherResult['insertId'], profession.replace("'", '').split(',')]);
+        await conn.query(queryInsertProfession, [tutorResult['insertId'], profession.replace("'", '').split(',')]);
 
         await conn.query('COMMIT');
         return { user };
@@ -267,12 +266,12 @@ const nativeSignIn = async (email, password) => {
     }
 };
 
-const nativeTeacherSignIn = async (email, password) => {
+const nativetutorSignIn = async (email, password) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
-        const [users] = await conn.query('SELECT * FROM teachers WHERE email = ?', [email]);
+        const [users] = await conn.query('SELECT * FROM tutors WHERE email = ?', [email]);
         const user = users[0];
 
         const auth = await argon2.verify(user.password, password);
@@ -363,8 +362,8 @@ const getUserProfileByUserID = async (userID, identity) => {
     try {
         await conn.query('START TRANSACTION');
         let users;
-        if (identity === 'teacher') {
-            [users] = await pool.query('SELECT * FROM teachers WHERE id = ?', [userID]);
+        if (identity === 'tutor') {
+            [users] = await pool.query('SELECT * FROM tutors WHERE id = ?', [userID]);
         }
         if (identity === 'student') {
             [users] = await pool.query('SELECT * FROM users WHERE id = ?', [userID]);
@@ -399,10 +398,10 @@ const getUsersProfileByUserID = async (userID) => {
 
 module.exports = {
     signUpToStudent,
-    signUpToTeacher,
+    signUpTotutor,
     nativeSignIn,
     facebookSignIn,
-    teacherSignUp,
+    tutorSignUp,
     getUserProfileAndAppointments,
     getUserProfileByEmail,
     getUserProfileByUserID,
@@ -410,6 +409,6 @@ module.exports = {
     updateAvator,
     getUserProfile,
     getUserAppointments,
-    nativeTeacherSignIn,
-    getTeacherProfile,
+    nativetutorSignIn,
+    gettutorProfile,
 };

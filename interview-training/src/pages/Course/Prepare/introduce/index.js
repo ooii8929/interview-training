@@ -2,7 +2,7 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import TeacherLottie from './teacher.json';
+import tutorLottie from './tutor.json';
 import Lottie from 'lottie-react';
 import { Row, Col } from 'react-bootstrap';
 import Button from '@mui/material/Button';
@@ -17,7 +17,7 @@ export default function Introduce(props) {
     return (
         <Row className="prepare-intro">
             <Col xs="5" className="prepare-intro-left">
-                <Lottie animationData={TeacherLottie} />
+                <Lottie animationData={tutorLottie} />
             </Col>
             <Col xs="6" className="introduce-container">
                 <Typography variant="h5" gutterBottom className="introduce-container-title">

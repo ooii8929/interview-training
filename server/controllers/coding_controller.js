@@ -385,7 +385,7 @@ const getTrainingRecords = async (req, res) => {
     if (identity === 'student') {
         allTraining = await Answer.getAllTraining(user_id);
     }
-    if (identity === 'teacher') {
+    if (identity === 'tutor') {
         allTraining = await Answer.getTutorTrainingRecords(user_id);
     }
     return res.status(200).send(allTraining);
@@ -444,12 +444,11 @@ const getProfileQuestions = async (req, res) => {
     let { profession } = req.query;
     console.log('id', id, profession);
     if (!id || id == undefined || !profession || profession == undefined) {
-        return res.status(400).send({ error: "Can't find profession or id" });
+        return res.status(400).send({ error: 'Can\'t find profession or id' });
     }
 
     let checkProfileQuestions = await Question.checkProfileQuestions(id);
 
-    console.log('checkProfileQuestions', checkProfileQuestions);
     if (checkProfileQuestions.length > 0) {
         return res.status(200).send(checkProfileQuestions[0]);
     }

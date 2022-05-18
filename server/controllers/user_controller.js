@@ -26,9 +26,9 @@ const signUp = async (req, res) => {
 
         let result;
 
-        if (identity === 'teacher') {
+        if (identity === 'tutor') {
             const { experience1, experience2, experience3, introduce, profession } = req.body;
-            result = await User.signUpToTeacher(name, email, password, experience1, experience2, experience3, introduce, profession, provider);
+            result = await User.signUpTotutor(name, email, password, experience1, experience2, experience3, introduce, profession, provider);
         }
 
         if (identity === 'student') {
@@ -88,8 +88,8 @@ const signIn = async (req, res) => {
                         result = await User.nativeSignIn(email, password);
                     }
 
-                    if (identity == 'teacher') {
-                        result = await User.nativeTeacherSignIn(email, password);
+                    if (identity == 'tutor') {
+                        result = await User.nativetutorSignIn(email, password);
                     }
 
                     break;
@@ -144,6 +144,14 @@ const signOut = async (req, res) => {
     }
 };
 
+const getUserProfile = async (req, res) => {
+    if (req.locals) {
+        return res.status(200).send(req.locals);
+    } else {
+        return res.status(500).send({ error: 'Cache Not Found' });
+    }
+};
+
 const getAvatorUploadURL = async (req, res) => {
     let { file_name, file_type } = req.query;
     try {
@@ -180,45 +188,6 @@ const updateAvator = async (req, res) => {
     }
 };
 
-const getUserProfileAndAppointments = async (req, res) => {
-    if (req.locals) {
-        return res.status(200).send(req.locals);
-    }
-
-    let { userID, userEmail, identity } = req.query;
-    try {
-        let userProfile;
-        if (identity == 'teacher') {
-            userProfile = await User.getTeacherProfile(userID, userEmail);
-        }
-        if (identity == 'student') {
-            userProfile = await User.getUserProfileAndAppointments(userID, userEmail);
-        }
-
-        return res.status(200).send(userProfile);
-    } catch (error) {
-        console.log('getUserProfile error', error);
-        return res.status(400).send({ error: error });
-    }
-};
-
-const getUserProfile = async (req, res) => {
-    let { user_id, user_email, identity } = req.query;
-
-    try {
-        let userProfile;
-        if (identity == 'teacher') {
-            userProfile = await User.getTeacherProfile(user_id, user_email);
-        }
-        if (identity == 'student') {
-            userProfile = await User.getUserProfile(user_id, user_email);
-        }
-        return res.status(200).send(userProfile);
-    } catch (error) {
-        return res.status(400).send({ error: error });
-    }
-};
-
 const getUserCodeLog = async (req, res) => {
     let { question_id, user_id } = req.query;
 
@@ -244,9 +213,8 @@ module.exports = {
     signUp,
     signIn,
     signOut,
-    getUserProfileAndAppointments,
+    getUserProfile,
     getUserCodeLog,
     getAvatorUploadURL,
     updateAvator,
-    getUserProfile,
 };

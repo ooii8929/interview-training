@@ -34,6 +34,14 @@ export default function Account(props) {
     const [time, setTime] = React.useState(null);
 
     let location = useLocation();
+
+    React.useEffect(() => {
+        async function init() {
+            await getProfile();
+        }
+        init();
+    }, []);
+
     function handleChange(e) {
         updateAvator(e.target.files[0]['name'], e.target.files[0]['type'], URL.createObjectURL(e.target.files[0]), e.target.files[0]);
         setAvator(URL.createObjectURL(e.target.files[0]));
@@ -42,12 +50,11 @@ export default function Account(props) {
 
     async function updateAvator(avatorName, avatorType, avator, avatorContent) {
         // Get S3 Upload URL
-
         let getAvatorURL = await axios({
             withCredentials: true,
             method: 'GET',
             credentials: 'same-origin',
-            url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`,
+            url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator/upload`,
             params: {
                 file_name: avatorName,
                 file_type: avatorType,
@@ -82,14 +89,7 @@ export default function Account(props) {
         console.log('updateAvatorURL', updateAvatorURL);
     }
 
-    React.useEffect(() => {
-        async function init() {
-            await getProfile();
-        }
-        init();
-    }, []);
-
-    //TODO: Get user profile
+    // Get user profile
     async function getProfile() {
         try {
             let profile = await axios({
@@ -110,8 +110,8 @@ export default function Account(props) {
             setIdentity(profile['data']['identity']);
 
             //TODO: get record
-            if (profile['data']['identity'] === 'teacher') {
-                await getTeacherTrainingRecords();
+            if (profile['data']['identity'] === 'tutor') {
+                await gettutorTrainingRecords();
             }
 
             if (profile['data']['identity'] === 'student') {
@@ -128,18 +128,23 @@ export default function Account(props) {
             });
             localStorage.setItem('returnPage', location.pathname);
             navigate('/login');
-            console.log(error);
         }
     }
 
-    //TODO: Get user profile
+    // Get user appointments
     async function getUserAppointments() {
         try {
-            let responseAppoint = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/user/appoint`, {
+            let responseAppoint = await axios({
+                withCredentials: true,
+                method: 'GET',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/course/user/appoint`,
                 params: {
                     userID: userID,
                 },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
+
             if (responseAppoint['data'].length !== 0) {
                 let responseAppointFilterUpTONow = responseAppoint['data'].filter((e) => {
                     return new Date(e.available_time) > Date.now();
@@ -185,7 +190,7 @@ export default function Account(props) {
         }
     }
 
-    async function getTeacherTrainingRecords() {
+    async function gettutorTrainingRecords() {
         try {
             let responseAllTraining = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/records`, {
                 params: {
@@ -295,7 +300,7 @@ export default function Account(props) {
                                               <TutorCard
                                                   key={index}
                                                   picture={arrange['picture']}
-                                                  teacher={arrange['name']}
+                                                  tutor={arrange['name']}
                                                   href={arrange['course_url']}
                                                   time={arrange['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
                                                   createDT={arrange['update_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)}

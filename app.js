@@ -202,7 +202,7 @@ app.use('/api/' + API_VERSION, [
     require('./server/routes/user_route'),
     require('./server/routes/coding_route'),
     require('./server/routes/social_route'),
-    require('./server/routes/tutor_route'),
+    require('./server/routes/course_route'),
 ]);
 
 // Page not found

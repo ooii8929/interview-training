@@ -192,8 +192,8 @@ const insertCodeComments = async (req, res) => {
         userInfo = await USER.getUserPureProfile(req.locals.id, req.locals.email);
     }
 
-    if (req.locals.identity == 'teacher') {
-        userInfo = await USER.getTeacherProfile(req.locals.id, req.locals.email);
+    if (req.locals.identity == 'tutor') {
+        userInfo = await USER.gettutorProfile(req.locals.id, req.locals.email);
     }
     let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
 

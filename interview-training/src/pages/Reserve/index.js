@@ -17,8 +17,12 @@ function Tutor() {
     const [display, setDisplay] = React.useState(false);
     const [tutors, setTutors] = React.useState(null);
     const [appointment, setAppointment] = React.useState(null);
-    const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/teacher/schedule`;
+    const getScheduleURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/course/tutor/schedule`;
     const userID = localStorage.getItem('userid');
+
+    React.useEffect(() => {
+        getTutors();
+    }, []);
 
     async function getTutors() {
         try {
@@ -26,10 +30,9 @@ function Tutor() {
                 withCredentials: true,
                 method: 'GET',
                 credentials: 'same-origin',
-                url: baseURL,
+                url: getScheduleURL,
                 headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
-            console.log('allTutors', allTutors);
 
             if (Object.keys(allTutors['data']).length === 0) {
                 await Swal.fire({
@@ -45,9 +48,6 @@ function Tutor() {
             console.log(error);
         }
     }
-    React.useEffect(() => {
-        getTutors();
-    }, []);
 
     // init pass
     const isInitialMount = React.useRef(true);
@@ -56,39 +56,40 @@ function Tutor() {
         if (isInitialMount.current) {
             isInitialMount.current = false;
         } else {
-            async function sendAppointment(course_id) {
-                try {
-                    let response = await axios({
-                        withCredentials: true,
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/user/appoint`,
-                        data: {
-                            course_id: course_id,
-                        },
-                        headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-                    });
-                    console.log('response', response);
-                    await Swal.fire({
-                        title: '預約成功！',
-                        icon: 'success',
-                        confirmButtonText: '前往會員頁查看',
-                    });
-
-                    window.location.href = '/account';
-                } catch (error) {
-                    await Swal.fire({
-                        title: `${error.response.status}`,
-                        text: `${error.response.data.error}`,
-                        icon: 'error',
-                        confirmButtonText: '前往登入',
-                    });
-                    window.location.href = '/login';
-                }
-            }
-            sendAppointment(appointment);
+            makeAppointment(appointment);
         }
     }, [appointment]);
+
+    async function makeAppointment(course_id) {
+        try {
+            await axios({
+                withCredentials: true,
+                method: 'POST',
+                credentials: 'same-origin',
+                url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/course/interviewee/appoint`,
+                data: {
+                    course_id: course_id,
+                },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+            });
+
+            await Swal.fire({
+                title: '預約成功！',
+                icon: 'success',
+                confirmButtonText: '前往會員頁查看',
+            });
+
+            window.location.href = '/account';
+        } catch (error) {
+            await Swal.fire({
+                title: `${error.response.status}`,
+                text: `${error.response.data.error}`,
+                icon: 'error',
+                confirmButtonText: '前往登入',
+            });
+            window.location.href = '/login';
+        }
+    }
 
     return (
         <>

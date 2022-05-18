@@ -31,7 +31,7 @@ export default function LabTabs(props) {
                                       <Grid item xs={4} key={index} className="account-box-grid-self">
                                           <TutorCard
                                               key={index}
-                                              teacher={appointment['name']}
+                                              tutor={appointment['name']}
                                               profession={appointment['profession']}
                                               picture={appointment['picture']}
                                               tID={appointment['question_id']}
@@ -52,7 +52,7 @@ export default function LabTabs(props) {
                                     <Grid item xs={4} key={index} className="account-box-grid-self">
                                         <TutorCard
                                             key={index}
-                                            teacher={appointment['name']}
+                                            tutor={appointment['name']}
                                             profession={appointment['profession']}
                                             picture={appointment['picture']}
                                             tID={appointment['question_id']}

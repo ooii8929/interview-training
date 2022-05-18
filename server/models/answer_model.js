@@ -80,11 +80,11 @@ const getTutorTrainingRecords = async (user_id) => {
         await conn.query('START TRANSACTION');
         let answer = {};
         const appointed = await pool.query(
-            'SELECT tt.available_time, tt.status AS tutor_status,tt.course_url,ap.status AS apponintments_status,ap.update_dt,users.picture,users.name  FROM teachers_time tt INNER JOIN appointments ap ON tt.id = ap.teacher_time_id INNER JOIN users ON ap.user_id = users.id WHERE tt.t_id = ?',
+            'SELECT tt.available_time, tt.status AS tutor_status,tt.course_url,ap.status AS apponintments_status,ap.update_dt,users.picture,users.name  FROM tutors_time tt INNER JOIN appointments ap ON tt.id = ap.tutor_time_id INNER JOIN users ON ap.user_id = users.id WHERE tt.t_id = ?',
             [user_id]
         );
 
-        const unappointed = await pool.query('SELECT *  FROM teachers_time  WHERE t_id = ? AND status=0', [user_id]);
+        const unappointed = await pool.query('SELECT *  FROM tutors_time  WHERE t_id = ? AND status=0', [user_id]);
 
         answer.appointed = appointed[0];
         answer.unappointed = unappointed[0];

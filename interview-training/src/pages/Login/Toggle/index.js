@@ -17,7 +17,7 @@ export default function ColorToggleButton(props) {
     return (
         <>
             <ToggleButtonGroup color="primary" value={alignment} exclusive onChange={handleChange} className="toggle-login">
-                <ToggleButton value="teacher">培訓教練</ToggleButton>
+                <ToggleButton value="tutor">培訓教練</ToggleButton>
                 <ToggleButton value="student">學生</ToggleButton>
             </ToggleButtonGroup>
             <div>

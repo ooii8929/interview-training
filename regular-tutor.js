@@ -13,7 +13,7 @@ const checkTime = async () => {
         // const questions = await conn.query('SELECT * FROM questions  WHERE profession = ? ORDER BY RAND() LIMIT 3', [profession]);
 
         // test no random
-        const [questions] = await conn.query('SELECT * FROM teachers_time WHERE status = 0 ');
+        const [questions] = await conn.query('SELECT * FROM tutors_time WHERE status = 0 ');
 
         let tmpTimeOutCourseId = [];
         questions.map((e) => {
@@ -23,7 +23,7 @@ const checkTime = async () => {
         });
 
         console.log('tmpTimeOutCourseId', tmpTimeOutCourseId);
-        const [updateResult] = await conn.query('UPDATE teachers_time SET status = 1 WHERE id in (?) ', [tmpTimeOutCourseId]);
+        const [updateResult] = await conn.query('UPDATE tutors_time SET status = 1 WHERE id in (?) ', [tmpTimeOutCourseId]);
         console.log('updateResult', updateResult);
         await conn.query('COMMIT');
         return { questions };

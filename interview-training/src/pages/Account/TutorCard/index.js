@@ -13,7 +13,7 @@ export default function BasicCard(props) {
             <CardMedia component="img" height="140" image={props.picture} alt="green iguana" />
             <CardContent className="all-tutor-card-container">
                 <Typography gutterBottom variant="h5">
-                    {props.teacher}
+                    {props.tutor}
                 </Typography>
                 <Typography gutterBottom variant="span">
                     {props.profession}

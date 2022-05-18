@@ -10,7 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from 'axios';
-// Teacher Option form
+// tutor Option form
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -27,7 +27,7 @@ export default function RegisterForm(props) {
     const [registerEmail, setRegisterEmail] = React.useState('');
     const [registerPassword, setRegisterPassword] = React.useState('');
 
-    // teacher option setting
+    // tutor option setting
     const professions = ['Backend', 'Frontend', 'SRE', 'Full-Stack', 'DevOps', 'Architect'];
     const [personName, setPersonName] = React.useState([]);
     const [count, setCount] = React.useState('');
@@ -174,7 +174,7 @@ export default function RegisterForm(props) {
                             />
                         </Grid>
                     </Grid>
-                    {props.identity === 'teacher' ? (
+                    {props.identity === 'tutor' ? (
                         <>
                             <FormControl sx={{ width: '100%', marginTop: '16px' }}>
                                 <InputLabel id="demo-multiple-checkbox-label">專業</InputLabel>

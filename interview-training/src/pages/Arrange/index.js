@@ -32,7 +32,7 @@ export default function Arrange() {
 
         let roomLink = generateRoomUrl(time);
         let scheduleInfo = {
-            teacher_id: userId,
+            tutor_id: userId,
             available_time: time,
             roomURL: roomLink,
         };
@@ -51,7 +51,7 @@ export default function Arrange() {
         }
 
         try {
-            let updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/tutor/teacher/schedule`, scheduleInfo);
+            let updateResult = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/course/tutor/schedule`, scheduleInfo);
             let timeShow = time.replace('T', '');
             await Swal.fire({
                 title: '安排成功！!',
@@ -90,7 +90,7 @@ export default function Arrange() {
                         <br />
                         請幫我完成排課時間
                     </Typography>
-                    <Box className="submit-teacher-arrange">
+                    <Box className="submit-tutor-arrange">
                         <Box component="form" noValidate onSubmit={handleScheduleSubmit} sx={{ mt: 4 }} className="flex-items">
                             <Grid container spacing={2} sx={{ width: '100%', p: 0, pl: 0, m: 0 }} style={{ paddingLeft: '0px !important' }}>
                                 <Grid item xs={12} sx={{ width: '100%', p: 0, pl: 0, m: 0 }} className="arrange-time" style={{ paddingLeft: '0px !important' }}>
