@@ -11,11 +11,7 @@ function TabPanel(props) {
 
     return (
         <div role="tabpanel" hidden={value !== index} id={`vertical-tabpanel-${index}`} aria-labelledby={`vertical-tab-${index}`} {...other}>
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
+            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
         </div>
     );
 }
@@ -52,7 +48,7 @@ export default function VerticalTabs(props) {
             >
                 {props.training
                     ? props.training.map((e, index) => {
-                          return <Tab label={e['create_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)} {...a11yProps(index)} />;
+                          return <Tab key={index} label={e['create_dt'].replace('T', ' ').replace('Z', ' ').split('.', 1)} {...a11yProps(index)} />;
                       })
                     : null}
             </Tabs>
@@ -60,8 +56,8 @@ export default function VerticalTabs(props) {
             {props.training
                 ? props.training.map((e, index) => {
                       return (
-                          <TabPanel value={value} index={index}>
-                              <Card video={e['video']} code={e['code']} questionID={e['_id']} setAllTraining={props.setAllTraining}></Card>
+                          <TabPanel value={value} index={index} key={index}>
+                              <Card sx={{ mb: 5 }} video={e['video']} code={e['code']} questionID={e['_id']} setAllTraining={props.setAllTraining} />
                           </TabPanel>
                       );
                   })

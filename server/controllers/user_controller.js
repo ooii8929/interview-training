@@ -1,72 +1,73 @@
 require('dotenv').config();
 const validator = require('validator');
 const User = require('../models/user_model');
-const { pool } = require('../models/mysqlcon');
 const util = require('../util/util');
 const Cache = require('../util/cache');
-const _ = require('lodash');
-var session = require('express-session');
-
-const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
+
 const signUp = async (req, res) => {
-    const { identity, name, email, password, provider } = req.body;
-    if (!util.isValidEmail(email)) {
-        res.status('400').send({ error: 'email format wrong' });
-        return;
-    }
-    if (!name || !email || !password) {
-        res.status(400).send({ error: 'Request Error: name, email and password are required.' });
-        return;
-    }
+    try {
+        const { identity, name, email, password } = req.body;
+        let { provider } = req.body;
 
-    if (!validator.isEmail(email)) {
-        res.status(400).send({ error: 'Request Error: Invalid email format' });
-        return;
-    }
-    let result;
-    if (identity === 'teacher') {
-        const { experience1, experience2, experience3, introduce, profession } = req.body;
-        result = await User.signUpToTeacher(name, email, password, experience1, experience2, experience3, introduce, profession);
-    }
-    if (identity === 'student') {
-        result = await User.signUpToStudent(name, email, password);
-    }
-
-    if (result.error) {
-        res.status(403).send({ error: result.error });
-        return;
-    }
-
-    const user = result.user;
-    if (!user) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
-    }
-    console.log('user', user);
-    // req.session.isLoggedIn = true;
-    sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, create_dt: user.create_dt, identity: identity };
-
-    sess.save((err) => {
-        if (err) {
-            return res.status(400).send('fail');
-        } else {
-            console.log('save', sess);
-            res.header('Content-Type', 'application/json');
-            return res.status(200).send(sess.user);
+        if (!name || !email || !password) {
+            res.status(400).send({ error: 'Request Error: name, email and password are required.' });
+            return;
         }
-    });
 
-    res.status(200).send({
-        data: {
-            user: {
-                id: user.id,
-                provider: user.provider,
-                name: user.name,
-                email: user.email,
-            },
-        },
-    });
+        if (!validator.isEmail(email)) {
+            res.status(400).send({ error: 'Invalid email format' });
+            return;
+        }
+
+        if (!provider) {
+            provider = 'native';
+        }
+
+        let result;
+
+        if (identity === 'teacher') {
+            const { experience1, experience2, experience3, introduce, profession } = req.body;
+            result = await User.signUpToTeacher(name, email, password, experience1, experience2, experience3, introduce, profession, provider);
+        }
+
+        if (identity === 'student') {
+            result = await User.signUpToStudent(name, email, password);
+        }
+
+        if (result.error) {
+            res.status(403).send({ error: result.error });
+            return;
+        }
+
+        const user = result.user;
+        if (!user) {
+            res.status(500).send({ error: 'Database Query Error' });
+            return;
+        }
+        if (Cache.ready) {
+            let sess = req.session;
+
+            sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, identity: identity };
+
+            sess.save((err) => {
+                if (err) {
+                    return res.status(400).send({ error: 'session fail' });
+                } else {
+                    res.header('Content-Type', 'application/json');
+                    return res.status(200).send({
+                        id: user.id,
+                        provider: user.provider,
+                        name: user.name,
+                        email: user.email,
+                    });
+                }
+            });
+        }
+    } catch (error) {
+        console.log('sign up error', error);
+        return res.status(500).send({ error: 'sign up fail' });
+    }
 };
 
 const signIn = async (req, res) => {
@@ -78,7 +79,7 @@ const signIn = async (req, res) => {
 
     if (Cache.ready) {
         try {
-            var sess = req.session;
+            let sess = req.session;
 
             let result;
             switch (provider) {
@@ -92,9 +93,7 @@ const signIn = async (req, res) => {
                     }
 
                     break;
-                case 'facebook':
-                    result = await facebookSignIn(access_token);
-                    break;
+
                 default:
                     result = { error: 'Wrong Request' };
             }
@@ -115,16 +114,15 @@ const signIn = async (req, res) => {
 
             sess.save((err) => {
                 if (err) {
-                    return res.status(400).send('fail');
+                    return res.status(400).send({ error: 'fail' });
                 } else {
-                    console.log('save', sess);
                     res.header('Content-Type', 'application/json');
                     return res.status(200).send(sess.user);
                 }
             });
         } catch (error) {
             console.log('error', error);
-            return res.status(400).send('fail');
+            return res.status(400).send({ error: 'fail' });
         }
     }
 };
@@ -137,7 +135,6 @@ const signOut = async (req, res) => {
                     console.log(err);
                     return res.status(400).send({ error: 'error' });
                 }
-
                 res.clearCookie('connect.sid', { path: '/' }).status(200).send('Ok.');
             });
         } catch (error) {
@@ -147,11 +144,11 @@ const signOut = async (req, res) => {
     }
 };
 
-const getAvatorURL = async (req, res) => {
+const getAvatorUploadURL = async (req, res) => {
     let { file_name, file_type } = req.query;
     try {
         let avatorURL = await util.storeAvatorURL(file_name, file_type);
-        return res.status(200).send({ avatorURL });
+        return res.status(200).send(avatorURL);
     } catch (error) {
         console.log('avatorURL error', error);
         return res.status(400).send({ error: error });
@@ -170,7 +167,7 @@ const updateAvator = async (req, res) => {
         req.session.user.picture = picture;
         req.session.save((err) => {
             if (err) {
-                return res.status(400).send('fail');
+                return res.status(400).send({ error: 'fail' });
             } else {
                 console.log('save');
             }
@@ -179,11 +176,11 @@ const updateAvator = async (req, res) => {
         return res.status(200).send({ userUpdateAvator });
     } catch (error) {
         console.log('userUpdateAvator error', error);
-        return res.status(400).send({ error });
+        return res.status(400).send({ error: error });
     }
 };
 
-const getUserProfile = async (req, res) => {
+const getUserProfileAndAppointments = async (req, res) => {
     if (req.locals) {
         return res.status(200).send(req.locals);
     }
@@ -195,7 +192,7 @@ const getUserProfile = async (req, res) => {
             userProfile = await User.getTeacherProfile(userID, userEmail);
         }
         if (identity == 'student') {
-            userProfile = await User.getUserProfile(userID, userEmail);
+            userProfile = await User.getUserProfileAndAppointments(userID, userEmail);
         }
 
         return res.status(200).send(userProfile);
@@ -205,7 +202,7 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-const getUserPureProfile = async (req, res) => {
+const getUserProfile = async (req, res) => {
     let { user_id, user_email, identity } = req.query;
 
     try {
@@ -214,7 +211,7 @@ const getUserPureProfile = async (req, res) => {
             userProfile = await User.getTeacherProfile(user_id, user_email);
         }
         if (identity == 'student') {
-            userProfile = await User.getUserPureProfile(user_id, user_email);
+            userProfile = await User.getUserProfile(user_id, user_email);
         }
         return res.status(200).send(userProfile);
     } catch (error) {
@@ -224,7 +221,6 @@ const getUserPureProfile = async (req, res) => {
 
 const getUserCodeLog = async (req, res) => {
     let { question_id, user_id } = req.query;
-    console.log('question_id, user_id', question_id, user_id);
 
     // Get records
     const dbConnect = dbo.getDb();
@@ -236,41 +232,21 @@ const getUserCodeLog = async (req, res) => {
         .sort({ create_dt: -1 })
         .toArray(function (err, result) {
             if (err) {
-                return res.status(400).send('Error fetching listings!');
+                return res.status(400).send({ error: 'Error fetching listings!' });
             } else {
                 console.log('result', result);
-                return res.status(200).json(result);
+                return res.status(200).send(result);
             }
         });
-};
-
-const insertUserProfile = async (req, res) => {
-    const { data } = req.body;
-
-    // Get records
-    const dbConnect = dbo.getDb();
-
-    dbConnect.collection('profile').insertOne({
-        user_id: 2,
-        question_id: 2,
-        video_answer: 'https://google.com.tw',
-        code_answer: "console.log('123')",
-    });
-
-    res.status(200).send('Insert finish!');
-
-    return;
 };
 
 module.exports = {
     signUp,
     signIn,
     signOut,
-    getUserProfile,
-    insertUserProfile,
+    getUserProfileAndAppointments,
     getUserCodeLog,
-
-    getAvatorURL,
+    getAvatorUploadURL,
     updateAvator,
-    getUserPureProfile,
+    getUserProfile,
 };

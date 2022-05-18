@@ -9,6 +9,7 @@ router.route('/tutor/teacher/schedule').post(wrapAsync(createRoom));
 router.route('/tutor/teacher/schedule').get(wrapAsync(getAllTeacherSchedule));
 
 router.route('/tutor/teacher/information').post(wrapAsync(setTeacherInfomation));
+
 router.route('/tutor/teacher/information').get(wrapAsync(getTeacherInfomation));
 
 router.route('/tutor/user/appoint').get(wrapAsync(getAppointmentURL));

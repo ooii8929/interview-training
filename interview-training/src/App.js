@@ -31,6 +31,7 @@ function App() {
     const [isLogin, setIsLogin] = React.useState(false);
     const [identity, setIdentity] = React.useState('student');
     const [avatorURL, setAvatorURL] = React.useState('');
+    const [email, setEmail] = React.useState('');
     const appContextValue = {
         userId,
         profileQuestion,
@@ -52,6 +53,7 @@ function App() {
                 if (getAvatorResult.data.email) {
                     setIsLogin(true);
                     setAvatorURL(getAvatorResult['data']['picture']);
+                    setEmail(getAvatorResult['data']['email']);
                     localStorage.setItem('userid', getAvatorResult.data.id);
                     localStorage.setItem('username', getAvatorResult.data.name);
                     localStorage.setItem('useremail', getAvatorResult.data.email);
@@ -68,7 +70,7 @@ function App() {
     return (
         <BrowserRouter>
             <AppContext.Provider value={appContextValue}>
-                <Header avator={avatorURL} identity={identity} title="面面-為你的面試加分" />
+                <Header email={email} avator={avatorURL} identity={identity} title="面面-為你的面試加分" />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />

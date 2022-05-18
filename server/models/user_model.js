@@ -79,7 +79,17 @@ const teacherSignUp = async (identity, name, email, password) => {
     }
 };
 
-const getUserProfile = async (userID, userEmail) => {
+const getUserAppointments = async (userID, userEmail) => {
+    const conn = await pool.getConnection();
+
+    const queryUserAppointments =
+        'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN teachers_time ON appointments.teacher_time_id = teachers_time.id INNER JOIN teachers ON teachers_time.t_id = teachers.id  WHERE users.email = ?';
+    const [userAppointments] = await conn.query(queryUserAppointments, [userEmail]);
+
+    return userAppointments;
+};
+
+const getUserProfileAndAppointments = async (userID, userEmail) => {
     const conn = await pool.getConnection();
 
     // get all professions
@@ -97,7 +107,7 @@ const getUserProfile = async (userID, userEmail) => {
     return userProfileCombine;
 };
 
-const getUserPureProfile = async (userID, userEmail) => {
+const getUserProfile = async (userID, userEmail) => {
     const conn = await pool.getConnection();
 
     // get all professions
@@ -134,15 +144,13 @@ const getTeacherProfile = async (teacherID, userEmail) => {
     }
 };
 
-const signUpToTeacher = async (name, email, password, experience1, experience2, experience3, introduce, profession) => {
+const signUpToTeacher = async (name, email, password, experience1, experience2, experience3, introduce, profession, provider) => {
     const conn = await pool.getConnection();
     try {
         await conn.query('START TRANSACTION');
 
         // check teacher exist
         let [findTeacherByEmail] = await conn.query('SELECT email FROM teachers WHERE email = ? FOR UPDATE', [email]);
-
-        console.log('findTeacherByEmail', findTeacherByEmail);
 
         if (findTeacherByEmail.length > 0) {
             await conn.query('COMMIT');
@@ -153,7 +161,7 @@ const signUpToTeacher = async (name, email, password, experience1, experience2, 
         const hash = await argon2.hash(password);
 
         const user = {
-            provider: 'native',
+            provider: provider,
             email: email,
             password: hash,
             name: name,
@@ -175,30 +183,7 @@ const signUpToTeacher = async (name, email, password, experience1, experience2, 
         SELECT id,?
         FROM professions
         WHERE profession IN (?)`;
-        const [professionResult] = await conn.query(queryInsertProfession, [teacherResult['insertId'], profession.replace("'", '').split(',')]);
-
-        // // get all professions
-        // const queryProfessions = 'SELECT * FROM professions WHERE profession IN (?)';
-        // const [professionsResult] = await conn.query(queryProfessions, [profession]);
-
-        // const allInsertTeacherProfession = [];
-
-        // console.log('professionsResult', professionsResult);
-
-        // professionsResult.forEach((e) => {
-        //     const insertTeacherProfession = [];
-        //     insertTeacherProfession.push(teacherResult.insertId);
-        //     insertTeacherProfession.push(e.id);
-        //     allInsertTeacherProfession.push(insertTeacherProfession);
-        // });
-
-        // console.log('allInsertTeacherProfession', allInsertTeacherProfession);
-
-        // // get all professions
-        // const insertTandP = 'INSERT INTO teachers_professions (teacher_id, profession_id) VALUES ?';
-        // const [insertTeacherProfessionResult] = await conn.query(insertTandP, [allInsertTeacherProfession]);
-
-        // user.id = teacherResult.insertId;
+        await conn.query(queryInsertProfession, [teacherResult['insertId'], profession.replace("'", '').split(',')]);
 
         await conn.query('COMMIT');
         return { user };
@@ -218,15 +203,12 @@ const signUpToStudent = async (name, email, password) => {
 
         let emails = await conn.query('SELECT email FROM users WHERE email = ? FOR UPDATE', [email]);
 
-        console.log('emails', emails);
-
         // check user exist
         if (emails[0].length > 0) {
             await conn.query('COMMIT');
             return { error: 'Email Already Exists' };
         }
 
-        const loginAt = new Date();
         const hash = await argon2.hash(password);
 
         const user = {
@@ -240,6 +222,7 @@ const signUpToStudent = async (name, email, password) => {
         const queryStr = 'INSERT INTO users SET ?';
         const [result] = await conn.query(queryStr, user);
 
+        console.log('result insert', result);
         user.id = result.insertId;
 
         await conn.query('COMMIT');
@@ -420,12 +403,13 @@ module.exports = {
     nativeSignIn,
     facebookSignIn,
     teacherSignUp,
-    getUserProfile,
+    getUserProfileAndAppointments,
     getUserProfileByEmail,
     getUserProfileByUserID,
     getUsersProfileByUserID,
     updateAvator,
-    getUserPureProfile,
+    getUserProfile,
+    getUserAppointments,
     nativeTeacherSignIn,
     getTeacherProfile,
 };

@@ -1,13 +1,10 @@
 require('dotenv').config();
-var cors = require('cors');
-var bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
 
 const { v4: uuidv4 } = require('uuid');
 const Question = require('../models/question_model');
 const Answer = require('../models/answer_model');
 const fs = require('fs');
-const _ = require('lodash');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
@@ -99,7 +96,7 @@ const submitCompile = async (req, res) => {
         console.log('codingAnswer', codingAnswer);
 
         // insert answer to profile
-        let updateAnswerRecord = await Answer.insertCodeAnswer(user_id, qid, reply, content);
+        await Answer.insertCodeAnswer(user_id, qid, reply, content);
 
         // Get all code by qid
         let [checkQuestion] = await Answer.questionByQid(user_id, question_id);
@@ -112,7 +109,7 @@ const submitCompile = async (req, res) => {
         console.log('3. 找到尚未完成題目', notFinishedQuestion);
         // if length is 0 , all question are finished
         if (notFinishedQuestion.length === 0) {
-            let endResult = await Answer.endTraining(user_id, question_id);
+            await Answer.endTraining(user_id, question_id);
         }
 
         res.status(200).send(reply);
@@ -169,7 +166,7 @@ const submitCompile = async (req, res) => {
                 output: ans,
                 except: formalAnswer,
             };
-            let codingAnswer = await Answer.submitCodeAnswer(user_id, question_id, qid, language, reply, content);
+            await Answer.submitCodeAnswer(user_id, question_id, qid, language, reply, content);
             res.status(200).send(reply);
         }
     }

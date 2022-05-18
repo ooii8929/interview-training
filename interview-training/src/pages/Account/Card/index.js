@@ -7,14 +7,12 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import axios from 'axios';
-import SendIcon from '@mui/icons-material/Send';
 import ShareIcon from '@mui/icons-material/Share';
 import Swal from 'sweetalert2';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function BasicCard(props) {
-    console.log('first', props.video);
     const [open, setOpen] = React.useState(false);
     const handleClose = () => {
         setOpen(false);
@@ -147,7 +145,7 @@ export default function BasicCard(props) {
     }
 
     return (
-        <Card sx={{ mb: 5 }}>
+        <Card>
             <CardContent>
                 <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open} onClick={handleClose}>
                     <CircularProgress color="inherit" />
@@ -157,9 +155,7 @@ export default function BasicCard(props) {
                           return (
                               <div key={index}>
                                   <div className="history-title-div">
-                                      <Typography variant="h5" component="div">
-                                          {e.title}
-                                      </Typography>
+                                      <Typography variant="h5">{e.title}</Typography>
                                       {e.shared ? (
                                           <Button
                                               variant="contained"
@@ -171,7 +167,7 @@ export default function BasicCard(props) {
                                               data-qid={e.qid}
                                               data-video={e.answer_url}
                                               sx={{ mt: 1, mr: 1 }}
-                                              disabled="true"
+                                              disabled={true}
                                           ></Button>
                                       ) : (
                                           <Button
@@ -205,9 +201,7 @@ export default function BasicCard(props) {
                           return (
                               <div key={index}>
                                   <div className="history-title-div">
-                                      <Typography variant="h5" component="div">
-                                          {c.title}
-                                      </Typography>{' '}
+                                      <Typography variant="h5">{c.title}</Typography>{' '}
                                       {c.shared ? (
                                           <Button
                                               variant="contained"
@@ -218,7 +212,7 @@ export default function BasicCard(props) {
                                               data-category={'code'}
                                               data-qid={c.qid}
                                               sx={{ mt: 1, mr: 1 }}
-                                              disabled="true"
+                                              disabled={true}
                                           ></Button>
                                       ) : (
                                           <Button
@@ -269,42 +263,42 @@ export default function BasicCard(props) {
                                               <>
                                                   <Grid container spacing={{ md: 4 }} columns={{ md: 12 }} className="runcode-container">
                                                       <Grid item xs={2} className="runcode-result-label">
-                                                          <p>測試結果</p>
+                                                          <span>測試結果</span>
                                                       </Grid>
                                                       <Grid item xs={4} className="runcode-result">
                                                           <div>
-                                                              <p>{c.javascript_answer_status.answer_status}</p>
+                                                              <span>{c.javascript_answer_status.answer_status}</span>
                                                           </div>
                                                       </Grid>
                                                       <Grid item xs={2} className="runcode-result-label">
-                                                          <p>測試數據</p>
+                                                          <span>測試數據</span>
                                                       </Grid>
                                                       <Grid item xs={4} className="runcode-result">
                                                           <div>
-                                                              <p>{c.javascript_answer_status.input}</p>
+                                                              <span>{c.javascript_answer_status.input}</span>
                                                           </div>
                                                       </Grid>
                                                   </Grid>
                                                   <Grid container spacing={{ md: 4 }} columns={{ md: 12 }} className="runcode-container">
                                                       <Grid item xs={2} className="runcode-result-label">
                                                           <div>
-                                                              <p>期待答案</p>
+                                                              <span>期待答案</span>
                                                           </div>
                                                       </Grid>
                                                       <Grid item xs={4} className="runcode-result">
                                                           <div>
-                                                              <p>{c.javascript_answer_status.except}</p>
+                                                              <span>{c.javascript_answer_status.except}</span>
                                                           </div>
                                                       </Grid>
                                                       <Grid item xs={2} className="runcode-result-label">
                                                           <div>
-                                                              <p>你的答案</p>
+                                                              <span>你的答案</span>
                                                           </div>
                                                       </Grid>
 
                                                       <Grid item xs={4} className="runcode-result">
                                                           <div>
-                                                              <p>{c.javascript_answer_status.output}</p>
+                                                              <span>{c.javascript_answer_status.output}</span>
                                                           </div>
                                                       </Grid>
                                                   </Grid>

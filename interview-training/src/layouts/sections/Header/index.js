@@ -131,7 +131,7 @@ const Header = (props) => {
                         </Box>
 
                         <Box sx={{ flexGrow: 0 }}>
-                            {props.avator ? (
+                            {props.email ? (
                                 <>
                                     <Button
                                         id="fade-button"
@@ -140,7 +140,11 @@ const Header = (props) => {
                                         aria-expanded={open ? 'true' : undefined}
                                         onClick={handleClick}
                                     >
-                                        <Avatar alt="Remy Sharp" src={props.avator} className="header-avator" />
+                                        <Avatar
+                                            alt="Remy Sharp"
+                                            src={props.avator || 'https://truth.bahamut.com.tw/s01/201207/28a8513919088d3328aaa40284c6b13e.PNG'}
+                                            className="header-avator"
+                                        />
                                     </Button>
                                     <Menu
                                         id="fade-menu"

@@ -16,9 +16,6 @@ const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
 
 const { CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD } = process.env;
 
-// const redisClient = new Redis(`redis://${CACHE_USER}:${CACHE_PASSWORD}@${CACHE_HOST}:${CACHE_PORT}`);
-
-// let stream = require('./server/util/stream-ws');
 const root = require('path').join(__dirname, 'interview-training/build');
 
 app.use(express.static(root));

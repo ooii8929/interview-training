@@ -175,7 +175,7 @@ const insertVideoArticle = async (req, res) => {
     };
     let insertResult = await SOCIAL.insertVideoArticle(postData);
 
-    let updateResult = await SOCIAL.updateVideoShared(question_id, qid);
+    await SOCIAL.updateVideoShared(question_id, qid);
 
     res.status(200).send(insertResult);
 };

@@ -40,5 +40,10 @@
     "swagger-ui-express": "^4.3.0",
     "uuid": "^8.3.2",
     "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1"
   }
 }

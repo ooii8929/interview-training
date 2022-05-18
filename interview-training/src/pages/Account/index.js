@@ -1,15 +1,12 @@
 import './index.scss';
 import React, { useContext } from 'react';
 import { AppContext } from '../../App';
-import { getFileName } from './utils/index';
 import axios from 'axios';
-import Card from './Card';
 import TutorCard from './TutorCard';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container } from '@mui/material';
-import Records from './Records';
 import ArrangeTime from './ArrangeTime';
 import './index.scss';
 import Swal from 'sweetalert2';
@@ -24,7 +21,6 @@ export default function Account(props) {
     const { Constant } = useContext(AppContext);
 
     const userID = localStorage.getItem('userid');
-    const userEmail = localStorage.getItem('useremail');
     let userIdentity = localStorage.getItem('identity');
 
     const [profiles, setProfiles] = React.useState(null);
@@ -219,7 +215,7 @@ export default function Account(props) {
                     <div className="account-avator-container">
                         <img src={avator} className="account-avator" />
                         <div className="upload_avator">
-                            <label for="upload" htmlFor="filePicker" className="update-avator-label">
+                            <label htmlFor="filePicker" className="update-avator-label">
                                 <input id="filePicker" type="file" onChange={handleChange} style={{ display: 'none' }} />
                                 <div className="update-avator-img">
                                     <img src={Camera} className="update-avator-icon" />
@@ -231,7 +227,7 @@ export default function Account(props) {
                     <div className="account-avator-container">
                         <img src="https://truth.bahamut.com.tw/s01/201207/28a8513919088d3328aaa40284c6b13e.PNG" className="account-avator" />
                         <div className="upload_avator">
-                            <label for="upload" htmlFor="filePicker" className="update-avator-label">
+                            <label htmlFor="filePicker" className="update-avator-label">
                                 <input id="filePicker" type="file" onChange={handleChange} style={{ display: 'none' }} />
                                 <div className="update-avator-img">
                                     <img src={Camera} className="update-avator-icon" />
@@ -245,7 +241,7 @@ export default function Account(props) {
                     <div className="account-info">
                         <h1>{profiles['name']}</h1>
                         <br />
-                        <p>{profiles['email']}</p>
+                        <span>{profiles['email']}</span>
                         已經加入面面 {time} 天了 ｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡
                     </div>
                 ) : null}

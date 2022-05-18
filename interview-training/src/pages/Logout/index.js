@@ -10,8 +10,10 @@ export default function Logout() {
         async function logout() {
             await axios({
                 withCredential: true,
+                credentials: 'same-origin',
                 method: 'POST',
                 url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/logout`,
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
             await localStorage.removeItem('userid');
             await localStorage.removeItem('username');

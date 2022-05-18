@@ -59,23 +59,13 @@ export default function RegisterForm(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            identity: props.identity,
-            name: data.get('name'),
-            email: data.get('registerEmail'),
-            password: data.get('registerPassword'),
-            provider: 'native',
-            experience1: data.get('experience1'),
-            experience2: data.get('experience2'),
-            experience3: data.get('experience3'),
-            introduce: data.get('introduce'),
-            profession: data.get('profession'),
-        });
+
         try {
             let updateResult = await axios({
+                withCredentials: true,
+                credentials: 'same-origin',
                 method: 'POST',
                 url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/signup`,
-
                 data: {
                     identity: props.identity,
                     name: data.get('name'),
@@ -88,11 +78,13 @@ export default function RegisterForm(props) {
                     introduce: data.get('introduce'),
                     profession: data.get('profession'),
                 },
+                headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
             });
 
-            localStorage.setItem('props.userID', updateResult.data.data.user.id);
-            localStorage.setItem('username', updateResult.data.data.user.name);
-            localStorage.setItem('useremail', updateResult.data.data.user.email);
+            console.log('updateResult', updateResult);
+            localStorage.setItem('userID', updateResult.data.id);
+            localStorage.setItem('username', updateResult.data.name);
+            localStorage.setItem('useremail', updateResult.data.email);
             localStorage.setItem('identity', props.identity);
             await Swal.fire({
                 title: 'Success Register!',

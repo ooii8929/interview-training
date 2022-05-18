@@ -50,7 +50,7 @@ export default function LoginForm(props) {
                 icon: 'success',
                 confirmButtonText: 'Cool',
             });
-            localStorage.setItem('props.userID', signInResponse.data.id);
+            localStorage.setItem('userID', signInResponse.data.id);
             localStorage.setItem('username', signInResponse.data.name);
             localStorage.setItem('useremail', signInResponse.data.email);
 

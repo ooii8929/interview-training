@@ -1,10 +1,7 @@
 require('dotenv').config();
-const validator = require('validator');
-const User = require('../models/user_model');
+
 const { pool } = require('../models/mysqlcon');
-const util = require('../util/util');
-const _ = require('lodash');
-const argon2 = require('argon2');
+
 const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
 
