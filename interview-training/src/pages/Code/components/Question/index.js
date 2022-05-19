@@ -1,6 +1,4 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../../../../App';
-
+import React from 'react';
 import { Box, Grid } from '@mui/material';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -18,29 +16,7 @@ let response;
 const defaultLanguage = 'javascript';
 let languages = ['javascript', 'python'];
 
-const steps = [
-  {
-    label: 'Select campaign settings',
-    description: `For each ad campaign that you create, you can control how much
-              you're willing to spend on clicks and conversions, which networks
-              and geographical locations you want your ads to show on, and more.`,
-  },
-  {
-    label: 'Create an ad group',
-    description: 'An ad group contains one or more ads which target a shared set of keywords.',
-  },
-  {
-    label: 'Create an ad',
-    description: `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`,
-  },
-];
-
 export default function Question() {
-  const { Constant } = useContext(AppContext);
-
   const [language, setLanguage] = React.useState(defaultLanguage);
   const [code, setCode] = React.useState(null);
   const [questionID, setQuestionID] = React.useState(null);
@@ -52,10 +28,8 @@ export default function Question() {
   const [runCodeResponseExpect, setRunCodeResponseExpect] = React.useState(null);
   const [userCodeLogs, setUserCodeLogs] = React.useState(null);
 
-  const profession = localStorage.getItem('profession');
   const userId = localStorage.getItem('userid');
 
-  const [answer, setAnswer] = React.useState(null);
   const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/questions`;
 
   async function runCode() {

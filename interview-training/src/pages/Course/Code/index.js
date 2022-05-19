@@ -1,15 +1,11 @@
-import React, { useState, useRef, useContext, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Grid, Button } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import VideoCheck from '../VideoCheck';
-import Accordion from './components/accordion';
 import './index.scss';
-
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,7 +15,6 @@ import CountDownTimerAnswer from './components/CountDownTimerAnswer';
 import ProgressBar from '../ProgressBar';
 
 let response;
-let isPause = false;
 
 export default function Video(props) {
   // Progress Bar
@@ -51,7 +46,6 @@ export default function Video(props) {
   let navigate = useNavigate();
   const location = useLocation();
 
-  const [userCodeLogs, setUserCodeLogs] = React.useState(null);
   const [questionID, setQuestionID] = React.useState(null);
 
   let profession = localStorage.getItem('profession');
@@ -59,7 +53,6 @@ export default function Video(props) {
 
   const [profileQuestion, setProfileQuestion] = React.useState('');
   let languages = ['javascript', 'python'];
-  const [answerStatus, setAnswerStatus] = useState(false);
   const [question, setQuestion] = React.useState('');
   const [code, setCode] = React.useState(null);
   const [runCodeResponse, setRunCodeResponse] = React.useState(null);
@@ -75,12 +68,9 @@ export default function Video(props) {
   const [runCodeResponseInput, setRunCodeResponseInput] = React.useState(null);
   const [runCodeResponseOutput, setRunCodeResponseOutput] = React.useState(null);
   const [runCodeResponseExpect, setRunCodeResponseExpect] = React.useState(null);
-  const [changeStatus, setChangeStatus] = React.useState('');
-
   const [runCodeResponseStatus, setRunCodeResponseStatus] = React.useState(null);
 
   // Answer Area
-  const [waitAnswer, setWaitAnswer] = React.useState(false);
   const countDownDiv = useRef(null);
   const countDownDivAnswer = useRef(null);
   const [seconds, setSeconds] = React.useState(null);
@@ -102,7 +92,6 @@ export default function Video(props) {
           },
           headers: { 'Access-Control-Allow-Origin': 'process.env.REACT_APP_BASE_URL', 'Content-Type': 'application/json' },
         });
-        console.log('1. get question response', response);
 
         setProfileQuestion(response);
       } catch (error) {
@@ -296,14 +285,12 @@ export default function Video(props) {
   }
 
   const handleTimeup = useCallback(() => {
-    console.log('time up!!');
     setStartBtn(false);
     setIsCount(false);
     countDownDiv.current.style.display = 'none ';
   }, []);
 
   const handleTimeupAnswer = useCallback(() => {
-    console.log('time up!!');
     setAnswerBtn(false);
     setAnswerIsCount(false);
     countDownDivAnswer.current.style.display = 'none';
@@ -313,10 +300,9 @@ export default function Video(props) {
     if (profileQuestion) {
       // 3.找到尚未完成的題目
       let notFinishedQuestion = profileQuestion.data.code.filter((e) => {
-        console.log('e', e);
         return e.status === 0;
       });
-      console.log('3. 找到尚未完成題目', notFinishedQuestion);
+
       // 如果題目都完成了，跳轉到結果頁
       if (notFinishedQuestion.length === 1) {
         localStorage.setItem('question_id', profileQuestion.data._id);
@@ -326,7 +312,7 @@ export default function Video(props) {
       if (notFinishedQuestion.length === 0) {
         // 發送答題結束的req
 
-        let endQuestionResponse = await axios({
+        await axios({
           withCredentials: true,
           method: 'POST',
           credentials: 'same-origin',
@@ -348,28 +334,13 @@ export default function Video(props) {
   // 5.設定當前題號
   React.useEffect(
     (e) => {
-      if (nowQuestionNumber) console.log('5. 設定當前題號成功：', nowQuestionNumber);
       // 5. 用當前題號拿到題目
-      getNowQuestion(nowQuestionNumber);
+      if (nowQuestionNumber) {
+        getNowQuestion(nowQuestionNumber);
+      }
     },
     [nowQuestionNumber]
   );
-
-  // React.useEffect(
-  //     (e) => {
-  //         if (waitAnswer) {
-  //             // set answer cannot click
-  //             setAnswerBtn(true);
-  //             // wait 20 s
-  //             setTimeout(function () {
-  //                 // set wait false
-  //                 setWaitAnswer(false);
-  //                 setAnswerBtn(false);
-  //             }, 20000);
-  //         }
-  //     },
-  //     [waitAnswer]
-  // );
 
   // 6.用題號得到當前題目
   function getNowQuestion(nowQuestionNumber) {
@@ -395,26 +366,8 @@ export default function Video(props) {
     [question]
   );
 
-  //  <div className="user-log-container">
-  //      {userCodeLogs ? (
-  //          <>
-  //              <h3>過往答題紀錄</h3>
-  //              <Accordion userLogs={userCodeLogs} />
-  //          </>
-  //      ) : null}
-  //  </div>;
-
-  React.useEffect(
-    (e) => {
-      if (changeStatus) {
-        setNowQuestion(changeStatus);
-      }
-    },
-    [changeStatus]
-  );
-
   return (
-    <>
+    <React.Fragment>
       {progressBarTitleArr ? (
         <div style={{ width: '70%', margin: 'auto', marginTop: '3%' }}>
           <ProgressBar title={progressBarTitleArr} num={progressBarNumber} />
@@ -554,6 +507,6 @@ export default function Video(props) {
           </div>
         </div>
       ) : null}
-    </>
+    </React.Fragment>
   );
 }

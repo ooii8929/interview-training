@@ -1,10 +1,9 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
-import { AppContext } from '../../../App';
+import React from 'react';
 import { getFileName } from '../Video/utils/index';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Grid, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -20,11 +19,9 @@ export default function VideoCheck(props) {
   const handleToggle = () => {
     setOpen(!open);
   };
-  const { Constant } = useContext(AppContext);
   let tmpProfile;
   let navigate = useNavigate();
   const [checked, setChecked] = React.useState([true, false, false]);
-  let nowUserId = localStorage.getItem('userid');
 
   const handleSave = async () => {
     var file = new File([props.blob], getFileName('webm'), {
@@ -94,7 +91,6 @@ export default function VideoCheck(props) {
   );
 
   async function storeChecked(params) {
-    console.log('checked', checked);
     let tmpChecked = [];
     for (let i = 0; i < checked.length; i++) {
       if (checked[i]) {
@@ -131,7 +127,6 @@ export default function VideoCheck(props) {
       confirmButtonText: '前往下一題',
     });
 
-    console.log('tmpProfile after change status', tmpProfile);
     navigate(0);
   }
 

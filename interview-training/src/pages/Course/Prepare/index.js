@@ -65,7 +65,7 @@ export default function Prepare() {
     [profileQuestion]
   );
   return (
-    <>
+    <React.Fragment>
       {profileQuestion ? <Introduce profilequestions={profileQuestion} /> : null}
 
       <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row" className="course-percent">
@@ -100,6 +100,6 @@ export default function Prepare() {
           </div>
         </Grid>
       </Grid>
-    </>
+    </React.Fragment>
   );
 }

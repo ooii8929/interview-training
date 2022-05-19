@@ -1,9 +1,9 @@
-import * as React from "react";
+import React from 'react';
 
-import NotFoundLottie from "./notfound.json";
-import Lottie from "lottie-react";
-import { Row, Col } from "react-bootstrap";
-import "./main.scss";
+import NotFoundLottie from './notfound.json';
+import Lottie from 'lottie-react';
+import { Row, Col } from 'react-bootstrap';
+import './main.scss';
 
 export default function NotFound(props) {
   return (

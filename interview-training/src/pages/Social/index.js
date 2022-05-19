@@ -1,20 +1,15 @@
 import './index.scss';
-import React, { useContext } from 'react';
-import { AppContext } from '../../App';
-import axios from 'axios';
-import Card from './Card';
+import React from 'react';
 import Article from './Article';
 import Tabs from './Tabs';
-import { useLocation, useParams } from 'react-router-dom';
-import { useRef } from 'react';
+import { useParams } from 'react-router-dom';
+
 import './index.scss';
 
-let allArticles;
-
 function Social() {
-    const { id } = useParams();
+  const { id } = useParams();
 
-    return <div>{id ? <Article /> : <Tabs />}</div>;
+  return <div>{id ? <Article /> : <Tabs />}</div>;
 }
 
 export default Social;

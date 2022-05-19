@@ -1,5 +1,5 @@
 import Header from './layouts/sections/Header';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Code from './pages/Code';
@@ -19,79 +19,79 @@ import SocialArticle from './pages/SocialArticle';
 import React, { createContext } from 'react';
 import Constant from './components/Constant.js';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 export const AppContext = createContext();
 
 function App() {
-    // console.log('Constant', Constant);
+  // console.log('Constant', Constant);
 
-    const [profileQuestion, setProfileQuestion] = React.useState('');
-    const [userId, setUserId] = React.useState('');
-    const [isLogin, setIsLogin] = React.useState(false);
-    const [identity, setIdentity] = React.useState('student');
-    const [avatorURL, setAvatorURL] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const appContextValue = {
-        userId,
-        profileQuestion,
-        setProfileQuestion,
-        setUserId,
-        Constant,
-    };
+  const [profileQuestion, setProfileQuestion] = React.useState('');
+  const [userId, setUserId] = React.useState('');
+  const [isLogin, setIsLogin] = React.useState(false);
+  const [avatorURL, setAvatorURL] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const appContextValue = {
+    userId,
+    profileQuestion,
+    setProfileQuestion,
+    setUserId,
+    Constant,
+  };
 
-    React.useEffect((e) => {
-        async function getAvator() {
-            try {
-                let getAvatorResult = await axios({
-                    withCredentials: true,
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
-                    headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-                });
-                if (getAvatorResult.data.email) {
-                    setIsLogin(true);
-                    setAvatorURL(getAvatorResult['data']['picture']);
-                    setEmail(getAvatorResult['data']['email']);
-                    localStorage.setItem('userid', getAvatorResult.data.id);
-                    localStorage.setItem('username', getAvatorResult.data.name);
-                    localStorage.setItem('useremail', getAvatorResult.data.email);
-                    localStorage.setItem('identity', getAvatorResult.data.identity);
-                }
-            } catch (error) {
-                console.log('error.response', error);
-            }
+  React.useEffect((e) => {}, [isLogin]);
+
+  React.useEffect((e) => {
+    async function getAvator() {
+      try {
+        let getAvatorResult = await axios({
+          withCredentials: true,
+          method: 'GET',
+          credentials: 'same-origin',
+          url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/profile`,
+          headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+        });
+        if (getAvatorResult.data.email) {
+          setIsLogin(true);
+          setAvatorURL(getAvatorResult['data']['picture']);
+          setEmail(getAvatorResult['data']['email']);
+          localStorage.setItem('userid', getAvatorResult.data.id);
+          localStorage.setItem('username', getAvatorResult.data.name);
+          localStorage.setItem('useremail', getAvatorResult.data.email);
+          localStorage.setItem('identity', getAvatorResult.data.identity);
         }
+      } catch (error) {
+        console.log('error.response', error);
+      }
+    }
 
-        getAvator();
-    }, []);
+    getAvator();
+  }, []);
 
-    return (
-        <BrowserRouter>
-            <AppContext.Provider value={appContextValue}>
-                <Header email={email} avator={avatorURL} identity={identity} title="面面-為你的面試加分" />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/code" element={<Code />} />
-                    <Route path="/reserve" element={<Reserve />} />
-                    <Route path="/social" element={<Social />} />
-                    <Route path="/social/:category/:id" element={<SocialArticle />} />
-                    <Route path="/logout" element={<Logout />} />
-                    <Route path="/tutor" element={<Tutor />} />
-                    <Route path="/course" element={<Course />} />
-                    <Route path="/course/video" element={<CourseVideo />} />
-                    <Route path="/course/code" element={<CourseCode />} />
-                    <Route path="/arrange" element={<Arrange />} />
-                    <Route path="/account" element={<Account setAvatorURL={setAvatorURL} />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/course/result" element={<CourseResult />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </AppContext.Provider>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <AppContext.Provider value={appContextValue}>
+        <Header email={email} avator={avatorURL} title="面面-為你的面試加分" />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/code" element={<Code />} />
+          <Route path="/reserve" element={<Reserve />} />
+          <Route path="/social" element={<Social />} />
+          <Route path="/social/:category/:id" element={<SocialArticle />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/tutor" element={<Tutor />} />
+          <Route path="/course" element={<Course />} />
+          <Route path="/course/video" element={<CourseVideo />} />
+          <Route path="/course/code" element={<CourseCode />} />
+          <Route path="/arrange" element={<Arrange />} />
+          <Route path="/account" element={<Account setAvatorURL={setAvatorURL} />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/course/result" element={<CourseResult />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AppContext.Provider>
+    </BrowserRouter>
+  );
 }
 
 export default App;

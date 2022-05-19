@@ -1,34 +1,23 @@
 import './../index.scss';
-
-import React, { useRef, useEffect, useContext, useState, Component } from 'react';
-import { EditorState, convertToRaw } from 'draft-js';
+import React, { useRef, useEffect } from 'react';
+import { EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { AppContext } from '../../../App';
 import './../components/main.css';
-// import { Editor, EditorState } from 'draft-js';
 import 'draft-js/dist/Draft.css';
-import Button from '@mui/material/Button';
-
 import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
-
 import { Grid, Box } from '@mui/material';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
-let allArticles;
-
 export default function SocialCodeArticle() {
   let navigate = useNavigate();
-
-  const [message, setMessage] = React.useState(null);
   const { id } = useParams();
-  const { Constant } = useContext(AppContext);
   const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
   const tringleGood = useRef(null);
   const tringleBad = useRef(null);
@@ -37,17 +26,10 @@ export default function SocialCodeArticle() {
   const [articleInfo, setArticleInfo] = React.useState('');
   const baseCodeURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code/id`;
 
-  const profession = localStorage.getItem('profession');
   const userId = localStorage.getItem('userid');
-  const userName = localStorage.getItem('username');
-  const userEmail = localStorage.getItem('useremail');
-  const identity = localStorage.getItem('identity');
   const [authorInfo, setAuthorInfo] = React.useState('');
   const [goods, setGoods] = React.useState(null);
   const [language, setLanguage] = React.useState('');
-  const [isGood, setIsGood] = React.useState(false);
-  const [authorPicture, setAuthorPicture] = React.useState('');
-  const [comments, setComments] = React.useState('');
   const location = useLocation();
 
   // get article info by id
@@ -59,7 +41,6 @@ export default function SocialCodeArticle() {
             article_id: id,
           },
         });
-        console.log('first tmpArticleInfo', tmpArticleInfo);
         setArticleInfo(tmpArticleInfo['data'][0]);
         setAuthorInfo(tmpArticleInfo['data'][0]['author']);
         setLanguage('javascript');
@@ -206,12 +187,6 @@ export default function SocialCodeArticle() {
 
   useEffect(
     (e) => {
-      if (message) console.log('message success');
-    },
-    [message]
-  );
-  useEffect(
-    (e) => {
       if (editorState) console.log('editorState success');
     },
     [editorState]
@@ -261,7 +236,7 @@ export default function SocialCodeArticle() {
   }
 
   return (
-    <>
+    <React.Fragment>
       <Grid container spacing={4} className="article-block">
         <Grid item xs={8} className="article-container article-container-left">
           <div>
@@ -381,6 +356,6 @@ export default function SocialCodeArticle() {
           </div>
         </Grid>
       </Grid>
-    </>
+    </React.Fragment>
   );
 }

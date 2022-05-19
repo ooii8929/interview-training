@@ -1,6 +1,5 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../../../App';
-import { Grid, Box, Typography } from '@mui/material';
+import React from 'react';
+import { Grid, Box } from '@mui/material';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { useParams } from 'react-router-dom';
@@ -9,7 +8,6 @@ import axios from 'axios';
 let allArticles;
 export default function Article(props) {
   const { id } = useParams();
-  const { Constant } = useContext(AppContext);
 
   const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article`;
   const profession = localStorage.getItem('profession');

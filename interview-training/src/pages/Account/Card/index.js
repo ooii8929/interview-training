@@ -1,6 +1,5 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useRef } from 'react';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -27,7 +26,8 @@ export default function BasicCard(props) {
 
   let languages = ['javascript', 'python'];
   const [code, setCode] = React.useState(null);
-  let shareResult;
+
+  React.useEffect(() => {}, [code]);
 
   async function shareAnswer(e) {
     handleToggle();
@@ -35,7 +35,7 @@ export default function BasicCard(props) {
 
     if (e.currentTarget.dataset.category === 'video') {
       try {
-        let videoArticle = await axios({
+        await axios({
           withCredentials: true,
           method: 'POST',
           credentials: 'same-origin',
@@ -91,7 +91,7 @@ export default function BasicCard(props) {
     // share code topic
     if (e.currentTarget.dataset.category === 'code') {
       try {
-        let codeArticle = await axios({
+        await axios({
           withCredentials: true,
           method: 'POST',
           credentials: 'same-origin',

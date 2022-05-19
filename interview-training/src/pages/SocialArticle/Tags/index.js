@@ -1,9 +1,9 @@
-import * as React from "react";
-import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
+import React from 'react';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
 export default function BasicChips(props) {
-  const [category, setCategory] = React.useState("");
+  const [category, setCategory] = React.useState('');
   React.useEffect(() => {}, [category]);
 
   return (
@@ -13,7 +13,7 @@ export default function BasicChips(props) {
           label="Backend"
           clickable={true}
           onClick={() => {
-            setCategory("Backend");
+            setCategory('Backend');
           }}
         />
         <Chip
@@ -21,7 +21,7 @@ export default function BasicChips(props) {
           variant="outlined"
           clickable={true}
           onClick={() => {
-            setCategory("Frontend");
+            setCategory('Frontend');
           }}
         />
       </Stack>

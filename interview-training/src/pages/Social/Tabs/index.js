@@ -1,10 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
-import { AppContext } from '../../../App';
 import axios from 'axios';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
-import { useLocation, useParams } from 'react-router-dom';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Card from '../Card';
@@ -13,22 +11,13 @@ let allArticles;
 
 export default function LabTabs() {
   const [value, setValue] = React.useState('1');
-  const { Constant } = useContext(AppContext);
-
-  const { id } = useParams();
 
   const [codeArticles, setCodeArticles] = React.useState(null);
   const [videoArticles, setVideoArticles] = React.useState(null);
 
-  const [authors, setAuthors] = React.useState(null);
-  const [videoAuthors, setVideoAuthors] = React.useState(null);
-
-  const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article`;
   const codeURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`;
   const videoURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record`;
 
-  const profession = localStorage.getItem('profession');
-  const [isArticle, setIsArticle] = React.useState(false);
   const { cardContainer } = React.useRef();
 
   const handleChange = (event, newValue) => {
@@ -41,7 +30,6 @@ export default function LabTabs() {
 
         console.log(allArticles);
         setCodeArticles(allArticles['data']);
-        setAuthors(allArticles['data']['authors']);
       } catch (error) {
         console.log(error);
       }
@@ -53,7 +41,6 @@ export default function LabTabs() {
         allArticles = await axios.get(videoURL);
 
         setVideoArticles(allArticles['data']);
-        setVideoAuthors(allArticles['data']['authors']);
       } catch (error) {
         console.log(error);
       }
@@ -61,9 +48,6 @@ export default function LabTabs() {
     getVideoArticles();
   }, []);
 
-  React.useEffect(() => {
-    console.log('isArticle', isArticle);
-  }, [isArticle]);
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <TabContext value={value}>

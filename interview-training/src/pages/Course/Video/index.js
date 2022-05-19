@@ -1,12 +1,11 @@
-import React, { useContext, useCallback, useState, useRef, useEffect } from 'react';
-import { AppContext } from '../../../App';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 
 import axios from 'axios';
 import './main.scss';
 import CountDownTimer from './CountDownTimer';
 import { Grid, Button } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import RecordRTC from 'recordrtc';
 import SendIcon from '@mui/icons-material/Send';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import VideoCheck from '../VideoCheck';
@@ -14,8 +13,6 @@ import ProgressBar from '../ProgressBar';
 import Swal from 'sweetalert2';
 
 export default function Video(props) {
-  const { Constant } = useContext(AppContext);
-
   const [stream, setStream] = useState(null);
   const [answerStatus, setAnswerStatus] = useState(false);
   const [question, setQuestion] = React.useState('');

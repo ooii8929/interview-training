@@ -1,10 +1,9 @@
-import * as React from "react";
-
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import React from 'react';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 export default function BasicCard(props) {
   return (
@@ -21,11 +20,7 @@ export default function BasicCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button
-          size="small"
-          value={props.id}
-          onClick={() => props.sendAppointment(props.id)}
-        >
+        <Button size="small" value={props.id} onClick={() => props.sendAppointment(props.id)}>
           立刻預約
         </Button>
       </CardActions>

@@ -1,6 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { AppContext } from '../../App';
 import Lottie from 'lottie-react';
 import Finished from './finished.json';
 import { Row, Col } from 'react-bootstrap';
@@ -8,14 +7,10 @@ import axios from 'axios';
 import './main.scss';
 import Swal from 'sweetalert2';
 
-let profession;
-let nowUserId;
 export default function CourseResult() {
-  const { Constant } = useContext(AppContext);
   // score
   const [codeSuccess, setCodeSuccess] = useState(null);
   const [allCode, setAllCode] = useState(null);
-  const [codeFail, setCodeFail] = useState(null);
   const [videoSuccess, setVideoSuccess] = useState(null);
   const [videoCheck, setVideoCheck] = useState(null);
   //
@@ -25,8 +20,6 @@ export default function CourseResult() {
   // 1. 判斷有沒有此數據，沒有則Get。如果有，就進入題目判斷
   React.useEffect((e) => {
     async function getVideoQuestions() {
-      nowUserId = localStorage.getItem('userid');
-      profession = localStorage.getItem('profession');
       let questionID = localStorage.getItem('question_id');
 
       let response = await axios({
@@ -47,29 +40,11 @@ export default function CourseResult() {
         });
         window.location.href = '/course';
       }
-      console.log('2. get question result', response);
       setProfileQuestion(response);
     }
     getVideoQuestions();
   }, []);
 
-  // React.useEffect(
-  //     (e) => {
-  //         if (codeSuccess) {
-  //             setAllCode((prev) => prev + 1);
-  //         }
-  //     },
-  //     [codeSuccess]
-  // );
-
-  // React.useEffect(
-  //     (e) => {
-  //         if (codeFail) {
-  //             setAllCode((prev) => prev + 1);
-  //         }
-  //     },
-  //     [codeFail]
-  // );
   React.useEffect(
     (e) => {
       console.log('profileQuestion', profileQuestion);
@@ -110,7 +85,7 @@ export default function CourseResult() {
   );
 
   return (
-    <>
+    <React.Fragment>
       <Row>
         <Col xs="5" id="code-main">
           <Lottie animationData={Finished} />
@@ -136,6 +111,6 @@ export default function CourseResult() {
           ) : null}
         </Col>
       </Row>
-    </>
+    </React.Fragment>
   );
 }

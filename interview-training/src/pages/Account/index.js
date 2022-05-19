@@ -14,13 +14,10 @@ import Camera from './camera.png';
 import Tab from './Tab';
 import CourseTabs from './CourseTabs';
 
-let allTutors;
-
 export default function Account(props) {
   let navigate = useNavigate();
 
   const userID = localStorage.getItem('userid');
-  let userIdentity = localStorage.getItem('identity');
 
   const [profiles, setProfiles] = React.useState(null);
   const [appointments, setAppointments] = React.useState('');
@@ -60,7 +57,6 @@ export default function Account(props) {
       },
       headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
     });
-    console.log('getAvatorURL', getAvatorURL);
 
     // Put to S3
     await axios.put(getAvatorURL['data']['avatorURL'], avatorContent, {
@@ -174,12 +170,9 @@ export default function Account(props) {
       });
 
       if (responseAllTraining) {
-        console.log('responseAllTraining', responseAllTraining);
-
         let allTrainingFilter = responseAllTraining['data'].filter((e) => {
           return e['status'] === 1;
         });
-        console.log('allTrainingFilter', allTrainingFilter);
 
         setAllTraining(allTrainingFilter);
       }
@@ -197,7 +190,6 @@ export default function Account(props) {
         url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/tutor/records`,
         headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
       });
-      console.log('responseAllTraining', responseAllTraining);
       setAllTutorRecords(responseAllTraining);
     } catch (error) {
       console.log(error);
@@ -215,24 +207,24 @@ export default function Account(props) {
     <div>
       {profiles && profiles['picture'] ? (
         <div className="account-avator-container">
-          <img src={avator} className="account-avator" />
+          <img src={avator} alt="avator" className="account-avator" />
           <div className="upload_avator">
             <label htmlFor="filePicker" className="update-avator-label">
               <input id="filePicker" type="file" onChange={handleChange} style={{ display: 'none' }} />
               <div className="update-avator-img">
-                <img src={Camera} className="update-avator-icon" />
+                <img src={Camera} alt="avator" className="update-avator-icon" />
               </div>
             </label>
           </div>
         </div>
       ) : (
         <div className="account-avator-container">
-          <img src="https://truth.bahamut.com.tw/s01/201207/28a8513919088d3328aaa40284c6b13e.PNG" className="account-avator" />
+          <img src="https://truth.bahamut.com.tw/s01/201207/28a8513919088d3328aaa40284c6b13e.PNG" alt="avator" className="account-avator" />
           <div className="upload_avator">
             <label htmlFor="filePicker" className="update-avator-label">
               <input id="filePicker" type="file" onChange={handleChange} style={{ display: 'none' }} />
               <div className="update-avator-img">
-                <img src={Camera} className="update-avator-icon" />
+                <img src={Camera} alt="avator" className="update-avator-icon" />
               </div>
             </label>
           </div>

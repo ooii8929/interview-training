@@ -1,12 +1,10 @@
-import * as React from 'react';
-import Grid from '@mui/material/Grid';
+import React from 'react';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import tutorLottie from './tutor.json';
 import Lottie from 'lottie-react';
 import { Row, Col } from 'react-bootstrap';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 export default function Introduce(props) {

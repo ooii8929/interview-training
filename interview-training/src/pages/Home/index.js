@@ -23,7 +23,7 @@ export default function Home(props) {
     localStorage.setItem('profession', profession);
   }, [profession]);
   return (
-    <>
+    <React.Fragment>
       <div id="home-herobar">
         <Row>
           <Col xs="6">
@@ -41,6 +41,6 @@ export default function Home(props) {
           </Col>
         </Row>
       </div>
-    </>
+    </React.Fragment>
   );
 }
