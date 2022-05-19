@@ -8,78 +8,51 @@ const dbo = require('../models/mongodbcon');
 const getCodeQuestions = async (profession) => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
-
-    // const questions = await conn.query('SELECT * FROM questions  WHERE profession = ? ORDER BY RAND() LIMIT 3', [profession]);
-
-    // test no random
     const questions = await conn.query('SELECT * FROM questions  WHERE profession = ? order by rand() limit 3;', [profession]);
-
-    await conn.query('COMMIT');
     return { questions };
   } catch (error) {
     console.log(error);
-    await conn.query('ROLLBACK');
     return { error };
-  } finally {
-    await conn.release();
   }
 };
 
 const getQuestionsByID = async (q_id) => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
-
-    // test no random
     const [questions] = await conn.query('SELECT * FROM questions_video WHERE id = ? ', [q_id]);
-
-    await conn.query('COMMIT');
     return questions;
   } catch (error) {
     console.log(error);
-    await conn.query('ROLLBACK');
+
     return { error: error };
-  } finally {
-    await conn.release();
   }
 };
 
 const getCodeQuestionsByID = async (q_id) => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
-
     // test no random
     const [questions] = await conn.query('SELECT * FROM questions WHERE id = ? ', [q_id]);
 
-    await conn.query('COMMIT');
     return questions;
   } catch (error) {
     console.log(error);
-    await conn.query('ROLLBACK');
+
     return { error: error };
-  } finally {
-    await conn.release();
   }
 };
 
 const getVideoQuestions = async (profession) => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
-
     // get video questions by profesiion and column not null
     const questions = await conn.query('SELECT * FROM questions_video WHERE profession = ? order by rand() limit 3;', [profession]);
 
-    await conn.query('COMMIT');
     return { questions };
   } catch (error) {
     console.log(error);
-    await conn.query('ROLLBACK');
+
     return { error };
-  } finally {
-    await conn.release();
   }
 };
 
@@ -90,7 +63,7 @@ const insertProfileTraining = async (profileQuestions) => {
     await dbConnect.collection('training').insertOne(profileQuestions);
     return { msg: 'success insert new profile training' };
   } catch (err) {
-    res.status(400).send(err);
+    return { error: 'error' };
   }
 };
 
@@ -102,14 +75,13 @@ const checkProfileQuestions = async (userID) => {
     console.log('db nowQuestion', nowQuestion);
     return nowQuestion;
   } catch (err) {
-    res.status(400).send(err);
+    return { error: 'error' };
   }
 };
 
 const insertLogicQuestion = async (title, description, answer) => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
     let data = {
       title: title,
       description: description,
@@ -119,14 +91,11 @@ const insertLogicQuestion = async (title, description, answer) => {
     // get video questions by profesiion and column not null
     const questions = await conn.query('INSERT INTO questions_logic SET ? ', data);
 
-    await conn.query('COMMIT');
     return { questions };
   } catch (error) {
     console.log(error);
-    await conn.query('ROLLBACK');
+
     return { error };
-  } finally {
-    await conn.release();
   }
 };
 

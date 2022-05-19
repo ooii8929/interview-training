@@ -27,10 +27,10 @@ router.route('/training/records').get(wrapAsync(getTrainingRecords));
 
 router.route('/training/profile/result').get(wrapAsync(getTrainingResultByQid));
 
-// get question by id
+// Get question by id
 router.route('/training/questions').get(wrapAsync(getQuestionsByProfession));
 
-// get question result by question id
+// Get question result by question id
 router.route('/training/question/result').get(wrapAsync(getQuestionByQuestionID));
 
 module.exports = router;

@@ -102,38 +102,12 @@ const getCodeQuestionsByID = async (q_id) => {
   }
 };
 
-const insertLogicQuestion = async (title, description, answer) => {
-  const conn = await pool.getConnection();
-  try {
-    await conn.query('START TRANSACTION');
-    let data = {
-      title: title,
-      description: description,
-      answer: answer,
-    };
-
-    // get video questions by profesiion and column not null
-    const questions = await conn.query('INSERT INTO questions_logic SET ? ', data);
-
-    await conn.query('COMMIT');
-    return { questions };
-  } catch (error) {
-    console.log(error);
-    await conn.query('ROLLBACK');
-    return { error };
-  } finally {
-    await conn.release();
-  }
-};
-
 module.exports = {
   getExamInProgressBySessionId,
   getVideoQuestions,
   getCodeQuestions,
   insertNewExamToTraining,
 
-  insertLogicQuestion,
   getQuestionsByID,
-
   getCodeQuestionsByID,
 };

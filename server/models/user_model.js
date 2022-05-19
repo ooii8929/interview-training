@@ -1,14 +1,10 @@
 require('dotenv').config();
 const argon2 = require('argon2');
-const got = require('got');
 const { pool } = require('./mysqlcon');
 const { TOKEN_EXPIRE, TOKEN_SECRET } = process.env; // 30 days by seconds
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
-const _ = require('lodash');
 
 const updateAvator = async (identity, userID, picture) => {
-  console.log('info', identity, userID, picture);
   const conn = await pool.getConnection();
   try {
     await conn.query('START TRANSACTION');
@@ -19,14 +15,12 @@ const updateAvator = async (identity, userID, picture) => {
     if (identity == 'student') {
       updateAvatorResult = await conn.query('UPDATE users SET picture = ? WHERE id = ?', [picture, userID]);
     }
-    console.log('updateAvator', updateAvatorResult);
 
     await conn.query('COMMIT');
     return updateAvatorResult;
   } catch (error) {
     await conn.query('ROLLBACK');
 
-    console.log('updateAvator error', error);
     return error;
   } finally {
     await conn.release();
@@ -53,7 +47,6 @@ const tutorSignUp = async (identity, name, email, password) => {
       return { error: 'Email Already Exists' };
     }
 
-    const loginAt = new Date();
     const hash = await argon2.hash(password);
 
     const user = {
@@ -66,7 +59,6 @@ const tutorSignUp = async (identity, name, email, password) => {
 
     const queryStr = 'INSERT INTO tutors SET ?';
     const [tutorResult] = await conn.query(queryStr, user);
-    console.log('tutorResult', tutorResult);
     user.id = tutorResult.insertId;
     await conn.query('COMMIT');
     return { user };
@@ -97,7 +89,7 @@ const getUserProfileAndAppointments = async (userID, userEmail) => {
   const [userProfileResult] = await conn.query(queryUserProfile, [userID]);
   let userProfileCombine = { userProfile: userProfileResult[0] };
 
-  // get all professions
+  // get all appointments
   const queryUserAppointments =
     'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
   const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [userEmail]);

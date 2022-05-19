@@ -156,16 +156,6 @@ export default function Video(props) {
     }
   }, [runCodeResponseStatus]);
 
-  async function getUserCodeLog(questionID) {
-    let codeLog = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/code/log`, {
-      params: {
-        question_id: questionID,
-        user_id: userId,
-      },
-    });
-    console.log('codeLog', codeLog);
-    setUserCodeLogs(codeLog.data);
-  }
   // submit answer
   async function submitAnswer(e) {
     function getRandomInt(max) {
@@ -180,7 +170,6 @@ export default function Video(props) {
         credentials: 'same-origin',
         url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/coding/submit/compile/`,
         data: {
-          user_id: userId,
           question_id: profileQuestion.data._id,
           qid: nowQuestionNumber,
           content: code,
@@ -190,7 +179,7 @@ export default function Video(props) {
       });
 
       handleClose();
-      console.log('submitAnswer response', response);
+
       setRunCodeResponse(response['data']);
       if (response['data']['answer_status'] === -1) {
         await Swal.fire({
@@ -221,8 +210,6 @@ export default function Video(props) {
       setRunCodeResponseInput(response['data']['input']);
       setRunCodeResponseOutput(response['data']['output']);
       setRunCodeResponseExpect(response['data']['except']);
-      console.log('questionID', questionID);
-      await getUserCodeLog(questionID);
 
       // count down
       setSeconds(6);

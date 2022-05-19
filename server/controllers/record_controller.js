@@ -8,14 +8,14 @@ const getRecordUploadAnswerUrl = async (req, res) => {
   AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_ACCESS_PASSWORD,
-    region: 'ap-northeast-1',
-    signatureVersion: 'v4',
+    region: process.env.RECORD_S3_REGION,
+    signatureVersion: process.env.RECORD_S3_SIGNATURE_VERSION,
   });
 
   const s3 = new AWS.S3();
 
-  const myBucket = 'interview-appworks';
-  const signedUrlExpireSeconds = 600 * 5;
+  const myBucket = process.env.RECORD_S3_BUCKET;
+  const signedUrlExpireSeconds = process.env.RECORD_S3_SIGNATURE_EXPIRED_TIME;
 
   s3.getSignedUrl(
     'putObject',

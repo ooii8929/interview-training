@@ -65,9 +65,9 @@ export default function Question() {
         language: language,
         content: code,
       });
-      console.log('run code response', response);
+
       setRunCodeResponse(response['data']);
-      if (response['data']['answer_status'] == -1) {
+      if (response['data']['answer_status'] === -1) {
         setRunCodeResponseStatus('Fail');
       } else {
         setRunCodeResponseStatus('Success');

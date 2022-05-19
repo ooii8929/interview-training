@@ -3,22 +3,20 @@ const router = require('express').Router();
 const { wrapAsync, authentication } = require('../util/util');
 
 const {
-    getCodeArticle,
-    getVideoArticle,
-    getAllArticle,
-    insertCodeArticle,
-    updateArticleGood,
-    getArticleByID,
-    getCodeArticleByID,
-    getVideoArticleByID,
-    insertComments,
-    updateArticleBad,
-    updateArticleCodeGood,
-    updateArticleCodeBad,
-    insertVideoArticle,
-    insertCodeComments,
-    updateArticleVideoBad,
-    updateArticleVideoGood,
+  getCodeArticle,
+  getVideoArticle,
+  getAllArticle,
+  insertCodeArticle,
+  getArticleByID,
+  getCodeArticleByID,
+  getVideoArticleByID,
+  insertComments,
+  updateArticleCodeGood,
+  updateArticleCodeBad,
+  insertVideoArticle,
+  insertCodeComments,
+  updateArticleVideoBad,
+  updateArticleVideoGood,
 } = require('../controllers/social_controller');
 
 router.route('/article').get(wrapAsync(getAllArticle));
