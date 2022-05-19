@@ -32,19 +32,19 @@ const getRecordUploadAnswerUrl = async (req, res) => {
 };
 
 async function submitRecordAnswer(req, res) {
-  const { user_id } = req.locals;
+  const { id } = req.locals;
   const { exam_id, qid, answer_url } = req.body;
 
-  let afterSubmit = await Record.submitVideoAnswer(user_id, exam_id, qid, answer_url);
+  let afterSubmit = await Record.submitVideoAnswer(id, exam_id, qid, answer_url);
 
   return res.status(200).send(afterSubmit);
 }
 
 async function submitRecordAnswerCheck(req, res) {
-  const { user_id } = req.locals;
+  const { id } = req.locals;
   const { question_id, qid, checked } = req.body;
 
-  let afterSubmit = await Record.submitVideoAnswerCheck(user_id, question_id, qid, checked);
+  let afterSubmit = await Record.submitVideoAnswerCheck(id, question_id, qid, checked);
 
   return res.status(200).send(afterSubmit);
 }

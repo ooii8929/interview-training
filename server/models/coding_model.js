@@ -113,7 +113,7 @@ const questionByQid = async (user_id, question_id) => {
 };
 
 const closeExam = async (user_id, question_id) => {
-  console.log('endTraining', user_id, question_id);
+  console.log('setTrainingFinish', user_id, question_id);
   // Get records
   const dbConnect = dbo.getDb();
 

@@ -55,12 +55,6 @@ const getVideoArticle = async (req, res) => {
   }
 };
 
-const getArticleByID = async (req, res) => {
-  let { article_id } = req.query;
-  let articles = await SOCIAL.getArticleByID(article_id);
-  res.status(200).send(articles);
-};
-
 const getCodeArticleByID = async (req, res) => {
   let { article_id } = req.query;
   let articles = await SOCIAL.getCodeArticleByID(article_id);
@@ -321,11 +315,9 @@ module.exports = {
   getCodeArticle,
   getVideoArticle,
   getAllArticle,
-  getVideoArticle,
   insertCodeArticle,
   insertVideoArticle,
   updateArticleGood,
-  getArticleByID,
   getCodeArticleByID,
   getVideoArticleByID,
   insertCodeComments,

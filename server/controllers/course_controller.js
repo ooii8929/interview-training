@@ -1,5 +1,6 @@
 require('dotenv').config();
 const Tutor = require('../models/course_model');
+
 const _ = require('lodash');
 
 const getAllTutorSchedule = async (req, res) => {
@@ -18,13 +19,14 @@ const getAllTutorSchedule = async (req, res) => {
 };
 
 const updateTutorSchedule = async (req, res) => {
-  const { tutor_id, available_time, roomURL } = req.body;
-  if (!tutor_id || !available_time || !roomURL) {
+  const { id } = req.locals;
+  const { available_time, roomURL } = req.body;
+  if (!available_time || !roomURL) {
     res.status(400).send({ error: 'Request Error: name, email and password are required.' });
     return;
   }
 
-  const result = await Tutor.updateTutorSchedule(tutor_id, available_time, roomURL);
+  const result = await Tutor.updateTutorSchedule(id, available_time, roomURL);
   if (result.error) {
     res.status(403).send({ error: result.error });
     return;
@@ -35,7 +37,6 @@ const updateTutorSchedule = async (req, res) => {
 
 const makeAppointment = async (req, res) => {
   let { course_id } = req.body;
-  console.log('make appointment', course_id);
   const result = await Tutor.makeAppointment(course_id, req.locals.id);
 
   if (result.error) {
@@ -71,8 +72,8 @@ const gettutorInfomation = async (req, res) => {
 };
 
 const getAppointmentURL = async (req, res) => {
-  let { userID } = req.query;
-  const result = await Tutor.getAllAppointmentByID(userID);
+  let { id } = req.locals;
+  const result = await Tutor.getAllAppointmentByID(id);
   if (result.error) {
     res.status(403).send({ error: result.error });
     return;

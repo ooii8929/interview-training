@@ -25,7 +25,7 @@ export default function LabTabs() {
 
   const baseURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article`;
   const codeURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`;
-  const videoURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video`;
+  const videoURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record`;
 
   const profession = localStorage.getItem('profession');
   const [isArticle, setIsArticle] = React.useState(false);

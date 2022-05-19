@@ -34,7 +34,7 @@ export default function SocialCodeArticle() {
   const [articles, setArticles] = React.useState('');
   // this article info
   const [articleInfo, setArticleInfo] = React.useState('');
-  const baseVideoURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video/id`;
+  const baseVideoURL = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record/id`;
   const display = useRef(null);
   const profession = localStorage.getItem('profession');
   const userId = localStorage.getItem('userid');
@@ -100,7 +100,7 @@ export default function SocialCodeArticle() {
         withCredentials: true,
         method: 'POST',
         credentials: 'same-origin',
-        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video/good`,
+        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record/good`,
         data: postDetail,
         headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
       });
@@ -139,7 +139,7 @@ export default function SocialCodeArticle() {
         withCredentials: true,
         method: 'POST',
         credentials: 'same-origin',
-        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video/bad`,
+        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record/bad`,
         data: postDetail,
         headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
       });
@@ -170,7 +170,7 @@ export default function SocialCodeArticle() {
   }
   async function getArticles() {
     try {
-      let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/video`, {
+      let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record`, {
         params: {
           profession: language,
         },

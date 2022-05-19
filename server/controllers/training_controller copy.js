@@ -171,7 +171,7 @@ const submitCompile = async (req, res) => {
     console.log('3. 找到尚未完成題目', notFinishedQuestion);
     // if length is 0 , all question are finished
     if (notFinishedQuestion.length === 0) {
-      await Answer.endTraining(user_id, question_id);
+      await Answer.setTrainingFinish(user_id, question_id);
     }
 
     res.status(200).send(reply);
@@ -243,10 +243,10 @@ const submitVideo = async (req, res) => {
 };
 
 // 答題結束
-const endTraining = async (req, res) => {
+const setTrainingFinish = async (req, res) => {
   const { user_id, question_id } = req.body;
 
-  let endResult = await Answer.endTraining(user_id, question_id);
+  let endResult = await Answer.setTrainingFinish(user_id, question_id);
   console.log('endResult', endResult);
   res.status(200).send(endResult);
 };
@@ -450,7 +450,7 @@ async function submitVideoAnswerCheck(req, res) {
 
 module.exports = {
   addLogicQuestion,
-  endTraining,
+  setTrainingFinish,
   getQuestionsByProfession,
   storeVideoAnswer,
   submitCompile,

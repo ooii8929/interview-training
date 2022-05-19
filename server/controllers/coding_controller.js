@@ -39,7 +39,7 @@ const runCompile = async (req, res) => {
 };
 
 const submitCompile = async (req, res) => {
-  const { user_id } = req.locals;
+  const { id } = req.locals;
   const { content, question_id, qid, language } = req.body;
   let answerContent = await Coding.getAnswerByQuesionId(qid);
   let specificNumber = uuidv4();
@@ -77,13 +77,13 @@ const submitCompile = async (req, res) => {
     /*--- Submit User Answer ---*/
 
     // Insert answer to training
-    await Coding.submitCodeAnswerToTraining(user_id, question_id, qid, language, reply, content);
+    await Coding.submitCodeAnswerToTraining(id, question_id, qid, language, reply, content);
 
     // Insert answer to profile
-    await Coding.insertCodeAnswer(user_id, qid, reply, content);
+    await Coding.insertCodeAnswer(id, qid, reply, content);
 
     // Get all code by qid
-    let [checkQuestion] = await Coding.questionByQid(user_id, question_id);
+    let [checkQuestion] = await Coding.questionByQid(id, question_id);
 
     // Check answer if finish
     let notFinishedQuestion = checkQuestion.code.filter((e) => {
@@ -92,7 +92,7 @@ const submitCompile = async (req, res) => {
 
     // If length is 0 , all question are finished
     if (notFinishedQuestion.length === 0) {
-      await Coding.closeExam(user_id, question_id);
+      await Coding.closeExam(id, question_id);
     }
 
     return res.status(200).send(reply);

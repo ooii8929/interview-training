@@ -3,7 +3,6 @@ const morganBody = require('morgan-body');
 const express = require('express');
 const session = require('express-session');
 // const redis = require('redis');
-const connectRedis = require('connect-redis');
 const cookieParser = require('cookie-parser');
 
 //const Redis = require('ioredis');
@@ -20,8 +19,6 @@ const root = require('path').join(__dirname, 'interview-training/build');
 
 app.use(express.static(root));
 
-// CORS allow all
-
 app.use(cookieParser());
 app.disable('X-Powered-By');
 
@@ -33,7 +30,6 @@ app.use(
     methods: 'GET, POST, PUT, DELETE',
   })
 );
-//app.use(cors());
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Credentials', true);
@@ -50,9 +46,6 @@ app.set('json spaces', 2);
 const RedisStore = require('connect-redis')(session);
 
 const dbo = require('./server/models/mongodbcon');
-
-// app.use(express.static('interview-training/build'));
-// var RedisStore = require('connect-redis')(session);
 
 //Configure session middleware
 app.use(

@@ -170,12 +170,16 @@ export default function SocialCodeArticle() {
   }
   async function getArticles() {
     try {
-      let tmpAllArticles = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`, {
+      let tmpAllArticles = await axios({
+        withCredentials: true,
+        method: 'GET',
+        credentials: 'same-origin',
+        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/code`,
         params: {
           profession: language,
         },
+        headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
       });
-      console.log('tmpAllArticles["data"]', tmpAllArticles['data']);
       setArticles(tmpAllArticles['data']);
     } catch (error) {
       console.log(error);

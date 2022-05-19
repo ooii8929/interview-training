@@ -3,29 +3,23 @@ const router = require('express').Router();
 const { wrapAsync, authentication } = require('../util/util');
 
 const {
+  getExamInProgressBySessionIdAndProfession,
+  getTraining,
   getQuestionsByProfession,
   getQuestionByQuestionID,
-  addLogicQuestion,
-
   getTrainingRecords,
-  endTraining,
-  getTrainingResultByQid,
-  getTraining,
-} = require('../controllers/coding_controller');
+  setTrainingFinish,
+} = require('../controllers/training_controller');
 
-const { getExamInProgressBySessionIdAndProfession } = require('../controllers/training_controller');
+router.route('/training').get(authentication(), wrapAsync(getTraining));
 
 router.route('/training/exam/progress').get(authentication(), wrapAsync(getExamInProgressBySessionIdAndProfession));
 
-router.route('/training/end').post(wrapAsync(endTraining));
+router.route('/training/exam/finish').post(authentication(), wrapAsync(setTrainingFinish));
 
-router.route('/training/question/logic').post(wrapAsync(addLogicQuestion));
+router.route('/training/tutor/records').get(authentication(), wrapAsync(getTrainingRecords));
 
-router.route('/training').get(wrapAsync(getTraining));
-
-router.route('/training/records').get(wrapAsync(getTrainingRecords));
-
-router.route('/training/profile/result').get(wrapAsync(getTrainingResultByQid));
+// router.route('/training/profile/result').get(authentication(), wrapAsync(getTrainingResultByQid));
 
 // Get question by id
 router.route('/training/questions').get(wrapAsync(getQuestionsByProfession));

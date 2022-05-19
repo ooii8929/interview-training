@@ -66,30 +66,26 @@ const getExamInProgressBySessionIdAndProfession = async (req, res) => {
 };
 
 // 答題結束
-const endTraining = async (req, res) => {
+const setTrainingFinish = async (req, res) => {
   const { user_id, question_id } = req.body;
 
-  let endResult = await Answer.endTraining(user_id, question_id);
+  let endResult = await Answer.setTrainingFinish(user_id, question_id);
   console.log('endResult', endResult);
   res.status(200).send(endResult);
 };
 
 const getTraining = async (req, res) => {
-  let { user_id } = req.query;
-  let allTraining = await Answer.getAllTraining(user_id);
+  let { id } = req.locals;
+  let allTraining = await Training.getAllTrainingByUserId(id);
 
   return res.status(200).send(allTraining);
 };
 
 const getTrainingRecords = async (req, res) => {
-  let { user_id, identity } = req.query;
-  let allTraining;
-  if (identity === 'student') {
-    allTraining = await Answer.getAllTraining(user_id);
-  }
-  if (identity === 'tutor') {
-    allTraining = await Answer.getTutorTrainingRecords(user_id);
-  }
+  let { id } = req.locals;
+
+  let allTraining = await Training.getTutorTrainingRecords(id);
+
   return res.status(200).send(allTraining);
 };
 
@@ -136,16 +132,14 @@ const addLogicQuestion = async (req, res) => {
 };
 
 module.exports = {
+  getTraining,
   getExamInProgressBySessionIdAndProfession,
   addLogicQuestion,
-  endTraining,
+  setTrainingFinish,
   getQuestionsByProfession,
-
-  getTraining,
+  getTrainingRecords,
 
   getVideoQuestionsByProfession,
-
-  getTrainingRecords,
 
   getTrainingResultByQid,
   getQuestionByQuestionID,

@@ -14,23 +14,6 @@ const getAnswerByQuesionId = async (questionID) => {
   }
 };
 
-const getUserProfile = async (userID) => {
-  // Get records
-  const dbConnect = dbo.getDb();
-
-  dbConnect
-    .collection('profile')
-    .find({ user_id: Number(userID) })
-    .limit(50)
-    .toArray(function (err, result) {
-      if (err) {
-        res.status(400).send('Error fetching listings!');
-      } else {
-        res.status(200).json(result);
-      }
-    });
-};
-
 const getAllTraining = async (user_id) => {
   // Get records
   const dbConnect = await dbo.getDb();
@@ -55,7 +38,7 @@ const getCourseResultByQid = async (userID) => {
     console.log('nowQuestionResult', nowQuestionResult);
     return nowQuestionResult;
   } catch (err) {
-    res.status(400).send(err);
+    return { error: 'error' };
   }
 };
 
@@ -70,40 +53,8 @@ const questionByQid = async (user_id, question_id) => {
     console.log('questionResult', questionResult);
     return questionResult;
   } catch (err) {
-    res.status(400).send(err);
+    return { error: 'error' };
   }
-};
-
-const getTutorTrainingRecords = async (user_id) => {
-  const conn = await pool.getConnection();
-  try {
-    await conn.query('START TRANSACTION');
-    let answer = {};
-    const appointed = await pool.query(
-      'SELECT tt.available_time, tt.status AS tutor_status,tt.course_url,ap.status AS apponintments_status,ap.update_dt,users.picture,users.name  FROM tutors_time tt INNER JOIN appointments ap ON tt.id = ap.tutor_time_id INNER JOIN users ON ap.user_id = users.id WHERE tt.t_id = ?',
-      [user_id]
-    );
-
-    const unappointed = await pool.query('SELECT *  FROM tutors_time  WHERE t_id = ? AND status=0', [user_id]);
-
-    answer.appointed = appointed[0];
-    answer.unappointed = unappointed[0];
-    await conn.query('COMMIT');
-    return answer;
-  } catch (e) {
-    console.log(error);
-    await conn.query('ROLLBACK');
-    console.log('getTutorTrainingRecords error', e);
-    return null;
-  } finally {
-    await conn.release();
-  }
-
-  // Get records
-  const dbConnect = await dbo.getDb();
-
-  let allTrainingResult = dbConnect.collection('training').find({ user_id: user_id }).limit(50).toArray();
-  return allTrainingResult;
 };
 
 const insertVideoAnswer = async (user_id, question_id, videoAnswer, checked) => {
@@ -248,15 +199,14 @@ const getCourseResultByQuestionID = async (question_id) => {
       .collection('training')
       .find({ _id: ObjectId(question_id) })
       .toArray();
-    console.log('questionResult', questionResult);
     return questionResult;
   } catch (err) {
     return { error: err };
   }
 };
 
-const endTraining = async (user_id, question_id) => {
-  console.log('endTraining', user_id, question_id);
+const setTrainingFinish = async (user_id, question_id) => {
+  console.log('setTrainingFinish', user_id, question_id);
   // Get records
   const dbConnect = dbo.getDb();
 
@@ -322,8 +272,8 @@ module.exports = {
   submitVideoAnswer,
   submitVideoAnswerCheck,
   submitCodeAnswer,
-  getTutorTrainingRecords,
-  endTraining,
+
+  setTrainingFinish,
   getCourseResultByQid,
   getCourseResultByQuestionID,
 };

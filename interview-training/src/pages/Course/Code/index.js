@@ -330,7 +330,7 @@ export default function Video(props) {
           withCredentials: true,
           method: 'POST',
           credentials: 'same-origin',
-          url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/end`,
+          url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/training/exam/finish`,
           data: {
             user_id: userId,
             question_id: profileQuestion.data._id,
