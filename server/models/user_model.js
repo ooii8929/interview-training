@@ -1,8 +1,6 @@
 require('dotenv').config();
 const argon2 = require('argon2');
 const { pool } = require('./mysqlcon');
-const { TOKEN_EXPIRE, TOKEN_SECRET } = process.env; // 30 days by seconds
-const jwt = require('jsonwebtoken');
 
 const updateAvator = async (identity, userID, picture) => {
   const conn = await pool.getConnection();
@@ -99,7 +97,17 @@ const getUserProfileAndAppointments = async (userID, userEmail) => {
   return userProfileCombine;
 };
 
-const getUserProfile = async (userID, userEmail) => {
+const getUserProfileByUserId = async (userID) => {
+  const conn = await pool.getConnection();
+
+  // get all professions
+  const queryUserProfile = 'SELECT * FROM users WHERE id = ?';
+  const userProfileResult = await conn.query(queryUserProfile, [userID]);
+
+  return userProfileResult;
+};
+
+const getUserProfileByUserEmail = async (userEmail) => {
   const conn = await pool.getConnection();
 
   // get all professions
@@ -167,8 +175,6 @@ const signUpTotutor = async (name, email, password, experience1, experience2, ex
 
     const queryStr = 'INSERT INTO tutors SET ?';
     const [tutorResult] = await conn.query(queryStr, user);
-    console.log(typeof profession);
-    console.log([tutorResult['insertId'], profession.replace("'", '').split(',')]);
     // insert profession and tutor
     const queryInsertProfession = `INSERT INTO tutors_professions (profession_id,tutor_id)
         SELECT id,?
@@ -289,57 +295,6 @@ const nativetutorSignIn = async (email, password) => {
   }
 };
 
-const facebookSignIn = async (id, name, email) => {
-  const conn = await pool.getConnection();
-  try {
-    await conn.query('START TRANSACTION');
-    const loginAt = new Date();
-    let user = {
-      provider: 'facebook',
-
-      email: email,
-      name: name,
-      picture: 'https://graph.facebook.com/' + id + '/picture?type=large',
-      access_expired: TOKEN_EXPIRE,
-      login_at: loginAt,
-    };
-    const accessToken = jwt.sign(
-      {
-        provider: user.provider,
-        name: user.name,
-        email: user.email,
-        picture: user.picture,
-      },
-      TOKEN_SECRET
-    );
-    user.access_token = accessToken;
-
-    const [users] = await conn.query("SELECT id FROM users WHERE email = ? AND provider = 'facebook' FOR UPDATE", [email]);
-    let userId;
-    if (users.length === 0) {
-      // Insert new user
-      const queryStr = 'insert into user set ?';
-      const [result] = await conn.query(queryStr, user);
-      userId = result.insertId;
-    } else {
-      // Update existed user
-      userId = users[0].id;
-      const queryStr = 'UPDATE user SET access_token = ?, access_expired = ?, login_at = ?  WHERE id = ?';
-      await conn.query(queryStr, [accessToken, TOKEN_EXPIRE, loginAt, userId]);
-    }
-    user.id = userId;
-
-    await conn.query('COMMIT');
-
-    return { user };
-  } catch (error) {
-    await conn.query('ROLLBACK');
-    return { error };
-  } finally {
-    await conn.release();
-  }
-};
-
 const getUserProfileByEmail = async (email) => {
   try {
     const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -361,7 +316,6 @@ const getUserProfileByUserID = async (userID, identity) => {
       [users] = await pool.query('SELECT * FROM users WHERE id = ?', [userID]);
     }
 
-    console.log('users', users);
     await conn.query('COMMIT');
     return users[0];
   } catch (error) {
@@ -392,14 +346,14 @@ module.exports = {
   signUpToStudent,
   signUpTotutor,
   nativeSignIn,
-  facebookSignIn,
   tutorSignUp,
   getUserProfileAndAppointments,
   getUserProfileByEmail,
   getUserProfileByUserID,
   getUsersProfileByUserID,
   updateAvator,
-  getUserProfile,
+  getUserProfileByUserId,
+  getUserProfileByUserEmail,
   getUserAppointments,
   nativetutorSignIn,
   gettutorProfile,

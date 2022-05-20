@@ -3,7 +3,6 @@ const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
 
 const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
-  console.log('submitVideoAnswer model', user_id, question_id, qid, answer_url);
   // Get records
   const dbConnect = dbo.getDb();
 
@@ -28,7 +27,6 @@ const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
         ],
       }
     );
-    console.log('updateAnswer', updateAnswer);
     return { msg: updateAnswer };
   } catch (err) {
     console.log('err', err);

@@ -35,6 +35,8 @@ export default function VideoCheck(props) {
         },
       });
 
+      console.log('presignedUrl', presignedUrl);
+
       let success = await axios.put(presignedUrl['data'], file, {
         headers: { 'Content-Type': 'video/webm' },
       });

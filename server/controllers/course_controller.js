@@ -1,6 +1,5 @@
 require('dotenv').config();
 const Tutor = require('../models/course_model');
-
 const _ = require('lodash');
 
 const getAllTutorSchedule = async (req, res) => {
@@ -59,21 +58,10 @@ const settutorInfomation = async (req, res) => {
   res.status(200).send(result);
 };
 
-const gettutorInfomation = async (req, res) => {
-  let { user_id } = req.query;
-  const result = await Tutor.gettutorInfomation(user_id);
-
-  if (result.error) {
-    res.status(403).send({ error: result.error });
-    return;
-  }
-
-  res.status(200).send(result);
-};
-
 const getAppointmentURL = async (req, res) => {
   let { id } = req.locals;
   const result = await Tutor.getAllAppointmentByID(id);
+
   if (result.error) {
     res.status(403).send({ error: result.error });
     return;
@@ -88,5 +76,4 @@ module.exports = {
   makeAppointment,
   getAppointmentURL,
   settutorInfomation,
-  gettutorInfomation,
 };

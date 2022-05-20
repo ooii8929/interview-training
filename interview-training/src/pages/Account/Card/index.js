@@ -32,7 +32,7 @@ export default function BasicCard(props) {
   async function shareAnswer(e) {
     handleToggle();
     e.preventDefault();
-
+    console.log('e.currentTarget.dataset', e.currentTarget.dataset);
     if (e.currentTarget.dataset.category === 'video') {
       try {
         await axios({
@@ -41,7 +41,6 @@ export default function BasicCard(props) {
           credentials: 'same-origin',
           url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/article/record`,
           data: {
-            user_id: userId,
             article_id: e.currentTarget.value,
             qid: e.currentTarget.dataset.qid,
             question_id: props.questionID,

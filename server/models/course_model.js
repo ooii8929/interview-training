@@ -133,7 +133,6 @@ const getAllAppointmentByID = async (userID) => {
 };
 
 const setTutorInfomation = async (experience1, experience2, experience3, user_id, introduce, profession) => {
-  console.log('settutorInfomation', experience1, experience2, experience3, user_id, introduce, profession);
   const conn = await pool.getConnection();
   try {
     await conn.query('START TRANSACTION');
@@ -149,32 +148,6 @@ const setTutorInfomation = async (experience1, experience2, experience3, user_id
     const queryStr = 'UPDATE tutors  SET ? WHERE id = ?';
 
     const [result] = await conn.query(queryStr, [tutorInfo, user_id]);
-
-    console.log('update result', result);
-
-    await conn.query('COMMIT');
-
-    return { result };
-  } catch (error) {
-    console.log(error);
-    await conn.query('ROLLBACK');
-    return { error };
-  } finally {
-    await conn.release();
-  }
-};
-
-const getTutorInfomation = async (user_id) => {
-  console.log('gettutorInfomation', user_id);
-  const conn = await pool.getConnection();
-  try {
-    await conn.query('START TRANSACTION');
-
-    const queryStr = 'SELECT * FROM tutors  WHERE id = ?';
-
-    const [result] = await conn.query(queryStr, [user_id]);
-
-    console.log('update result', result);
 
     await conn.query('COMMIT');
 
@@ -194,5 +167,4 @@ module.exports = {
   makeAppointment,
   getAllAppointmentByID,
   setTutorInfomation,
-  getTutorInfomation,
 };

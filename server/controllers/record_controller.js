@@ -1,6 +1,5 @@
 require('dotenv').config();
 const AWS = require('aws-sdk');
-
 const Record = require('../models/record_model');
 
 // Get s3 upload url
@@ -15,14 +14,13 @@ const getRecordUploadAnswerUrl = async (req, res) => {
   const s3 = new AWS.S3();
 
   const myBucket = process.env.RECORD_S3_BUCKET;
-  const signedUrlExpireSeconds = process.env.RECORD_S3_SIGNATURE_EXPIRED_TIME;
 
   s3.getSignedUrl(
     'putObject',
     {
       Bucket: myBucket,
       Key: req.query.filename,
-      Expires: signedUrlExpireSeconds,
+      Expires: 600 * 5,
       ContentType: 'video/webm',
     },
     function (err, url) {

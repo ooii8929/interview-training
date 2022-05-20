@@ -1,7 +1,5 @@
 require('dotenv').config();
-const Question = require('../models/question_model');
-const Answer = require('../models/answer_model');
-const Training = require('../models/training_model');
+const TRAINING = require('../models/training_model');
 
 const getExamInProgressBySessionIdAndProfession = async (req, res) => {
   let { id } = req.locals;
@@ -15,7 +13,7 @@ const getExamInProgressBySessionIdAndProfession = async (req, res) => {
     return res.status(400).send({ error: "Can't find profession" });
   }
 
-  let examInProgress = await Training.getExamInProgressBySessionId(id);
+  let examInProgress = await TRAINING.getExamInProgressBySessionId(id);
 
   if (examInProgress.length > 0) {
     return res.status(200).send(examInProgress[0]);
@@ -32,10 +30,10 @@ const getExamInProgressBySessionIdAndProfession = async (req, res) => {
   };
 
   // Get 3 random video questions
-  let videoQuestions = await Training.getVideoQuestions(profession);
+  let videoQuestions = await TRAINING.getVideoQuestions(profession);
 
   // Get 3 random code questions
-  let codeQuestions = await Training.getCodeQuestions(profession);
+  let codeQuestions = await TRAINING.getCodeQuestions(profession);
 
   videoQuestions[0].map((e) => {
     newExam.video.push({
@@ -61,44 +59,46 @@ const getExamInProgressBySessionIdAndProfession = async (req, res) => {
   });
 
   // Insert new exam to interviewee training table in mongodb
-  await Training.insertNewExamToTraining(newExam);
+  await TRAINING.insertNewExamToTraining(newExam);
   return res.status(200).send(newExam);
 };
 
 // 答題結束
 const setTrainingFinish = async (req, res) => {
-  const { user_id, question_id } = req.body;
+  const { id } = req.locals;
+  const { question_id } = req.body;
 
-  let endResult = await Answer.setTrainingFinish(user_id, question_id);
-  console.log('endResult', endResult);
+  let endResult = await TRAINING.setTrainingFinish(id, question_id);
+
   res.status(200).send(endResult);
 };
 
 const getTraining = async (req, res) => {
-  let { id } = req.locals;
-  let allTraining = await Training.getAllTrainingByUserId(id);
+  const { id } = req.locals;
+
+  let allTraining = await TRAINING.getAllTrainingByUserId(id);
 
   return res.status(200).send(allTraining);
 };
 
 const getTrainingRecords = async (req, res) => {
-  let { id } = req.locals;
+  const { id } = req.locals;
 
-  let allTraining = await Training.getTutorTrainingRecords(id);
+  let allTraining = await TRAINING.getTutorTrainingRecords(id);
 
   return res.status(200).send(allTraining);
 };
 
 const getTrainingResultByQid = async (req, res) => {
-  let { userID, question_id } = req.query;
-  let trainingResult = await Answer.getCourseResultByQid(userID, question_id);
+  const { userID, question_id } = req.query;
+  let trainingResult = await TRAINING.getTrainingResultByQid(userID, question_id);
 
   return res.status(200).send(trainingResult);
 };
 
 const getQuestionsByProfession = async (req, res) => {
-  let { profession } = req.query;
-  let questions = await Question.getCodeQuestions(profession);
+  const { profession } = req.query;
+  let questions = await TRAINING.getCodeQuestions(profession);
 
   let allQuestions = questions.questions[0];
 
@@ -108,7 +108,7 @@ const getQuestionsByProfession = async (req, res) => {
 const getQuestionByQuestionID = async (req, res) => {
   let { question_id } = req.query;
   try {
-    let [finishedAnswer] = await Answer.getCourseResultByQuestionID(question_id);
+    let [finishedAnswer] = await TRAINING.getTrainingResultByQuestionID(question_id);
 
     return res.status(200).send(finishedAnswer);
   } catch (error) {
@@ -118,7 +118,7 @@ const getQuestionByQuestionID = async (req, res) => {
 
 const getVideoQuestionsByProfession = async (req, res) => {
   let { profession } = req.query;
-  let questions = await Question.getVideoQuestions(profession);
+  let questions = await TRAINING.getVideoQuestions(profession);
 
   let allQuestions = questions.questions[0];
 
@@ -127,7 +127,7 @@ const getVideoQuestionsByProfession = async (req, res) => {
 
 const addLogicQuestion = async (req, res) => {
   let { title, description, answer } = req.body.data;
-  let question = await Question.insertLogicQuestion(title, description, answer);
+  let question = await TRAINING.insertLogicQuestion(title, description, answer);
   return res.status(200).send(question);
 };
 

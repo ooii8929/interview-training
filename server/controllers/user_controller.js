@@ -42,8 +42,7 @@ const signUp = async (req, res) => {
 
     const user = result.user;
     if (!user) {
-      res.status(500).send({ error: 'Database Query Error' });
-      return;
+      return res.status(500).send({ error: 'server error' });
     }
     if (Cache.ready) {
       let sess = req.session;
@@ -66,7 +65,7 @@ const signUp = async (req, res) => {
     }
   } catch (error) {
     console.log('sign up error', error);
-    return res.status(500).send({ error: 'sign up fail' });
+    return res.status(500).send({ error: 'server error' });
   }
 };
 
@@ -106,8 +105,7 @@ const signIn = async (req, res) => {
 
       const user = result.user;
       if (!user) {
-        res.status(500).send({ error: 'Database Query Error' });
-        return;
+        return res.status(500).send({ error: 'server error' });
       }
 
       sess.user = { id: user.id, provider: user.provider, name: user.name, email: user.email, picture: user.picture, create_dt: user.create_dt, identity: identity };
@@ -121,8 +119,7 @@ const signIn = async (req, res) => {
         }
       });
     } catch (error) {
-      console.log('error', error);
-      return res.status(400).send({ error: 'fail' });
+      return res.status(500).send({ error: 'server error' });
     }
   }
 };
@@ -138,17 +135,16 @@ const signOut = async (req, res) => {
         res.clearCookie('connect.sid', { path: '/' }).status(200).send('Ok.');
       });
     } catch (error) {
-      console.log('error', error);
-      return res.status(400).send({ error: 'error' });
+      return res.status(500).send({ error: 'server error' });
     }
   }
 };
 
-const getUserProfile = async (req, res) => {
+const getUserProfileByUserEmail = async (req, res) => {
   if (req.locals) {
     return res.status(200).send(req.locals);
   } else {
-    return res.status(500).send({ error: 'Cache Not Found' });
+    return res.status(500).send({ error: 'server error' });
   }
 };
 
@@ -158,8 +154,7 @@ const getAvatorUploadURL = async (req, res) => {
     let avatorURL = await util.storeAvatorURL(file_name, file_type);
     return res.status(200).send(avatorURL);
   } catch (error) {
-    console.log('avatorURL error', error);
-    return res.status(400).send({ error: error });
+    return res.status(500).send({ error: 'server error' });
   }
 };
 
@@ -175,16 +170,13 @@ const updateAvator = async (req, res) => {
     req.session.user.picture = picture;
     req.session.save((err) => {
       if (err) {
-        return res.status(400).send({ error: 'fail' });
-      } else {
-        console.log('save');
+        return res.status(500).send({ error: 'server error' });
       }
     });
 
     return res.status(200).send({ userUpdateAvator });
   } catch (error) {
-    console.log('userUpdateAvator error', error);
-    return res.status(400).send({ error: error });
+    return res.status(500).send({ error: 'server error' });
   }
 };
 
@@ -204,7 +196,7 @@ const getUserCodeLog = async (req, res) => {
         return res.status(400).send({ error: 'Error fetching listings!' });
       } else {
         console.log('result', result);
-        return res.status(200).send(result);
+        return res.status(500).send({ error: 'server error' });
       }
     });
 };
@@ -213,7 +205,7 @@ module.exports = {
   signUp,
   signIn,
   signOut,
-  getUserProfile,
+  getUserProfileByUserEmail,
   getUserCodeLog,
   getAvatorUploadURL,
   updateAvator,

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { pool } = require('./mysqlcon');
 const dbo = require('../models/mongodbcon');
+var ObjectId = require('mongodb').ObjectID;
 
 const getAllTrainingByUserId = async (user_id) => {
   // Get records
@@ -138,6 +139,62 @@ const getTutorTrainingRecords = async (user_id) => {
   }
 };
 
+const getTrainingResultByQuestionID = async (question_id) => {
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
+
+    const questionResult = await dbConnect
+      .collection('training')
+      .find({ _id: ObjectId(question_id) })
+      .toArray();
+    return questionResult;
+  } catch (err) {
+    return { error: err };
+  }
+};
+
+const setTrainingFinish = async (user_id, question_id) => {
+  console.log('setTrainingFinish', user_id, question_id);
+  // Get records
+  const dbConnect = dbo.getDb();
+
+  try {
+    let endTrainingResult = await dbConnect.collection('training').updateOne(
+      {
+        user_id: Number(user_id),
+        _id: ObjectId(question_id),
+      },
+      {
+        $set: {
+          finished_dt: new Date(),
+          status: 1,
+        },
+      }
+    );
+    console.log('endTrainingResult', endTrainingResult);
+    return { msg: endTrainingResult };
+  } catch (err) {
+    console.log('err', err);
+    return { err: err };
+  }
+};
+
+const getTrainingResultByQid = async (userID) => {
+  // Get records
+  const dbConnect = dbo.getDb();
+  try {
+    const nowQuestionResult = await dbConnect
+      .collection('training')
+      .find({ user_id: Number(userID), status: 1 })
+      .sort({ $natural: 1 })
+      .toArray();
+    return nowQuestionResult;
+  } catch (err) {
+    return { error: 'error' };
+  }
+};
+
 module.exports = {
   getExamInProgressBySessionId,
   getVideoQuestions,
@@ -145,7 +202,10 @@ module.exports = {
   insertNewExamToTraining,
   getAllTrainingByUserId,
   getTutorTrainingRecords,
-
   getQuestionsByID,
+  getTrainingResultByQuestionID,
+  setTrainingFinish,
+  getTrainingResultByQid,
+
   getCodeQuestionsByID,
 };

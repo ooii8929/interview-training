@@ -1,10 +1,4 @@
 require('dotenv').config();
-const validator = require('validator');
-const User = require('../models/user_model');
-const { pool } = require('../models/mysqlcon');
-const util = require('../util/util');
-const _ = require('lodash');
-const argon2 = require('argon2');
 const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
 
@@ -78,7 +72,7 @@ const getCodeArticleByID = async (article_id) => {
   }
 };
 
-const getVideoArticleByID = async (article_id) => {
+const getRecordArticleByID = async (article_id) => {
   // Get records
   const dbConnect = await dbo.getDb();
   try {
@@ -103,15 +97,6 @@ const insertCodeArticle = async (postData) => {
 
   return insertResult;
 };
-
-// const insertVideoArticle = async (postData) => {
-//     // Get records
-//     const dbConnect = dbo.getDb();
-
-//     let insertResult = await dbConnect.collection('article').insertOne(postData);
-
-//     return insertResult;
-// };
 
 const insertCodeComment = async (user_id, article_id, summerNote, userInfo) => {
   // Get records
@@ -171,7 +156,6 @@ const insertVideoArticle = async (postData) => {
 };
 
 const updateCodeShared = async (question_id, qid) => {
-  console.log(question_id, qid);
   // Get records
   const dbConnect = dbo.getDb();
 
@@ -330,12 +314,11 @@ module.exports = {
   updateArticleCodeGood,
   getArticleByID,
   getCodeArticleByID,
-  getVideoArticleByID,
+  getRecordArticleByID,
   insertCodeComment,
   getArticleVideoGood,
   checkShared,
   getArticleCodeGood,
   updateArticleVideoBad,
-  getArticleVideoGood,
   updateArticleVideoGood,
 };

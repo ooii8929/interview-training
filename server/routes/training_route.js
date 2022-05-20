@@ -19,8 +19,6 @@ router.route('/training/exam/finish').post(authentication(), wrapAsync(setTraini
 
 router.route('/training/tutor/records').get(authentication(), wrapAsync(getTrainingRecords));
 
-// router.route('/training/profile/result').get(authentication(), wrapAsync(getTrainingResultByQid));
-
 // Get question by id
 router.route('/training/questions').get(wrapAsync(getQuestionsByProfession));
 

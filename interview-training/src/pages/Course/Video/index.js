@@ -178,7 +178,6 @@ export default function Video(props) {
         console.log('question', question);
         setChangeStatus('');
       }
-      // getNowQuestion();
     },
     [question]
   );

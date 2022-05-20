@@ -8,7 +8,7 @@ const {
   getAllArticle,
   insertCodeArticle,
   getCodeArticleByID,
-  getVideoArticleByID,
+  getRecordArticleByID,
   updateArticleCodeGood,
   updateArticleCodeBad,
   insertVideoArticle,
@@ -20,7 +20,7 @@ const {
 router.route('/article').get(wrapAsync(getAllArticle));
 
 router.route('/article/code/id').get(wrapAsync(getCodeArticleByID));
-router.route('/article/record/id').get(wrapAsync(getVideoArticleByID));
+router.route('/article/record/id').get(wrapAsync(getRecordArticleByID));
 
 router.route('/article/code').get(wrapAsync(getCodeArticle));
 router.route('/article/code').post(authentication(), wrapAsync(insertCodeArticle));

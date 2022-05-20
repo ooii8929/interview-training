@@ -36,11 +36,18 @@ export default function SocialCodeArticle() {
   React.useEffect(() => {
     async function getSpecificArticle() {
       try {
-        let tmpArticleInfo = await axios.get(baseCodeURL, {
+        let tmpArticleInfo = await axios({
+          withCredentials: true,
+          method: 'GET',
+          credentials: 'same-origin',
+          url: baseCodeURL,
           params: {
             article_id: id,
           },
+          headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
         });
+
+        console.log('tmpArticleInfo', tmpArticleInfo);
         setArticleInfo(tmpArticleInfo['data'][0]);
         setAuthorInfo(tmpArticleInfo['data'][0]['author']);
         setLanguage('javascript');
