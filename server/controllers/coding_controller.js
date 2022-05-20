@@ -34,7 +34,7 @@ const runCompile = async (req, res) => {
       except: formalAnswer,
     });
   } catch (error) {
-    return res.status(500).send({ error: 'Server Something wrong' });
+    return res.status(500).send({ error: 'Server something wrong' });
   }
 };
 

@@ -33,7 +33,7 @@ const getVideoQuestions = async (profession) => {
 
     // get video questions by profesiion and column not null
     const questions = await conn.query('SELECT * FROM questions_video WHERE profession = ? order by rand() limit 3;', [profession]);
-
+    console.log('questions', questions);
     await conn.query('COMMIT');
     return questions;
   } catch (error) {
