@@ -1,21 +1,16 @@
 require('dotenv').config();
 const { pool } = require('./mysqlcon');
+const { MysqlError } = require('../util/error/database_error');
 
 const getAllTutorSchedule = async () => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
-
     const tutors_schedule = await conn.query(
       'SELECT tt.id,tt.t_id,tt.available_time,tt.course_url,ts.experience1,ts.experience2,ts.experience3,ts.introduce,ts.profession,ts.name,ts.picture FROM tutors_time AS tt INNER JOIN tutors AS ts ON ts.id = tt.t_id WHERE tt.status = "0"'
     );
-    await conn.query('COMMIT');
     return tutors_schedule[0];
-  } catch (error) {
-    await conn.query('ROLLBACK');
-    return { error };
-  } finally {
-    await conn.release();
+  } catch (err) {
+    return new MysqlError('[getAllTutorSchedule]', err);
   }
 };
 
@@ -44,9 +39,9 @@ const updateTutorSchedule = async (tutor_id, tutor_date_time, roomURL) => {
 
     await conn.query('COMMIT');
     return { result };
-  } catch (error) {
+  } catch (err) {
     await conn.query('ROLLBACK');
-    return { error };
+    return new MysqlError('[updateTutorSchedule]', err);
   } finally {
     await conn.release();
   }
@@ -103,7 +98,6 @@ const makeAppointment = async (tutor_time_id, user_id) => {
     await conn.query('COMMIT');
     return { insertAppointmentResult };
   } catch (error) {
-    console.log(error);
     await conn.query('ROLLBACK');
     return { error };
   } finally {
@@ -135,8 +129,6 @@ const getAllAppointmentByID = async (userID) => {
 const setTutorInfomation = async (experience1, experience2, experience3, user_id, introduce, profession) => {
   const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
-
     let tutorInfo = {
       experience1: experience1,
       experience2: experience2,
@@ -149,15 +141,9 @@ const setTutorInfomation = async (experience1, experience2, experience3, user_id
 
     const [result] = await conn.query(queryStr, [tutorInfo, user_id]);
 
-    await conn.query('COMMIT');
-
     return { result };
-  } catch (error) {
-    console.log(error);
-    await conn.query('ROLLBACK');
-    return { error };
-  } finally {
-    await conn.release();
+  } catch (err) {
+    return { err };
   }
 };
 

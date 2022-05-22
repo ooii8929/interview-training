@@ -4,8 +4,9 @@ const Coding = require('../models/coding_model');
 const fs = require('fs');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const { ApplicationError } = require('../util/error/base_error');
 
-const runCompile = async (req, res) => {
+const runCompile = async (req, res, next) => {
   const { content, question_id, language } = req.body;
 
   let answerContent = await Coding.getAnswerByQuesionId(question_id);
@@ -34,11 +35,11 @@ const runCompile = async (req, res) => {
       except: formalAnswer,
     });
   } catch (error) {
-    return res.status(500).send({ error: 'Server something wrong' });
+    next(error);
   }
 };
 
-const submitCompile = async (req, res) => {
+const submitCompile = async (req, res, next) => {
   const { id } = req.locals;
   const { content, question_id, qid, language } = req.body;
   let answerContent = await Coding.getAnswerByQuesionId(qid);
@@ -97,7 +98,7 @@ const submitCompile = async (req, res) => {
 
     return res.status(200).send(reply);
   } catch (error) {
-    return res.status(400).send({ error: 'wrong' });
+    next(new ApplicationError());
   }
 };
 

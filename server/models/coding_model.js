@@ -2,6 +2,7 @@ require('dotenv').config();
 const { pool } = require('../models/mysqlcon');
 const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
+const { MongodbError } = require('../util/error/database_error');
 
 const getAnswerByQuesionId = async (questionID) => {
   try {
@@ -41,8 +42,7 @@ const submitCodeAnswerToTraining = async (user_id, question_id, qid, language, c
         );
         return { msg: updateAnswer };
       } catch (err) {
-        console.log('err', err);
-        return { err: err };
+        throw new MongodbError('[submitCodeAnswerToTraining,javascript]', err);
       }
     } else if (language == 'python') {
       try {
@@ -67,16 +67,13 @@ const submitCodeAnswerToTraining = async (user_id, question_id, qid, language, c
             ],
           }
         );
-        console.log('updateAnswer', updateAnswer);
         return { msg: updateAnswer };
       } catch (err) {
-        console.log('err', err);
-        return { err: err };
+        return new MongodbError('[submitCodeAnswerToTraining,python]', err);
       }
     }
-  } catch (error) {
-    console.log('submitCodeAnswerToTraining error', error);
-    return { error: 'submitCodeAnswerToTraining error' };
+  } catch (err) {
+    return new MongodbError('[submitCodeAnswerToTraining]', err);
   }
 };
 
@@ -93,7 +90,7 @@ const insertCodeAnswer = async (userID, question_id, code_answer, content) => {
     });
     return { msg: 'success' };
   } catch (err) {
-    res.status(400).send(err);
+    return new MongodbError('[insertCodeAnswer]', err);
   }
 };
 
@@ -105,10 +102,9 @@ const questionByQid = async (user_id, question_id) => {
       .collection('training')
       .find({ _id: ObjectId(question_id) })
       .toArray();
-    console.log('questionResult', questionResult);
     return questionResult;
   } catch (err) {
-    return { error: 'wrong' };
+    return new MongodbError('[questionByQid]', err);
   }
 };
 
@@ -130,11 +126,9 @@ const closeExam = async (user_id, question_id) => {
         },
       }
     );
-    console.log('endTrainingResult', endTrainingResult);
     return { msg: endTrainingResult };
   } catch (err) {
-    console.log('err', err);
-    return { err: err };
+    return new MongodbError('[closeExam]', err);
   }
 };
 

@@ -14,7 +14,6 @@ redisClient.ready = false;
 
 redisClient.on('error', () => {
   redisClient.ready = false;
-
   console.log('Error in Redis');
 });
 

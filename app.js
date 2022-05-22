@@ -5,6 +5,9 @@ const session = require('express-session');
 // const redis = require('redis');
 const cookieParser = require('cookie-parser');
 
+// Error handle
+const { UserFacingError, DatabaseError, ApplicationError } = require('./server/util/error/base_error');
+
 //const Redis = require('ioredis');
 
 const cors = require('cors');
@@ -12,8 +15,6 @@ const app = express();
 const Cache = require('./server/util/cache');
 const { PORT_TEST, PORT, NODE_ENV, API_VERSION } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
-
-const { CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD } = process.env;
 
 const root = require('path').join(__dirname, 'interview-training/build');
 
@@ -45,8 +46,6 @@ app.set('json spaces', 2);
 
 const RedisStore = require('connect-redis')(session);
 
-const dbo = require('./server/models/mongodbcon');
-
 //Configure session middleware
 app.use(
   session({
@@ -60,81 +59,7 @@ app.use(
   })
 );
 
-const server = require('http')
-  .Server(app)
-  .listen(port, () => {
-    // Cache.connect().catch(() => {
-    //     console.log('redis connect fail');
-    // });
-    console.log(`Listening on port ${port}...`);
-  });
-
 // morganBody(app);
-
-// Socket.io
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['my-custom-header'],
-    credentials: true,
-  },
-});
-
-// Someone Connect
-io.on('connection', (socket) => {
-  socket.on('join', (room) => {
-    console.log(socket.id);
-    socket.join(room);
-    console.log('準備通話');
-    socket.to(room).emit('ready', '準備通話');
-  });
-  socket.on('getMessage', (message) => {
-    console.log(message);
-  });
-
-  // 轉傳 Offer
-  socket.on('offer', (room, desc) => {
-    console.log('收到 offer', room);
-    socket.to(room).emit('offer', desc);
-  });
-
-  // 轉傳 Answer
-  socket.on('answer', (room, desc) => {
-    console.log('收到 answer');
-    socket.to(room).emit('answer', desc);
-  });
-
-  // 交換 ice candidate
-  socket.on('ice_candidate', (room, data) => {
-    console.log('收到 ice_candidate');
-    socket.to(room).emit('ice_candidate', data);
-  });
-
-  socket.on('share', (room, data) => {
-    console.log('收到分享螢幕');
-    socket.to(room).emit('share', data);
-  });
-
-  // 離開房間
-  socket.on('leaved', (room) => {
-    console.log('leave room', room);
-    socket.to(room).emit('bye');
-    socket.emit('leaved');
-  });
-
-  socket.on('chat', (data) => {
-    console.log(data.sender, 'send a message:', data.msg, 'time', data.time);
-    socket.to(data.room).emit('chat', { sender: data.sender, msg: data.msg, time: data.time });
-  });
-});
-
-dbo.connectToServer(function (err) {
-  if (err) {
-    console.error(err);
-    process.exit();
-  }
-});
 
 // API routes
 app.use('/api/' + API_VERSION, [
@@ -146,6 +71,10 @@ app.use('/api/' + API_VERSION, [
   require('./server/routes/training_route'),
 ]);
 
+const http = require('http');
+const server = http.createServer(app);
+require('./server/util/mysocket').config(server);
+
 // Page not found
 app.use(function (req, res, next) {
   res.sendStatus(404);
@@ -154,6 +83,16 @@ app.use(function (req, res, next) {
 
 // Error handling
 app.use(function (err, req, res, next) {
-  console.log(err);
+  if (err instanceof UserFacingError || err instanceof DatabaseError || err instanceof ApplicationError) {
+    res.sendStatus(err.statusCode).send(err.response);
+  }
   res.status(500).send('Internal Server Error');
 });
+
+if (NODE_ENV != 'production') {
+  server.listen(port, async () => {
+    console.log(`Listening on port: ${port}`);
+  });
+}
+
+module.exports = app;

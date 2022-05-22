@@ -1,6 +1,7 @@
 require('dotenv').config();
 const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
+const { MysqlError, MongodbError } = require('../util/error/database_error');
 
 const getAllArticle = async () => {
   // Get records
@@ -9,9 +10,8 @@ const getAllArticle = async () => {
     const cursor = await dbConnect.collection('article').find({}).toArray();
 
     return cursor;
-  } catch (error) {
-    console.log('error', error);
-    return error;
+  } catch (err) {
+    return new MongodbError('[getAllArticle]', err);
   }
 };
 
@@ -22,9 +22,8 @@ const getCodeArticle = async () => {
     const cursor = await dbConnect.collection('code-article').find({}).toArray();
 
     return cursor;
-  } catch (error) {
-    console.log('error', error);
-    return error;
+  } catch (err) {
+    return new MongodbError('[getCodeArticle]', err);
   }
 };
 
@@ -35,9 +34,8 @@ const getVideoArticle = async () => {
     const cursor = await dbConnect.collection('video-article').find({}).toArray();
 
     return cursor;
-  } catch (error) {
-    console.log('error', error);
-    return error;
+  } catch (err) {
+    return new MongodbError('[getVideoArticle]', err);
   }
 };
 
@@ -45,16 +43,13 @@ const getArticleByID = async (article_id) => {
   // Get records
   const dbConnect = await dbo.getDb();
   try {
-    console.log('article_id', article_id);
     const cursor = await dbConnect
       .collection('article')
       .find({ _id: ObjectId(article_id) })
       .toArray();
-    console.log('cursor');
     return cursor;
-  } catch (error) {
-    console.log('error', error);
-    return error;
+  } catch (err) {
+    return new MongodbError('[getArticleByID]', err);
   }
 };
 
@@ -67,8 +62,8 @@ const getCodeArticleByID = async (article_id) => {
       .find({ _id: ObjectId(article_id) })
       .toArray();
     return cursor;
-  } catch (error) {
-    return error;
+  } catch (err) {
+    return new MongodbError('[getCodeArticleByID]', err);
   }
 };
 
@@ -76,16 +71,13 @@ const getRecordArticleByID = async (article_id) => {
   // Get records
   const dbConnect = await dbo.getDb();
   try {
-    console.log('article_id', article_id);
     const cursor = await dbConnect
       .collection('video-article')
       .find({ _id: ObjectId(article_id) })
       .toArray();
-    console.log('cursor', cursor);
     return cursor;
-  } catch (error) {
-    console.log('error', error);
-    return error;
+  } catch (err) {
+    return new MongodbError('[getRecordArticleByID]', err);
   }
 };
 
@@ -127,7 +119,6 @@ const insertCodeComment = async (user_id, article_id, summerNote, userInfo) => {
 };
 
 const checkShared = async (question_id, qid) => {
-  console.log(question_id, qid);
   // Get records
   const dbConnect = dbo.getDb();
 
