@@ -1,69 +1,65 @@
 require('dotenv').config();
+
 const { Server } = require('socket.io');
-const socketRedis = require('socket.io-redis');
-const Cache = require('./cache');
+let io;
 
-// Socket.io
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['my-custom-header'],
-    credentials: true,
-  },
-});
-
-// Someone Connect
-io.on('connection', (socket) => {
-  socket.on('join', (room) => {
-    console.log(socket.id);
-    socket.join(room);
-    console.log('準備通話');
-    socket.to(room).emit('ready', '準備通話');
+function config(server) {
+  // Socket.io Initialization
+  console.log('Initialize socket');
+  io = new Server(server, {
+    cors: {
+      origin: '*',
+    },
   });
-  socket.on('getMessage', (message) => {
-    console.log(message);
-  });
+  // Someone Connect
+  io.on('connection', (socket) => {
+    socket.on('join', (room) => {
+      console.log(socket.id);
+      socket.join(room);
+      console.log('準備通話');
+      socket.to(room).emit('ready', '準備通話');
+    });
+    socket.on('getMessage', (message) => {
+      console.log(message);
+    });
 
-  // 轉傳 Offer
-  socket.on('offer', (room, desc) => {
-    console.log('收到 offer', room);
-    socket.to(room).emit('offer', desc);
-  });
+    // 轉傳 Offer
+    socket.on('offer', (room, desc) => {
+      console.log('收到 offer', room);
+      socket.to(room).emit('offer', desc);
+    });
 
-  // 轉傳 Answer
-  socket.on('answer', (room, desc) => {
-    console.log('收到 answer');
-    socket.to(room).emit('answer', desc);
-  });
+    // 轉傳 Answer
+    socket.on('answer', (room, desc) => {
+      console.log('收到 answer');
+      socket.to(room).emit('answer', desc);
+    });
 
-  // 交換 ice candidate
-  socket.on('ice_candidate', (room, data) => {
-    console.log('收到 ice_candidate');
-    socket.to(room).emit('ice_candidate', data);
-  });
+    // 交換 ice candidate
+    socket.on('ice_candidate', (room, data) => {
+      console.log('收到 ice_candidate');
+      socket.to(room).emit('ice_candidate', data);
+    });
 
-  socket.on('share', (room, data) => {
-    console.log('收到分享螢幕');
-    socket.to(room).emit('share', data);
-  });
+    socket.on('share', (room, data) => {
+      console.log('收到分享螢幕');
+      socket.to(room).emit('share', data);
+    });
 
-  // 離開房間
-  socket.on('leaved', (room) => {
-    console.log('leave room', room);
-    socket.to(room).emit('bye');
-    socket.emit('leaved');
-  });
+    // 離開房間
+    socket.on('leaved', (room) => {
+      console.log('leave room', room);
+      socket.to(room).emit('bye');
+      socket.emit('leaved');
+    });
 
-  socket.on('chat', (data) => {
-    console.log(data.sender, 'send a message:', data.msg, 'time', data.time);
-    socket.to(data.room).emit('chat', { sender: data.sender, msg: data.msg, time: data.time });
+    socket.on('chat', (data) => {
+      console.log(data.sender, 'send a message:', data.msg, 'time', data.time);
+      socket.to(data.room).emit('chat', { sender: data.sender, msg: data.msg, time: data.time });
+    });
   });
-});
+}
 
-dbo.connectToServer(function (err) {
-  if (err) {
-    console.error(err);
-    process.exit();
-  }
-});
+module.exports = {
+  config,
+};
