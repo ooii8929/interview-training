@@ -98,7 +98,7 @@ const submitCompile = async (req, res, next) => {
 
     return res.status(200).send(reply);
   } catch (error) {
-    next(new ApplicationError());
+    next(error);
   }
 };
 
@@ -123,7 +123,7 @@ async function runCodeWithDocker(uuid, content, language) {
     });
     return stdout || stderr;
   } catch (error) {
-    console.log('err', error);
+    throw new ApplicationError();
   }
 }
 

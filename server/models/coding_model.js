@@ -128,7 +128,7 @@ const closeExam = async (user_id, question_id) => {
     );
     return { msg: endTrainingResult };
   } catch (err) {
-    return new MongodbError('[closeExam]', err);
+    throw new MongodbError('[closeExam]', err);
   }
 };
 

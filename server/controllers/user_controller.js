@@ -5,7 +5,7 @@ const util = require('../util/util');
 const Cache = require('../util/cache');
 const dbo = require('../models/mongodbcon');
 
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
   try {
     const { identity, name, email, password } = req.body;
     let { provider } = req.body;
@@ -64,12 +64,11 @@ const signUp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log('sign up error', error);
-    return res.status(500).send({ error: 'server error' });
+    next(error);
   }
 };
 
-const signIn = async (req, res) => {
+const signIn = async (req, res, next) => {
   const { email, password, identity, provider } = req.body;
   if (!util.isValidEmail(email)) {
     res.status('400').send({ error: 'email format wrong' });
@@ -119,12 +118,12 @@ const signIn = async (req, res) => {
         }
       });
     } catch (error) {
-      return res.status(500).send({ error: 'server error' });
+      next(error);
     }
   }
 };
 
-const signOut = async (req, res) => {
+const signOut = async (req, res, next) => {
   if (Cache.ready) {
     try {
       req.session.destroy((err) => {
@@ -135,30 +134,30 @@ const signOut = async (req, res) => {
         res.clearCookie('connect.sid', { path: '/' }).status(200).send('Ok.');
       });
     } catch (error) {
-      return res.status(500).send({ error: 'server error' });
+      next(error);
     }
   }
 };
 
-const getUserProfileByUserEmail = async (req, res) => {
-  if (req.locals) {
+const getUserProfileByUserEmail = async (req, res, next) => {
+  try {
     return res.status(200).send(req.locals);
-  } else {
-    return res.status(500).send({ error: 'server error' });
+  } catch (error) {
+    next(error);
   }
 };
 
-const getAvatorUploadURL = async (req, res) => {
+const getAvatorUploadURL = async (req, res, next) => {
   let { file_name, file_type } = req.query;
   try {
     let avatorURL = await util.storeAvatorURL(file_name, file_type);
     return res.status(200).send(avatorURL);
   } catch (error) {
-    return res.status(500).send({ error: 'server error' });
+    next(error);
   }
 };
 
-const updateAvator = async (req, res) => {
+const updateAvator = async (req, res, next) => {
   let { identity, userID, picture } = req.body;
 
   try {
@@ -176,29 +175,20 @@ const updateAvator = async (req, res) => {
 
     return res.status(200).send({ userUpdateAvator });
   } catch (error) {
-    return res.status(500).send({ error: 'server error' });
+    next(error);
   }
 };
 
-const getUserCodeLog = async (req, res) => {
-  let { question_id, user_id } = req.query;
+const getUserCodeLog = async (req, res, next) => {
+  try {
+    let { question_id, user_id } = req.query;
 
-  // Get records
-  const dbConnect = dbo.getDb();
+    let userCodeLog = User.getUserCodeLog(question_id, user_id);
 
-  dbConnect
-    .collection('profile')
-    .find({ user_id: user_id, question_id: parseInt(question_id) })
-    .limit(50)
-    .sort({ create_dt: -1 })
-    .toArray(function (err, result) {
-      if (err) {
-        return res.status(400).send({ error: 'Error fetching listings!' });
-      } else {
-        console.log('result', result);
-        return res.status(500).send({ error: 'server error' });
-      }
-    });
+    return res.status(200).send({ userCodeLog });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {

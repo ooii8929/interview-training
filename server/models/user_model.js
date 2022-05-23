@@ -1,6 +1,7 @@
 require('dotenv').config();
 const argon2 = require('argon2');
 const { pool } = require('./mysqlcon');
+const dbo = require('../models/mongodbcon');
 
 const updateAvator = async (identity, userID, picture) => {
   const conn = await pool.getConnection();
@@ -327,19 +328,32 @@ const getUserProfileByUserID = async (userID, identity) => {
 };
 
 const getUsersProfileByUserID = async (userID) => {
-  const conn = await pool.getConnection();
   try {
-    await conn.query('START TRANSACTION');
     const [users] = await pool.query('SELECT * FROM users WHERE id IN (?)', [userID]);
-    console.log('users', users);
-    await conn.query('COMMIT');
+
     return users;
   } catch (error) {
-    await conn.query('ROLLBACK');
     return { error };
-  } finally {
-    await conn.release();
   }
+};
+
+const getUserCodeLog = async (question_id, user_id) => {
+  // Get records
+  const dbConnect = dbo.getDb();
+
+  dbConnect
+    .collection('profile')
+    .find({ user_id: user_id, question_id: parseInt(question_id) })
+    .limit(50)
+    .sort({ create_dt: -1 })
+    .toArray(function (err, result) {
+      if (err) {
+        // return res.status(400).send({ error: 'Error fetching listings!' });
+      } else {
+        return result;
+        //  return res.status(500).send({ error: 'server error' });
+      }
+    });
 };
 
 module.exports = {
@@ -357,4 +371,5 @@ module.exports = {
   getUserAppointments,
   nativetutorSignIn,
   gettutorProfile,
+  getUserCodeLog,
 };

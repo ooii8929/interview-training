@@ -82,6 +82,7 @@ app.use(function (req, res, next) {
 });
 
 // Error handling
+// eslint-disable-next-line no-unused-vars
 app.use(function (err, req, res, next) {
   if (err instanceof UserFacingError || err instanceof DatabaseError || err instanceof ApplicationError) {
     res.sendStatus(err.statusCode).send(err.response);
