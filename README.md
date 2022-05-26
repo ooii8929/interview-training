@@ -1,4 +1,4 @@
-![Interview Training System](logo.jpg){ width="800" height="600" style="display: block; margin: 0 auto" }
+![Interview Training System](/logo.png){ width="800" height="600" style="display: block; margin: 0 auto" }
 
 
 
