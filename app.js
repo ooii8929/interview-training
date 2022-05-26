@@ -4,6 +4,27 @@ const express = require('express');
 const session = require('express-session');
 // const redis = require('redis');
 const cookieParser = require('cookie-parser');
+const winston = require('winston');
+const WinstonCloudWatch = require('winston-cloudwatch');
+
+winston.loggers.add('access-log', {
+  transports: [
+    new winston.transports.Console({
+      json: true,
+      colorize: true,
+      level: 'info',
+    }),
+    new WinstonCloudWatch({
+      logGroupName: process.env.CLOUDWATCH_GROUP_NAME,
+      logStreamName: new Date().toISOString().split('T')[0],
+      accessKeyId: process.env.CLOUDWATCH_ACCESS_KEY,
+      awsSecretKey: process.env.CLOUDWATCH_SECRET_ACCESS_KEY,
+      awsRegion: process.env.CLOUDWATCH_REGION,
+      jsonMessage: true,
+    }),
+  ],
+});
+var logg = winston.loggers.get('access-log');
 
 // Error handle
 const { UserFacingError, DatabaseError, ApplicationError } = require('./server/util/error/base_error');
@@ -84,6 +105,7 @@ app.use(function (req, res, next) {
 // Error handling
 // eslint-disable-next-line no-unused-vars
 app.use(function (err, req, res, next) {
+  logg.error(err);
   if (err instanceof UserFacingError || err instanceof DatabaseError || err instanceof ApplicationError) {
     res.sendStatus(err.statusCode).send(err.response);
   }
