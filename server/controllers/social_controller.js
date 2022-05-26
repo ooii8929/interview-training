@@ -182,86 +182,90 @@ const insertVideoArticle = async (req, res, next) => {
   }
 };
 
-const insertCodeComments = async (req, res,next) => {
- try {
+const insertCodeComments = async (req, res, next) => {
+  try {
     // insert code post
-  const { article_id, summerNote } = req.body;
-  let userInfo;
-  if (req.locals.identity == 'student') {
-    userInfo = await USER.getUserPureProfile(req.locals.id, req.locals.email);
-  }
+    const { article_id, summerNote } = req.body;
+    let userInfo;
+    if (req.locals.identity == 'student') {
+      userInfo = await USER.getUserPureProfile(req.locals.id, req.locals.email);
+    }
 
-  if (req.locals.identity == 'tutor') {
-    userInfo = await USER.gettutorProfile(req.locals.id, req.locals.email);
-  }
-  let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
+    if (req.locals.identity == 'tutor') {
+      userInfo = await USER.gettutorProfile(req.locals.id, req.locals.email);
+    }
+    let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
 
-  return res.status(200).send(insertResult);
+    return res.status(200).send(insertResult);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const updateArticleGood = async (req, res) => {
-  // insert code post
-  const { id } = req.locals;
-  const { article_id } = req.body.data;
-
-  let updateResult = await SOCIAL.updateArticleGood(article_id, id);
-
-  res.status(200).send(updateResult);
- } catch (error) {
-   next(error)
- }
-};
-
-const updateArticleBad = async (req, res,next) => {
+const updateArticleGood = async (req, res, next) => {
   try {
     // insert code post
     const { id } = req.locals;
     const { article_id } = req.body.data;
-  
-    let updateResult = await SOCIAL.updateArticleBad(article_id, id);
-  
+
+    let updateResult = await SOCIAL.updateArticleGood(article_id, id);
+
     res.status(200).send(updateResult);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-const updateArticleCodeGood = async (req, res,next) => {
+const updateArticleBad = async (req, res, next) => {
+  try {
+    // insert code post
+    const { id } = req.locals;
+    const { article_id } = req.body.data;
+
+    let updateResult = await SOCIAL.updateArticleBad(article_id, id);
+
+    res.status(200).send(updateResult);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateArticleCodeGood = async (req, res, next) => {
   try {
     // insert code post
     const { article_id } = req.body;
-  
+
     let getNowGoods = await SOCIAL.getArticleCodeGood(article_id);
-  
+
     if (getNowGoods[0]['goods'].includes(req.locals.id)) {
       return res.status(401).send({ error: '已經點過讚' });
     }
-  
+
     let updateResult = await SOCIAL.updateArticleGood(article_id, req.locals.id);
-  
+
     res.status(200).send(updateResult);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
-const updateArticleVideoGood = async (req, res,next) => {
- try {
+const updateArticleVideoGood = async (req, res, next) => {
+  try {
     // insert code post
     const { article_id } = req.body;
-  
+
     let getNowGoods = await SOCIAL.getArticleVideoGood(article_id);
-  
+
     if (getNowGoods[0]['goods'].includes(req.locals.id)) {
       return res.status(401).send({ error: '已經點過讚' });
     }
-  
+
     let updateResult = await SOCIAL.updateArticleVideoGood(article_id, req.locals.id);
-  
+
     res.status(200).send(updateResult);
- } catch (error) {
-   next(error)
- }
+  } catch (error) {
+    next(error);
+  }
 };
 
 const updateArticleVideoBad = async (req, res, next) => {

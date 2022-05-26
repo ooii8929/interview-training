@@ -2,6 +2,8 @@ require('dotenv').config();
 const argon2 = require('argon2');
 const { pool } = require('./mysqlcon');
 const dbo = require('../models/mongodbcon');
+const { MongodbError, MysqlError } = require('../util/error/database_error');
+const { BadRequestError } = require('../util/error/user_error');
 
 const updateAvator = async (identity, userID, picture) => {
   const conn = await pool.getConnection();
@@ -19,8 +21,7 @@ const updateAvator = async (identity, userID, picture) => {
     return updateAvatorResult;
   } catch (error) {
     await conn.query('ROLLBACK');
-
-    return error;
+    throw new MysqlError('[updateAvator]', error);
   } finally {
     await conn.release();
   }
@@ -43,7 +44,7 @@ const tutorSignUp = async (identity, name, email, password) => {
     // check user exist
     if (emails[0].length > 0) {
       await conn.query('COMMIT');
-      return { error: 'Email Already Exists' };
+      throw new MysqlError('[tutorSignUp]', { error: 'Email Already Exists' });
     }
 
     const hash = await argon2.hash(password);
@@ -62,63 +63,78 @@ const tutorSignUp = async (identity, name, email, password) => {
     await conn.query('COMMIT');
     return { user };
   } catch (error) {
-    console.log(error);
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[tutorSignUp]', error);
   } finally {
     await conn.release();
   }
 };
 
 const getUserAppointments = async (userID, userEmail) => {
-  const conn = await pool.getConnection();
+  try {
+    const conn = await pool.getConnection();
 
-  const queryUserAppointments =
-    'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
-  const [userAppointments] = await conn.query(queryUserAppointments, [userEmail]);
+    const queryUserAppointments =
+      'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
+    const [userAppointments] = await conn.query(queryUserAppointments, [userEmail]);
 
-  return userAppointments;
+    return userAppointments;
+  } catch (error) {
+    throw new MysqlError('[getUserAppointments]', error);
+  }
 };
 
 const getUserProfileAndAppointments = async (userID, userEmail) => {
-  const conn = await pool.getConnection();
+  try {
+    const conn = await pool.getConnection();
 
-  // get all professions
-  const queryUserProfile = 'SELECT create_dt,email,id,last_login_dt,picture FROM users WHERE id = ?';
-  const [userProfileResult] = await conn.query(queryUserProfile, [userID]);
-  let userProfileCombine = { userProfile: userProfileResult[0] };
+    // get all professions
+    const queryUserProfile = 'SELECT create_dt,email,id,last_login_dt,picture FROM users WHERE id = ?';
+    const [userProfileResult] = await conn.query(queryUserProfile, [userID]);
+    let userProfileCombine = { userProfile: userProfileResult[0] };
 
-  // get all appointments
-  const queryUserAppointments =
-    'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
-  const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [userEmail]);
+    // get all appointments
+    const queryUserAppointments =
+      'SELECT * FROM users INNER JOIN appointments ON users.id = appointments.user_id INNER JOIN tutors_time ON appointments.tutor_time_id = tutors_time.id INNER JOIN tutors ON tutors_time.t_id = tutors.id  WHERE users.email = ?';
+    const [userProfileResultAppointments] = await conn.query(queryUserAppointments, [userEmail]);
 
-  userProfileCombine.appointments = userProfileResultAppointments;
+    userProfileCombine.appointments = userProfileResultAppointments;
 
-  return userProfileCombine;
+    return userProfileCombine;
+  } catch (error) {
+    throw new MysqlError('[getUserProfileAndAppointments]', error);
+  }
 };
 
 const getUserProfileByUserId = async (userID) => {
-  const conn = await pool.getConnection();
+  try {
+    const conn = await pool.getConnection();
 
-  // get all professions
-  const queryUserProfile = 'SELECT * FROM users WHERE id = ?';
-  const userProfileResult = await conn.query(queryUserProfile, [userID]);
+    // get all professions
+    const queryUserProfile = 'SELECT * FROM users WHERE id = ?';
+    const userProfileResult = await conn.query(queryUserProfile, [userID]);
 
-  return userProfileResult;
+    return userProfileResult;
+  } catch (error) {
+    throw new MysqlError('[getUserProfileByUserId]', error);
+  }
 };
 
 const getUserProfileByUserEmail = async (userEmail) => {
-  const conn = await pool.getConnection();
+  try {
+    const conn = await pool.getConnection();
 
-  // get all professions
-  const queryUserProfile = 'SELECT * FROM users WHERE email = ?';
-  const userProfileResult = await conn.query(queryUserProfile, [userEmail]);
+    // get all professions
+    const queryUserProfile = 'SELECT * FROM users WHERE email = ?';
+    const userProfileResult = await conn.query(queryUserProfile, [userEmail]);
 
-  return userProfileResult;
+    return userProfileResult;
+  } catch (error) {
+    throw new MysqlError('[getUserProfileByUserEmail]', error);
+  }
 };
 
-const gettutorProfile = async (tutorID, userEmail) => {
+const getTutorProfile = async (tutorID, userEmail) => {
   const conn = await pool.getConnection();
   try {
     await conn.query('START TRANSACTION');
@@ -137,8 +153,7 @@ const gettutorProfile = async (tutorID, userEmail) => {
     return tutorProfileCombine;
   } catch (error) {
     await conn.query('ROLLBACK');
-    console.log('error', error);
-    return error;
+    throw new MysqlError('[getTutorProfile]', error);
   } finally {
     await conn.release();
   }
@@ -154,7 +169,7 @@ const signUpTotutor = async (name, email, password, experience1, experience2, ex
 
     if (findtutorByEmail.length > 0) {
       await conn.query('COMMIT');
-      return { error: 'Email Already Exists' };
+      throw new BadRequestError('[signUpTotutor]', { error: 'Email Already Exists' });
     }
 
     // argon2 hash
@@ -186,9 +201,8 @@ const signUpTotutor = async (name, email, password, experience1, experience2, ex
     await conn.query('COMMIT');
     return { user };
   } catch (error) {
-    console.log(error);
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[signUpTotutor]', error);
   } finally {
     await conn.release();
   }
@@ -228,7 +242,7 @@ const signUpToStudent = async (name, email, password) => {
   } catch (error) {
     console.log(error);
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[signUpToStudent]', error);
   } finally {
     await conn.release();
   }
@@ -246,7 +260,7 @@ const nativeSignIn = async (email, password) => {
     console.log(auth);
     if (!auth) {
       await conn.query('COMMIT');
-      return { error: 'Password is wrong' };
+      throw new BadRequestError('[signUpTotutor]', { error: 'Password is wrong' });
     }
 
     const loginAt = new Date();
@@ -259,7 +273,7 @@ const nativeSignIn = async (email, password) => {
     return { user };
   } catch (error) {
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[nativeSignIn]', error);
   } finally {
     await conn.release();
   }
@@ -277,7 +291,7 @@ const nativetutorSignIn = async (email, password) => {
     console.log(auth);
     if (!auth) {
       await conn.query('COMMIT');
-      return { error: 'Password is wrong' };
+      throw new BadRequestError('[signUpTotutor]', { error: 'Password is wrong' });
     }
 
     const loginAt = new Date();
@@ -290,7 +304,7 @@ const nativetutorSignIn = async (email, password) => {
     return { user };
   } catch (error) {
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[nativetutorSignIn]', error);
   } finally {
     await conn.release();
   }
@@ -300,8 +314,8 @@ const getUserProfileByEmail = async (email) => {
   try {
     const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
     return users[0];
-  } catch (e) {
-    return null;
+  } catch (error) {
+    throw new MysqlError('[nativetutorSignIn]', error);
   }
 };
 
@@ -321,7 +335,7 @@ const getUserProfileByUserID = async (userID, identity) => {
     return users[0];
   } catch (error) {
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[getUserProfileByUserID]', error);
   } finally {
     await conn.release();
   }
@@ -333,27 +347,31 @@ const getUsersProfileByUserID = async (userID) => {
 
     return users;
   } catch (error) {
-    return { error };
+    throw new MysqlError('[getUsersProfileByUserID]', error);
   }
 };
 
 const getUserCodeLog = async (question_id, user_id) => {
-  // Get records
-  const dbConnect = dbo.getDb();
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
 
-  dbConnect
-    .collection('profile')
-    .find({ user_id: user_id, question_id: parseInt(question_id) })
-    .limit(50)
-    .sort({ create_dt: -1 })
-    .toArray(function (err, result) {
-      if (err) {
-        // return res.status(400).send({ error: 'Error fetching listings!' });
-      } else {
-        return result;
-        //  return res.status(500).send({ error: 'server error' });
-      }
-    });
+    dbConnect
+      .collection('profile')
+      .find({ user_id: user_id, question_id: parseInt(question_id) })
+      .limit(50)
+      .sort({ create_dt: -1 })
+      .toArray(function (err, result) {
+        if (err) {
+          // return res.status(400).send({ error: 'Error fetching listings!' });
+        } else {
+          return result;
+          //  return res.status(500).send({ error: 'server error' });
+        }
+      });
+  } catch (error) {
+    throw new MongodbError('[getUserCodeLog]', error);
+  }
 };
 
 module.exports = {
@@ -370,6 +388,6 @@ module.exports = {
   getUserProfileByUserEmail,
   getUserAppointments,
   nativetutorSignIn,
-  gettutorProfile,
+  getTutorProfile,
   getUserCodeLog,
 };

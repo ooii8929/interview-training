@@ -1,7 +1,7 @@
 require('dotenv').config();
 const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
-const { MysqlError, MongodbError } = require('../util/error/database_error');
+const { MongodbError } = require('../util/error/database_error');
 
 const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
   // Get records
@@ -30,7 +30,7 @@ const submitVideoAnswer = async (user_id, question_id, qid, answer_url) => {
     );
     return { msg: updateAnswer };
   } catch (err) {
-    return new MongodbError('[submitVideoAnswer]', err);
+    throw new MongodbError('[submitVideoAnswer]', err);
   }
 };
 
@@ -60,7 +60,7 @@ const submitVideoAnswerCheck = async (user_id, question_id, qid, checked) => {
     );
     return { msg: updateAnswer };
   } catch (err) {
-    return new MongodbError('[submitVideoAnswerCheck]', err);
+    throw new MongodbError('[submitVideoAnswerCheck]', err);
   }
 };
 

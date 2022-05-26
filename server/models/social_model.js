@@ -1,7 +1,7 @@
 require('dotenv').config();
 const dbo = require('../models/mongodbcon');
 var ObjectId = require('mongodb').ObjectID;
-const { MysqlError, MongodbError } = require('../util/error/database_error');
+const { MongodbError } = require('../util/error/database_error');
 
 const getAllArticle = async () => {
   // Get records
@@ -11,7 +11,7 @@ const getAllArticle = async () => {
 
     return cursor;
   } catch (err) {
-    return new MongodbError('[getAllArticle]', err);
+    throw new MongodbError('[getAllArticle]', err);
   }
 };
 
@@ -23,7 +23,7 @@ const getCodeArticle = async () => {
 
     return cursor;
   } catch (err) {
-    return new MongodbError('[getCodeArticle]', err);
+    throw new MongodbError('[getCodeArticle]', err);
   }
 };
 
@@ -35,7 +35,7 @@ const getVideoArticle = async () => {
 
     return cursor;
   } catch (err) {
-    return new MongodbError('[getVideoArticle]', err);
+    throw new MongodbError('[getVideoArticle]', err);
   }
 };
 
@@ -49,7 +49,7 @@ const getArticleByID = async (article_id) => {
       .toArray();
     return cursor;
   } catch (err) {
-    return new MongodbError('[getArticleByID]', err);
+    throw new MongodbError('[getArticleByID]', err);
   }
 };
 
@@ -63,7 +63,7 @@ const getCodeArticleByID = async (article_id) => {
       .toArray();
     return cursor;
   } catch (err) {
-    return new MongodbError('[getCodeArticleByID]', err);
+    throw new MongodbError('[getCodeArticleByID]', err);
   }
 };
 
@@ -77,7 +77,7 @@ const getRecordArticleByID = async (article_id) => {
       .toArray();
     return cursor;
   } catch (err) {
-    return new MongodbError('[getRecordArticleByID]', err);
+    throw new MongodbError('[getRecordArticleByID]', err);
   }
 };
 
@@ -131,19 +131,22 @@ const checkShared = async (question_id, qid) => {
       .toArray();
 
     return getShared;
-  } catch (err) {
-    console.log('err', err);
-    return { err: err };
+  } catch (error) {
+    throw new MongodbError('[checkShared]', error);
   }
 };
 
 const insertVideoArticle = async (postData) => {
-  // Get records
-  const dbConnect = dbo.getDb();
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
 
-  let insertResult = dbConnect.collection('video-article').insertOne(postData);
+    let insertResult = dbConnect.collection('video-article').insertOne(postData);
 
-  return insertResult;
+    return insertResult;
+  } catch (error) {
+    throw new MongodbError('[insertVideoArticle]', error);
+  }
 };
 
 const updateCodeShared = async (question_id, qid) => {
@@ -171,9 +174,8 @@ const updateCodeShared = async (question_id, qid) => {
     );
     console.log('updateAnswer', updateAnswer);
     return { msg: updateAnswer };
-  } catch (err) {
-    console.log('err', err);
-    return { err: err };
+  } catch (error) {
+    throw new MongodbError('[updateCodeShared]', error);
   }
 };
 
@@ -203,37 +205,48 @@ const updateVideoShared = async (question_id, qid) => {
     );
     console.log('updateAnswer', updateAnswer);
     return { msg: updateAnswer };
-  } catch (err) {
-    console.log('err', err);
-    return { err: err };
+  } catch (error) {
+    throw new MongodbError('[updateVideoShared]', error);
   }
 };
 
 const updateArticleGood = async (article_id, user_id) => {
-  // Get records
-  const dbConnect = dbo.getDb();
-  console.log('good', article_id, user_id);
-  let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
-  console.log('insertResult', insertResult);
-  return insertResult;
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
+    console.log('good', article_id, user_id);
+    let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+  } catch (error) {
+    throw new MongodbError('[updateArticleGood]', error);
+  }
 };
 
 const updateArticleCodeGood = async (article_id, user_id) => {
-  // Get records
-  const dbConnect = dbo.getDb();
-  console.log('good', article_id, user_id);
-  let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
-  console.log('insertResult', insertResult);
-  return insertResult;
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
+    console.log('good', article_id, user_id);
+    let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+  } catch (error) {
+    throw new MongodbError('[updateArticleCodeGood]', error);
+  }
 };
 
 const updateArticleVideoGood = async (article_id, user_id) => {
-  // Get records
-  const dbConnect = dbo.getDb();
-  console.log('good', article_id, user_id);
-  let insertResult = await dbConnect.collection('video-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
-  console.log('insertResult', insertResult);
-  return insertResult;
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
+    console.log('good', article_id, user_id);
+    let insertResult = await dbConnect.collection('video-article').updateOne({ _id: ObjectId(article_id) }, { $push: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+  } catch (error) {
+    throw new MongodbError('[updateArticleVideoGood]', error);
+  }
 };
 
 const getArticleVideoGood = async (article_id) => {
@@ -249,9 +262,8 @@ const getArticleVideoGood = async (article_id) => {
       .toArray();
 
     return goods;
-  } catch (err) {
-    console.log('err', err);
-    return { err: err };
+  } catch (error) {
+    throw new MongodbError('[getArticleVideoGood]', error);
   }
 };
 
@@ -268,28 +280,35 @@ const getArticleCodeGood = async (article_id) => {
       .toArray();
 
     return goods;
-  } catch (err) {
-    console.log('err', err);
-    return { err: err };
+  } catch (error) {
+    throw new MongodbError('[getArticleCodeGood]', error);
   }
 };
 
 const updateArticleVideoBad = async (article_id, user_id) => {
-  // Get records
-  const dbConnect = dbo.getDb();
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
 
-  let insertResult = await dbConnect.collection('video-article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
-  console.log('insertResult', insertResult);
-  return insertResult;
+    let insertResult = await dbConnect.collection('video-article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+  } catch (error) {
+    throw new MongodbError('[updateArticleVideoBad]', error);
+  }
 };
 
 const updateArticleCodeBad = async (article_id, user_id) => {
-  // Get records
-  const dbConnect = dbo.getDb();
+  try {
+    // Get records
+    const dbConnect = dbo.getDb();
 
-  let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
-  console.log('insertResult', insertResult);
-  return insertResult;
+    let insertResult = await dbConnect.collection('code-article').updateOne({ _id: ObjectId(article_id) }, { $pull: { goods: user_id } });
+    console.log('insertResult', insertResult);
+    return insertResult;
+  } catch (error) {
+    throw new MongodbError('[updateArticleCodeBad]', error);
+  }
 };
 
 module.exports = {

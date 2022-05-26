@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { pool } = require('./mysqlcon');
-const { MysqlError } = require('../util/error/database_error');
+const { MongodbError, MysqlError } = require('../util/error/database_error');
 
 const getAllTutorSchedule = async () => {
   const conn = await pool.getConnection();
@@ -10,7 +10,7 @@ const getAllTutorSchedule = async () => {
     );
     return tutors_schedule[0];
   } catch (err) {
-    return new MysqlError('[getAllTutorSchedule]', err);
+    throw new MysqlError('[getAllTutorSchedule]', err);
   }
 };
 
@@ -24,7 +24,7 @@ const updateTutorSchedule = async (tutor_id, tutor_date_time, roomURL) => {
 
     if (checkSchedule[0].length > 0) {
       await conn.query('COMMIT');
-      return { error: 'You are already appointed at the time' };
+      throw new MysqlError('[You are already appointed at the time]', { status: 401, message: 'Duplicated appointment' });
     }
 
     const appoint = {
@@ -39,9 +39,9 @@ const updateTutorSchedule = async (tutor_id, tutor_date_time, roomURL) => {
 
     await conn.query('COMMIT');
     return { result };
-  } catch (err) {
+  } catch (error) {
     await conn.query('ROLLBACK');
-    return new MysqlError('[updateTutorSchedule]', err);
+    throw new MysqlError('[updateTutorSchedule]', error);
   } finally {
     await conn.release();
   }
@@ -64,7 +64,7 @@ const makeAppointment = async (tutor_time_id, user_id) => {
 
     if (authCheck[0].length !== 1) {
       await conn.query('COMMIT');
-      return { error: '你必須為學生身份才可以預約課程' };
+      throw new MysqlError('[updateTutorSchedule]', { error: '你必須為學生身份才可以預約課程' });
     }
 
     // check user time if crashed
@@ -79,7 +79,7 @@ const makeAppointment = async (tutor_time_id, user_id) => {
 
     const userScheduleCheck = await conn.query(checkQueryStr, [user_id, currentDate, futureDate]);
     if (userScheduleCheck[0].length > 0) {
-      return { error: 'You have already appointed tutor in this time' };
+      throw new MysqlError('[updateTutorSchedule]', { error: 'You have already appointed tutor in this time' });
     }
 
     const appoint = {
@@ -99,7 +99,7 @@ const makeAppointment = async (tutor_time_id, user_id) => {
     return { insertAppointmentResult };
   } catch (error) {
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[makeAppointment]', error);
   } finally {
     await conn.release();
   }
@@ -118,9 +118,8 @@ const getAllAppointmentByID = async (userID) => {
     await conn.query('COMMIT');
     return userAppointments[0];
   } catch (error) {
-    console.log(error);
     await conn.query('ROLLBACK');
-    return { error };
+    throw new MysqlError('[getAllAppointmentByID]', error);
   } finally {
     await conn.release();
   }
@@ -142,8 +141,8 @@ const setTutorInfomation = async (experience1, experience2, experience3, user_id
     const [result] = await conn.query(queryStr, [tutorInfo, user_id]);
 
     return { result };
-  } catch (err) {
-    return { err };
+  } catch (error) {
+    throw new MongodbError('[setTutorInfomation]', error);
   }
 };
 

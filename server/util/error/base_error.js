@@ -10,9 +10,9 @@ class ApplicationError extends Error {
 
     this.name = this.constructor.name;
 
-    this.reason = reason || 'Internal server error';
-
     this.message = message || 'Something went wrong. Please try again.';
+
+    this.reason = reason || 'Internal server error';
 
     this.status = status || 500;
 
