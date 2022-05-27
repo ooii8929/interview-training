@@ -11,8 +11,6 @@ Preparing for an interview is hard for newbies. In order to give interviewers mo
 
 ![interview training Pain point and solution](https://imgur.com/oHeKXX0.png)
 
-![test gif](https://imgur.com/I2hMPqU.gif)
-
 ## 🚀 Test Accounts
 Website URL: https://wooah.app/
 
