@@ -1,4 +1,4 @@
-![Interview Training System](/logo.png){ width="800" height="600" style="display: block; margin: 0 auto" }
+![Interview Training System](/logo.png)
 
 
 # Interview Training System - 面面
@@ -56,35 +56,30 @@ Website URL: https://wooah.app/
 ![programming platform](https://i.imgur.com/kd8o8E5.jpg)
 
 - Use Docker to run the different languages.
+  - Deploy a python image and a JavaScript image.
+    ```
+    cd server/util/code-training
+    docker build -t python-image -f python-dockerfile .
+    docker build -t node-image -f node-dockerfile .
+    ```
+
+    ```
+    ./build-python.sh
+    ./build-javascript.sh
+    ```
+
+  - Go Language is maintain
+    ```
+    cd server/env-build
+    ./build.sh
+    ```
+
 - Set Docker Runtime options to distribute server resources.
 - Store answer to MongDB which can burden heavy write scenarios.
 
 ### Support Language
 We support javescript and python language.
 
-### Installation
-You need to deploy a python image and a js image of docker to run coding trainging.
-
-```
-cd server/util/code-training
-docker build -t python-image -f python-dockerfile .
-docker build -t node-image -f node-dockerfile .
-```
-
-After finished it, you can use the follow command to try if it's successful.
-
-```
-./build-python.sh
-./build-javascript.sh
-```
-
-You don't need to build go language image, because it is compiling language which need its environment. 
-So we use build-go.sh to run the go question.
-
-```
-cd server/env-build
-./build.sh
-```
 
 ## Feature 2 : Online Mock Interview
 ![test gif](https://imgur.com/5aCSlcJ.gif)
