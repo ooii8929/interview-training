@@ -6,7 +6,25 @@
 A system that provides a situational interview that helps interviewees master key interviewing skills. 
 There are 3 main features: situational simulation, tutor matching platform and social platform.
 
-## Pain point and solution
+## Table of Contents
+
+- [Pain Point and Solution](#pain-point-and-solution)
+- Test Accounts
+- Feature 1 : Online Programming Platform
+  - User Flow
+  - Technologies
+- Feature 2 : Online Programming Platform
+  - User Flow
+  - Technologies
+- Database Schema
+- Features
+- Technologies
+- Loading Test
+- Race Condition Cases
+- Author
+
+
+## Pain Point and Solution
 Preparing for an interview is hard for newbies. In order to give interviewers more opportunities to improve their performance during the interview, this interview training system was developed.
 
 ![interview training Pain point and solution](https://imgur.com/oHeKXX0.png)
@@ -26,19 +44,12 @@ Website URL: https://wooah.app/
     - Email: lai@gmail.com
     - Password: 123123
 
-![test](https://interview-appworks.s3.ap-northeast-1.amazonaws.com/Screen+Shot+2022-05-27+at+1.22.43+PM.png)
+## Feature 1 : Online Programming Platform
+![test gif](https://imgur.com/I2hMPqU.gif)
 
-## Table of Contents
+### User Flow
 
-- Architecture
-- Database Schema
-- Features
-- Technologies
-- Loading Test
-- Race Condition Cases
-- Contact
-
-
+### Technologies
 
 
 ## Database Schema
@@ -106,7 +117,7 @@ cd server/env-build
 ```
 
 
-## Authors
+## Author
 
 - [Author: Alvin Lin](https://www.linkedin.com/in/alvin331/)
 - [Mail: ooii8929@gmail.com](mailto:ooii8929@gmail.com)

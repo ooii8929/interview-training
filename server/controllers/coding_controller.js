@@ -127,7 +127,7 @@ async function runCodeWithDocker(uuid, content, language) {
   }
 }
 
-async function checkCodeStatus(formalAnswer, userAnswer) {
+function checkCodeStatus(formalAnswer, userAnswer) {
   if (formalAnswer === userAnswer) {
     return 1;
   }

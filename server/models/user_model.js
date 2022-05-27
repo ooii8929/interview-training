@@ -319,7 +319,7 @@ const getUserProfileByEmail = async (email) => {
   }
 };
 
-const getUserProfileByUserID = async (userID, identity) => {
+const getUserProfileByUserID = async (userID, identity, email) => {
   const conn = await pool.getConnection();
   try {
     await conn.query('START TRANSACTION');

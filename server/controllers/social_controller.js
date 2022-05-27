@@ -186,19 +186,13 @@ const insertCodeComments = async (req, res, next) => {
   try {
     // insert code post
     const { article_id, summerNote } = req.body;
-    let userInfo;
-    if (req.locals.identity == 'student') {
-      userInfo = await USER.getUserPureProfile(req.locals.id, req.locals.email);
-    }
+    let userInfo = await USER.getUserProfileByUserID(req.locals.id, req.locals.identity, req.locals.email);
 
-    if (req.locals.identity == 'tutor') {
-      userInfo = await USER.gettutorProfile(req.locals.id, req.locals.email);
-    }
     let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
 
     return res.status(200).send(insertResult);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
