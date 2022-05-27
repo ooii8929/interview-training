@@ -14,8 +14,8 @@ There are 3 main features: situational simulation, tutor matching platform and s
   - [User Flow](#user-flow)
   - [Technologies](#technologies)
 - Feature 2 : Online Mock Interview
-  - [User Flow - Online Mock Interview](#user-flow-online-mock-interview)
-  - Technologies
+  - [User Flow](#user-content-technologies-1)
+  - [Technologies](#user-content-technologies-1)
 - Feature 3 : Online Tutor and Match Platform
   - User Flow
   - Technologies
