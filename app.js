@@ -6,7 +6,13 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const winston = require('winston');
 const WinstonCloudWatch = require('winston-cloudwatch');
-
+const dbo = require('./server/models/mongodbcon');
+dbo.connectToServer(function (err) {
+  if (err) {
+    console.error(err);
+    process.exit();
+  }
+});
 winston.loggers.add('access-log', {
   transports: [
     new winston.transports.Console({

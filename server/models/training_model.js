@@ -27,7 +27,8 @@ const getExamInProgressBySessionId = async (userID) => {
     const nowQuestion = await dbConnect.collection('training').find({ user_id: userID, status: 0 }).toArray();
     return nowQuestion;
   } catch (error) {
-    throw new MongodbError('[getAllTrainingByUserId]', error);
+    console.log('error', error);
+    throw new MongodbError(error, 500);
   }
 };
 
@@ -39,7 +40,7 @@ const getVideoQuestions = async (profession) => {
 
     return questions;
   } catch (error) {
-    throw new MysqlError('[getVideoQuestions]', error);
+    throw new MysqlError(error, 500);
   }
 };
 

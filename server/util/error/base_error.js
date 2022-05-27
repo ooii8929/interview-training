@@ -3,16 +3,14 @@
 // Here is the base error classes to extend from
 
 class ApplicationError extends Error {
-  constructor(message, reason, status) {
+  constructor(message, status) {
     super();
 
     Error.captureStackTrace(this, this.constructor);
 
     this.name = this.constructor.name;
 
-    this.message = message || 'Something went wrong. Please try again.';
-
-    this.reason = reason || 'Internal server error';
+    this.message = message || 'Internal Server Error';
 
     this.status = status || 500;
 
