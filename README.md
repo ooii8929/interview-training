@@ -13,19 +13,20 @@ There are 3 main features: situational simulation, tutor matching platform and s
 - [Feature 1 : Online Programming Platform](#feature-1-:-online-programming-platform)
   - [User Flow](#user-flow)
   - [Technologies](#technologies)
-- Feature 2 : Online Mock Interview
+  - [Installation](#installation)
+- [Feature 2 : Online Mock Interview](#feature-2-:-online-mock-interview)
   - [User Flow](#user-content-user-flow-1)
   - [Technologies](#user-content-technologies-1)
-- Feature 3 : Online Tutor and Match Platform
-  - User Flow
-  - Technologies
-- Feature 4 : Interviewee Social Platform
-  - User Flow
-  - Technologies
-- Database Schema
-- Features
-- Technologies
-- Author
+- [Feature 3 : Online Tutor and Match Platform](#feature-3-:-online-tutor-and-match-platform)
+  - [User Flow](#user-content-user-flow-2)
+  - [Technologies](#user-content-technologies-2)
+- [Feature 4 : Interviewee Social Platform](#feature-4-:-interviewee-social-platform)
+  - [User Flow](#user-content-user-flow-3)
+  - [Technologies](#user-content-technologies-3)
+- [Database Schema](#database-schema)
+- [Technologies](#user-content-technologies-4)
+- [Future Work](#future-work)
+- [Author](#author)
 
 
 ## Pain Point and Solution
@@ -51,59 +52,17 @@ Website URL: https://wooah.app/
 ## Feature 1 : Online Programming Platform
 ![test gif](https://imgur.com/I2hMPqU.gif)
 
-### User Flow
+### Architect & Technologies
+![programming platform](https://i.imgur.com/kd8o8E5.jpg)
 
-### Technologies
+- Use Docker to run the different languages.
+- Set Docker Runtime options to distribute server resources.
+- Store answer to MongDB which can burden heavy write scenarios.
 
-## Feature 2 : Online Mock Interview
-![test gif](https://imgur.com/I2hMPqU.gif)
+### Support Language
+We support javescript and python language.
 
-### User Flow
-
-### Technologies
-
-
-## Database Schema
-![Database Schema](https://imgur.com/OlGVdzF.png)
-
-## Technologies
-
-- Back-End
-    - Node.js
-    - Express.js
-- Front-End
-    - HTML
-    - CSS
-    - JavaScript
-    - React.js
-- Database
-    - MySQL
-    - MongoDB
-- Framework
-    - MVC design pattern
-
-- AWS Cloud Services
-    - Elastic Compute Cloud (EC2)
-    - Relational Database Service (RDS)
-    - Simple Storage Service (S3)
-
-- Networking
-    - NGINX
-    - Socket.IO
-    
-- Test
-    - Mocha
-    - Chai
-
-
-# interview-training
-Appworks school self-project
-
-# Code Training
-## Support
-We support javescript, python, and go language.
-
-## Init
+### Installation
 You need to deploy a python image and a js image of docker to run coding trainging.
 
 ```
@@ -126,6 +85,65 @@ So we use build-go.sh to run the go question.
 cd server/env-build
 ./build.sh
 ```
+
+## Feature 2 : Online Mock Interview
+![test gif](https://imgur.com/I2hMPqU.gif)
+
+### Architect & Technologies
+![programming platform](https://imgur.com/5HuPYPi.jpg)
+
+## Feature 3 : Online Tutor and Match Platform
+![test gif](https://imgur.com/I2hMPqU.gif)
+
+### Architect & Technologies
+![programming platform](https://imgur.com/GH95gm1.jpg)
+
+
+## Database Schema
+![Database Schema](https://imgur.com/OlGVdzF.png)
+
+## Technologies
+
+- Back-End
+    - Node.js
+    - Express.js
+
+- Front-End
+    - HTML
+    - CSS
+    - JavaScript
+    - React.js
+
+- Database
+    - MySQL
+    - MongoDB
+
+- Framework
+    - MVC design pattern
+
+- AWS Cloud Services
+    - Elastic Compute Cloud (EC2)
+    - Relational Database Service (RDS)
+    - Simple Storage Service (S3)
+
+- Networking
+    - NGINX
+    - Socket.IO
+    
+- Test
+    - Mocha
+    - Chai
+
+
+
+## Future Work
+
+### Feature
+Emotion AI
+
+### Architect
+Transform Docker into lambda to reduce server load
+
 
 
 ## Author
