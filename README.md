@@ -58,7 +58,7 @@ Website URL: https://wooah.app/
 ## Feature 2 : Online Mock Interview
 ![test gif](https://imgur.com/I2hMPqU.gif)
 
-### User Flow - Online Mock Interview
+### User Flow
 
 ### Technologies
 
