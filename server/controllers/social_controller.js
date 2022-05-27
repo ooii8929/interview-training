@@ -188,7 +188,7 @@ const insertCodeComments = async (req, res, next) => {
     const { article_id, summerNote } = req.body;
     let userInfo = await USER.getUserProfileByUserID(req.locals.id, req.locals.identity, req.locals.email);
 
-    let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo[0][0]);
+    let insertResult = await SOCIAL.insertCodeComment(req.locals.id, article_id, summerNote, userInfo);
 
     return res.status(200).send(insertResult);
   } catch (error) {

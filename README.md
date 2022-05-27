@@ -50,10 +50,11 @@ Website URL: https://wooah.app/
     - Password: 123123
 
 ## Feature 1 : Online Programming Platform
+This feature supply an mock online coding area which you can mock you are ask question. 
 ![test gif](https://imgur.com/I2hMPqU.gif)
 
 ### Architect & Technologies
-![programming platform](https://i.imgur.com/kd8o8E5.jpg)
+![programming platform](https://imgur.com/TAxJbwz.jpg)
 
 - Use Docker to run the different languages.
   - Deploy a python image and a JavaScript image.
