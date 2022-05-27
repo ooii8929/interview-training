@@ -6,6 +6,11 @@
 A system that provides a situational interview that helps interviewees master key interviewing skills. 
 There are 3 main features: situational simulation, tutor matching platform and social platform.
 
+## Pain point and solution
+Preparing for an interview is hard for newbies. In order to give interviewers more opportunities to improve their performance during the interview, this interview training system was developed.
+
+![interview training Pain point and solution](https://imgur.com/oHeKXX0.png)
+
 ## 🚀 Test Accounts
 Website URL: https://wooah.app/
 
