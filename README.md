@@ -9,18 +9,22 @@ There are 3 main features: situational simulation, tutor matching platform and s
 ## Table of Contents
 
 - [Pain Point and Solution](#pain-point-and-solution)
-- Test Accounts
-- Feature 1 : Online Programming Platform
+- [Test Accounts](#test-accounts)
+- [Feature 1 : Online Programming Platform](#feature-1-:-online-programming-platform)
+  - [User Flow](#user-flow)
+  - [Technologies](#technologies)
+- Feature 2 : Online Mock Interview
+  - [User Flow - Online Mock Interview](#user-flow-online-mock-interview)
+  - Technologies
+- Feature 3 : Online Tutor and Match Platform
   - User Flow
   - Technologies
-- Feature 2 : Online Programming Platform
+- Feature 4 : Interviewee Social Platform
   - User Flow
   - Technologies
 - Database Schema
 - Features
 - Technologies
-- Loading Test
-- Race Condition Cases
 - Author
 
 
