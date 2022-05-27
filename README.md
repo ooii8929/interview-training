@@ -55,6 +55,13 @@ Website URL: https://wooah.app/
 
 ### Technologies
 
+## Feature 2 : Online Mock Interview
+![test gif](https://imgur.com/I2hMPqU.gif)
+
+### User Flow - Online Mock Interview
+
+### Technologies
+
 
 ## Database Schema
 ![Database Schema](https://imgur.com/OlGVdzF.png)
