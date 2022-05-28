@@ -285,7 +285,17 @@ export default function Account(props) {
           <Grid container columns={12} className="account-box-grid">
             {allTutorRecords
               ? allTutorRecords['data']['appointed'].map((arrange, index) => {
-                  return (
+                  return identity === 'tutor' ? (
+                    <Grid item xs={4} key={index} className="account-box-grid-self">
+                      <TutorCard
+                        key={index}
+                        picture={arrange['picture']}
+                        tutor={arrange['name']}
+                        href={arrange['course_url']}
+                        createDT={arrange['available_time'].replace('T', ' ').replace('Z', ' ').split('.', 1)}
+                      />
+                    </Grid>
+                  ) : (
                     <Grid item xs={4} key={index} className="account-box-grid-self">
                       <TutorCard
                         key={index}
