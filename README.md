@@ -47,7 +47,8 @@ There are 3 main features: situational simulation, tutor matching platform and s
 ![](https://imgur.com/dk8Yvwu.jpg)
 
 ## Feature 1 : Online Programming Platform
-This feature supply an mock online coding area which you can mock you are ask question. 
+This feature supply an mock online coding area which you can mock you are ask question.   
+    <br />
 ![test gif](https://imgur.com/I2hMPqU.gif)
 
 ### Architect & Technologies
@@ -80,14 +81,16 @@ We support javescript and python language.
 
 
 ## Feature 2 : Online Mock Interview
-Provides a mock interview environment which record interviewee's performance and provides key points to interviewee to practice interviews.
+Provides a mock interview environment which record interviewee's performance and provides key points to interviewee to practice interviews.  
+    <br />
 ![test gif](https://imgur.com/LljUi6R.gif)
 
 ### Architect & Technologies
 ![programming platform](https://imgur.com/RfsF4Zb.jpg)
 
 ## Feature 3 : Online Tutor and Match Platform
-Interviewees can find experienced tutors here and takes online classes.
+Interviewees can find experienced tutors here and takes online classes.  
+    <br />
 ![](https://imgur.com/LljUi6R.gif)
 
 ### Architect & Technologies
