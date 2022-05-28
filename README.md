@@ -1,4 +1,4 @@
-![Interview Training System](/logo.png)
+![Interview Training System](https://imgur.com/VQs7ffO.jpg)
 
 
 # Interview Training System - 面面
@@ -8,7 +8,7 @@ There are 3 main features: situational simulation, tutor matching platform and s
 
 ## Table of Contents
 
-- [Pain Point and Solution](#pain-point-and-solution)
+
 - [Test Accounts](#test-accounts)
 - [Feature 1 : Online Programming Platform](#user-content-feature-1--online-programming-platform)
   - [User Flow](#user-flow)
@@ -28,11 +28,6 @@ There are 3 main features: situational simulation, tutor matching platform and s
 - [Future Work](#future-work)
 - [Author](#author)
 
-
-## Pain Point and Solution
-Preparing for an interview is hard for newbies. In order to give interviewers more opportunities to improve their performance during the interview, this interview training system was developed.
-
-![interview training Pain point and solution](https://imgur.com/oHeKXX0.png)
 
 ## 🚀 Test Accounts
 Website URL: https://wooah.app/
