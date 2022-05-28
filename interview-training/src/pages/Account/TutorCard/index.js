@@ -25,9 +25,6 @@ export default function BasicCard(props) {
         <Typography variant="body2" color="text.secondary">
           {props.time}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {props.createDT}
-        </Typography>
       </CardContent>
 
       <CardActions className="tutor-card-speci">
