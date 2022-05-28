@@ -23,7 +23,7 @@ export default function BasicCard(props) {
         </Typography>
 
         <Typography variant="body2" color="text.secondary">
-          {props.availableTime}
+          {props.time}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {props.createDT}
