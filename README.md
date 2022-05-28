@@ -80,7 +80,7 @@ We support javescript and python language.
 
 
 ## Feature 2 : Online Mock Interview
-Provides a mock interview environment which record interviewee's performance and key points to practice interviews.
+Provides a mock interview environment which record interviewee's performance and provides key points to interviewee to practice interviews.
 ![test gif](https://imgur.com/LljUi6R.gif)
 
 ### Architect & Technologies
@@ -88,7 +88,7 @@ Provides a mock interview environment which record interviewee's performance and
 
 ## Feature 3 : Online Tutor and Match Platform
 Interviewees can find experienced tutors here and takes online classes.
-![](https://imgur.com/T52c3NX.gif)
+![](https://imgur.com/LljUi6R.gif)
 
 ### Architect & Technologies
 ![programming platform](https://imgur.com/nxRloD8.jpg)
