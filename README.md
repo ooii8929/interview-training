@@ -2,6 +2,7 @@
 
 
 # Interview Training System - 面面
+Website URL: https://wooah.app/
 
 A system that provides a situational interview that helps interviewees master key interviewing skills. 
 There are 3 main features: situational simulation, tutor matching platform and social platform.
@@ -30,8 +31,6 @@ There are 3 main features: situational simulation, tutor matching platform and s
 
 
 ## 🚀 Test Accounts
-Website URL: https://wooah.app/
-
 - Student1
     - Email: ooii8929@gmail.com
     - Password: 123123
@@ -44,12 +43,15 @@ Website URL: https://wooah.app/
     - Email: lai@gmail.com
     - Password: 123123
 
+## Architect Overview
+![](https://imgur.com/dk8Yvwu.jpg)
+
 ## Feature 1 : Online Programming Platform
 This feature supply an mock online coding area which you can mock you are ask question. 
 ![test gif](https://imgur.com/I2hMPqU.gif)
 
 ### Architect & Technologies
-![programming platform](https://imgur.com/TAxJbwz.jpg)
+![programming platform](https://imgur.com/sRHSjhz.jpg)
 
 - Use Docker to run the different languages.
   - Deploy a python image and a JavaScript image.
@@ -78,21 +80,24 @@ We support javescript and python language.
 
 
 ## Feature 2 : Online Mock Interview
-![test gif](https://imgur.com/5aCSlcJ.gif)
+Provides a mock interview environment which record interviewee's performance and key points to practice interviews.
+![test gif](https://imgur.com/LljUi6R.gif)
 
 ### Architect & Technologies
-![programming platform](https://imgur.com/5HuPYPi.jpg)
+![programming platform](https://imgur.com/RfsF4Zb.jpg)
 
 ## Feature 3 : Online Tutor and Match Platform
+Interviewees can find experienced tutors here and takes online classes.
+![](https://imgur.com/T52c3NX.gif)
 
 ### Architect & Technologies
-![programming platform](https://imgur.com/GH95gm1.jpg)
+![programming platform](https://imgur.com/nxRloD8.jpg)
 
 ## Feature 4 : Interviewee Social Platform
-
+We provide a social platform where interviewers can ask interview-related questions
 
 ### Architect & Technologies
-![programming platform](https://imgur.com/b2EjPw2.jpg)
+![programming platform](https://imgur.com/tH8MK5d.jpg)
 
 
 ## Database Schema
@@ -102,30 +107,30 @@ We support javescript and python language.
 
 - Back-End
     - Node.js
-    - Express.js
-
+    - Express.js  
+    <br />
 - Front-End
     - HTML
     - CSS
     - JavaScript
-    - React.js
-
+    - React.js  
+    <br />
 - Database
     - MySQL
-    - MongoDB
-
+    - MongoDB  
+    <br />
 - Framework
-    - MVC design pattern
-
+    - MVC design pattern  
+    <br />
 - AWS Cloud Services
     - Elastic Compute Cloud (EC2)
     - Relational Database Service (RDS)
-    - Simple Storage Service (S3)
-
+    - Simple Storage Service (S3)  
+    <br />
 - Networking
     - NGINX
-    - Socket.IO
-    
+    - Socket.IO  
+    <br />
 - Test
     - Mocha
     - Chai
@@ -134,11 +139,8 @@ We support javescript and python language.
 
 ## 🚀 Future Work
 
-### Feature
-Emotion AI
-
-### Architect
-Transform Docker into lambda to reduce server load
+- Use emotion AI to recommend related question in real time
+- Transform Docker into lambda to reduce server load
 
 
 
