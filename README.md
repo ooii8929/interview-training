@@ -11,18 +11,15 @@ There are 3 main features: situational simulation, tutor matching platform and s
 
 
 - [Test Accounts](#test-accounts)
+- [Architect Overview](#architect-overview)
 - [Feature 1 : Online Programming Platform](#user-content-feature-1--online-programming-platform)
-  - [User Flow](#user-flow)
   - [Technologies](#technologies)
-  - [Installation](#installation)
+  - [Note](#note)
 - [Feature 2 : Online Mock Interview](#user-content-feature-2--online-mock-interview)
-  - [User Flow](#user-content-user-flow-1)
   - [Technologies](#user-content-technologies-1)
 - [Feature 3 : Online Tutor and Match Platform](#user-content-feature-3--online-tutor-and-match-platform)
-  - [User Flow](#user-content-user-flow-2)
   - [Technologies](#user-content-technologies-2)
 - [Feature 4 : Interviewee Social Platform](#user-content-feature-4--interviewee-social-platform)
-  - [User Flow](#user-content-user-flow-3)
   - [Technologies](#user-content-technologies-3)
 - [Database Schema](#database-schema)
 - [Technologies](#user-content-technologies-4)
@@ -54,6 +51,7 @@ This feature supply an mock online coding area which you can mock you are ask qu
 ### Architect & Technologies
 ![programming platform](https://imgur.com/sRHSjhz.jpg)
 
+### Note
 - Use Docker to run the different languages.
   - Deploy a python image and a JavaScript image.
     ```
@@ -67,18 +65,21 @@ This feature supply an mock online coding area which you can mock you are ask qu
     ./build-javascript.sh
     ```
 
-  - Go Language is maintain
+- To avoid the server loading too heavy due to Docker operation, set runtime options with memory and CPUs.
     ```
-    cd server/env-build
-    ./build.sh
+    --cpus=".1" --memory="20m"
     ```
 
-- Set Docker Runtime options to distribute server resources.
+- To avoid malicious damage to the server, set ulimit option
+    ```
+    --ulimit cpu=1
+    ```
+
+- The execution file is temporary and will be deleted automatically after the answer is returned.
+
 - Store answer to MongDB which can burden heavy write scenarios.
 
-### Support Language
-We support javescript and python language.
-
+- The system support support javescript and python language now.
 
 ## Feature 2 : Online Mock Interview
 Provides a mock interview environment which record interviewee's performance and provides key points to interviewee to practice interviews.  
