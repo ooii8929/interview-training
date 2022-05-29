@@ -20,14 +20,14 @@ There are 3 main features: situational simulation, tutor matching platform and s
 - [Feature 3 : Online Tutor and Match Platform](#user-content-feature-3--online-tutor-and-match-platform)
   - [Technologies](#user-content-architect--technologies-2)
 - [Feature 4 : Interviewee Social Platform](#user-content-feature-4--interviewee-social-platform)
-  - [Technologies](#user-content-technologies-3)
+  - [Technologies](#user-content-architect--technologies-3)
 - [Database Schema](#database-schema)
 - [Technologies](#user-content-technologies-4)
 - [Future Work](#future-work)
 - [Author](#author)
 
 
-## 🚀 Test Accounts
+## Test Accounts
 - Student1
     - Email: ooii8929@gmail.com
     - Password: 123123
@@ -148,7 +148,7 @@ We provide a social platform where interviewers can ask interview-related questi
 
 
 
-## 🚀 Future Work
+## Future Work
 
 - Use emotion AI to recommend related question in real time
 - Transform Docker into lambda to reduce server load
