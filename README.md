@@ -13,7 +13,7 @@ There are 3 main features: situational simulation, tutor matching platform and s
 - [Test Accounts](#test-accounts)
 - [Architect Overview](#architect-overview)
 - [Feature 1 : Online Programming Platform](#user-content-feature-1--online-programming-platform)
-  - [Technologies](#technologies)
+  - [Technologies](#user-content-architect--technologies)
   - [Note](#note)
 - [Feature 2 : Online Mock Interview](#user-content-feature-2--online-mock-interview)
   - [Technologies](#user-content-technologies-1)
