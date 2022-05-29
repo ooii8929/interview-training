@@ -128,7 +128,11 @@ We provide a social platform where interviewers can ask interview-related questi
 - AWS Cloud Services
     - Elastic Compute Cloud (EC2)
     - Relational Database Service (RDS)
-    - Simple Storage Service (S3)  
+    - Simple Storage Service (S3)
+    - Amazon CloudWatch
+    - AWS Lambda
+    - Amazon EventBridge
+    - Amazon ElastiCache
     <br />
 - Networking
     - NGINX
@@ -137,6 +141,8 @@ We provide a social platform where interviewers can ask interview-related questi
 - Test
     - Mocha
     - Chai
+- Other
+    - Docker
 
 
 
