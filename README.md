@@ -91,10 +91,11 @@ Provides a mock interview environment which record interviewee's performance and
 ## Feature 3 : Online Tutor and Match Platform
 Interviewees can find experienced tutors here and takes online classes.  
     <br />
-![](https://imgur.com/LljUi6R.gif)
+![](https://i.imgur.com/T52c3NX.gif){ width: 100vw !important; }
 
 ### Architect & Technologies
-![programming platform](https://imgur.com/nxRloD8.jpg)
+![programming platform](https://imgur.com/nxRloD8.jpg =100x20)
+
 
 ## Feature 4 : Interviewee Social Platform
 We provide a social platform where interviewers can ask interview-related questions
