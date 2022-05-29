@@ -18,7 +18,7 @@ There are 3 main features: situational simulation, tutor matching platform and s
 - [Feature 2 : Online Mock Interview](#user-content-feature-2--online-mock-interview)
   - [Technologies](#user-content-technologies-1)
 - [Feature 3 : Online Tutor and Match Platform](#user-content-feature-3--online-tutor-and-match-platform)
-  - [Technologies](#user-content-technologies-2)
+  - [Technologies](#user-content-architect--technologies-2)
 - [Feature 4 : Interviewee Social Platform](#user-content-feature-4--interviewee-social-platform)
   - [Technologies](#user-content-technologies-3)
 - [Database Schema](#database-schema)
