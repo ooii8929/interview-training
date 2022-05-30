@@ -56,43 +56,50 @@ export default function Account(props) {
   }
 
   async function updateAvator(avatorName, avatorType, avator, avatorContent) {
-    // Get S3 Upload URL
-    let getAvatorURL = await axios({
-      withCredentials: true,
-      method: 'GET',
-      credentials: 'same-origin',
-      url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator/upload`,
-      params: {
-        file_name: avatorName,
-        file_type: avatorType,
-      },
-      headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-    });
+    try {
+      // Get S3 Upload URL
+      let getAvatorURL = await axios({
+        withCredentials: true,
+        method: 'GET',
+        credentials: 'same-origin',
+        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator/upload`,
+        params: {
+          file_name: avatorName,
+          file_type: avatorType,
+        },
+        headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+      });
+      console.log('getAvatorURL', getAvatorURL);
 
-    // Put to S3
-    await axios.put(getAvatorURL['data']['avatorURL'], avatorContent, {
-      headers: { 'Content-Type': avatorType },
-    });
+      // Put to S3
+      await axios.put(getAvatorURL['data'], avatorContent, {
+        headers: { 'Content-Type': avatorType },
+      });
 
-    let data = {
-      userID: userID,
-      identity: identity,
-      picture: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/avator/` + avatorName,
-    };
+      let data = {
+        userID: userID,
+        identity: identity,
+        picture: `https://interview-appworks.s3.ap-northeast-1.amazonaws.com/avator/` + avatorName,
+      };
 
-    console.log('data', data);
+      console.log('data', data);
 
-    // Update Profile Avator URL
-    let updateAvatorURL = await axios({
-      withCredentials: true,
-      method: 'POST',
-      credentials: 'same-origin',
-      url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`,
-      data: data,
-      headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
-    });
+      // Update Profile Avator URL
+      let updateAvatorURL = await axios({
+        withCredentials: true,
+        method: 'POST',
+        credentials: 'same-origin',
+        url: `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_BASE_VERSION}/user/avator`,
+        data: data,
+        headers: { 'Access-Control-Allow-Origin': `${process.env.REACT_APP_NOW_URL}`, 'Content-Type': 'application/json' },
+      });
 
-    console.log('updateAvatorURL', updateAvatorURL);
+      console.log('updateAvatorURL', updateAvatorURL);
+
+      // setAvator(updateAvatorURL);
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   // Get user profile
