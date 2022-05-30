@@ -38,10 +38,21 @@ export default function Account(props) {
     init();
   }, []);
 
-  function handleChange(e) {
-    updateAvator(e.target.files[0]['name'], e.target.files[0]['type'], URL.createObjectURL(e.target.files[0]), e.target.files[0]);
-    setAvator(URL.createObjectURL(e.target.files[0]));
-    props.setAvatorURL(URL.createObjectURL(e.target.files[0]));
+  async function handleChange(e) {
+    try {
+      updateAvator(e.target.files[0]['name'], e.target.files[0]['type'], URL.createObjectURL(e.target.files[0]), e.target.files[0]);
+      setAvator(URL.createObjectURL(e.target.files[0]));
+      props.setAvatorURL(URL.createObjectURL(e.target.files[0]));
+    } catch (error) {
+      console.log('error', error);
+      console.log('error response', error.response);
+      await Swal.fire({
+        title: '出現一些問題',
+        text: `${error.response.data.error}`,
+        icon: 'error',
+        confirmButtonText: '再試一次',
+      });
+    }
   }
 
   async function updateAvator(avatorName, avatorType, avator, avatorContent) {

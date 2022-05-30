@@ -169,7 +169,7 @@ const signUpTotutor = async (name, email, password, experience1, experience2, ex
 
     if (findtutorByEmail.length > 0) {
       await conn.query('COMMIT');
-      throw new BadRequestError('[signUpTotutor]', { error: 'Email Already Exists' });
+      return new BadRequestError({ error: 'Email Already Exists' }, 400);
     }
 
     // argon2 hash
@@ -218,7 +218,7 @@ const signUpToStudent = async (name, email, password) => {
     // check user exist
     if (emails[0].length > 0) {
       await conn.query('COMMIT');
-      return { error: 'Email Already Exists' };
+      return new BadRequestError({ error: 'Email Already Exists' }, 400);
     }
 
     const hash = await argon2.hash(password);

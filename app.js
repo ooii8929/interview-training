@@ -111,11 +111,15 @@ app.use(function (req, res, next) {
 // Error handling
 // eslint-disable-next-line no-unused-vars
 app.use(function (err, req, res, next) {
+  res.setHeader('Content-Type', 'application/json');
   logg.error(err);
+  console.log('err test', err);
+  console.log('err status', err.message);
   if (err instanceof UserFacingError || err instanceof DatabaseError || err instanceof ApplicationError) {
-    res.sendStatus(err.statusCode).send(err.response);
+    return res.status(err.status).send(err.message);
+  } else {
+    return res.status(500).send('Internal Server Error');
   }
-  res.status(500).send('Internal Server Error');
 });
 
 if (NODE_ENV != 'production') {

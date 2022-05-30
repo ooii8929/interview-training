@@ -4,6 +4,7 @@ const User = require('../models/user_model');
 const util = require('../util/util');
 const Cache = require('../util/cache');
 const dbo = require('../models/mongodbcon');
+const { DatabaseError, UserFacingError } = require('../util/error/base_error');
 
 const signUp = async (req, res, next) => {
   try {
@@ -29,15 +30,18 @@ const signUp = async (req, res, next) => {
     if (identity === 'tutor') {
       const { experience1, experience2, experience3, introduce, profession } = req.body;
       result = await User.signUpTotutor(name, email, password, experience1, experience2, experience3, introduce, profession, provider);
+      if (result instanceof DatabaseError || result instanceof UserFacingError) {
+        console.log('thorw now');
+        throw result;
+      }
     }
 
     if (identity === 'student') {
       result = await User.signUpToStudent(name, email, password);
-    }
-
-    if (result.error) {
-      res.status(403).send({ error: result.error });
-      return;
+      if (result instanceof DatabaseError || result instanceof UserFacingError) {
+        console.log('thorw now');
+        throw result;
+      }
     }
 
     const user = result.user;
@@ -64,6 +68,7 @@ const signUp = async (req, res, next) => {
       });
     }
   } catch (error) {
+    console.log('controller', error);
     next(error);
   }
 };
