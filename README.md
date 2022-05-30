@@ -46,7 +46,8 @@ There are 3 main features: situational simulation, tutor matching platform and s
 ## Feature 1 : Online Programming Platform
 The purpose of this feature is to simulate a coding interview scenario.
     <br />
-![test gif](https://imgur.com/I2hMPqU.gif)
+https://user-images.githubusercontent.com/27533338/170912947-8ed5d609-ceca-4a2f-a237-7c5837c7dc0f.mp4
+
 
 ### Architect & Technologies
 ![programming platform](https://imgur.com/sRHSjhz.jpg)
@@ -84,7 +85,9 @@ The purpose of this feature is to simulate a coding interview scenario.
 ## Feature 2 : Online Mock Interview
 Provides a mock interview environment that records the interviewee's performance and provides critical points for the interviewee to practice interviews.  
     <br />
-![test gif](https://imgur.com/LljUi6R.gif)
+https://user-images.githubusercontent.com/27533338/170912969-a40093bb-fd19-494a-974a-0b007744a732.mp4
+
+
 
 
 ### Architect & Technologies
@@ -94,7 +97,9 @@ Provides a mock interview environment that records the interviewee's performance
 
 You can learn online from experienced people here.
     <br />
-![](https://i.imgur.com/T52c3NX.gif)
+https://user-images.githubusercontent.com/27533338/170912989-1ace7b0a-db1a-47a5-86e3-a62ca6689faf.mp4
+
+
 
 ### Architect & Technologies
 ![programming platform](https://imgur.com/nxRloD8.jpg)
