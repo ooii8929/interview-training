@@ -87,9 +87,6 @@ Provides a mock interview environment that records the interviewee's performance
 ![test gif](https://imgur.com/LljUi6R.gif)
 
 
-https://user-images.githubusercontent.com/27533338/170911818-4557d1d6-5e87-472e-826b-422b341eb860.mp4
-
-
 ### Architect & Technologies
 ![programming platform](https://imgur.com/RfsF4Zb.jpg)
 
