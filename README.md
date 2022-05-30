@@ -100,7 +100,6 @@ You can learn online from experienced people here.
 Note
 
 1. The two sides of the call exchange IP through the server we provide.
-2. 
 
 
 ## Feature 4 : Interviewee Social Platform
