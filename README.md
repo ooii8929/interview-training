@@ -44,7 +44,7 @@ There are 3 main features: situational simulation, tutor matching platform and s
 ![](https://imgur.com/dk8Yvwu.jpg)
 
 ## Feature 1 : Online Programming Platform
-This feature supply an mock online coding area which you can mock you are ask question.   
+The purpose of this feature is to simulate a coding interview scenario.
     <br />
 ![test gif](https://imgur.com/I2hMPqU.gif)
 
@@ -77,12 +77,12 @@ This feature supply an mock online coding area which you can mock you are ask qu
 
 - The execution file is temporary and will be deleted automatically after the answer is returned.
 
-- Store answer to MongDB which can burden heavy write scenarios.
+- To handle write-heavy scenarios, store answers in MongoDB.
 
-- The system support support javescript and python language now.
+- The system supports javescript and python language now.
 
 ## Feature 2 : Online Mock Interview
-Provides a mock interview environment which record interviewee's performance and provides key points to interviewee to practice interviews.  
+Provides a mock interview environment that records the interviewee's performance and provides critical points for the interviewee to practice interviews.  
     <br />
 ![test gif](https://imgur.com/LljUi6R.gif)
 
@@ -90,12 +90,17 @@ Provides a mock interview environment which record interviewee's performance and
 ![programming platform](https://imgur.com/RfsF4Zb.jpg)
 
 ## Feature 3 : Online Tutor and Match Platform
-Interviewees can find experienced tutors here and takes online classes.  
+You can learn online from experienced people here.
     <br />
 ![](https://i.imgur.com/T52c3NX.gif)
 
 ### Architect & Technologies
 ![programming platform](https://imgur.com/nxRloD8.jpg)
+
+Note
+
+1. The two sides of the call exchange IP through the server we provide.
+2. 
 
 
 ## Feature 4 : Interviewee Social Platform
@@ -150,9 +155,10 @@ We provide a social platform where interviewers can ask interview-related questi
 
 ## Future Work
 
-- Use emotion AI to recommend related question in real time
-- Transform Docker into lambda to reduce server load
-
+- Use emotion AI to recommend related questions in real-time.
+- Transform Docker into lambda to reduce server load.
+- Implement Turn server in webRTC to increase connection stability.
+- 
 
 
 ## Author
