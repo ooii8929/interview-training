@@ -55,7 +55,7 @@ https://user-images.githubusercontent.com/27533338/170912947-8ed5d609-ceca-4a2f-
 
 ### Note
 - Use Docker to run the different languages.
-  - Deploy a python image and a JavaScript image.
+  - Deploy a Python image and a JavaScript image.
     ```
     cd server/util/code-training
     docker build -t python-image -f python-dockerfile .
@@ -81,7 +81,7 @@ https://user-images.githubusercontent.com/27533338/170912947-8ed5d609-ceca-4a2f-
 
 - To handle write-heavy scenarios, store answers in MongoDB.
 
-- The system supports javescript and python language now.
+- The system supports JaveScript and Python language now.
 
 ## Feature 2 : Online Mock Interview
 Provides a mock interview environment that records the interviewee's performance and provides critical points for the interviewee to practice interviews.  
@@ -167,7 +167,7 @@ We provide a social platform where interviewers can ask interview-related questi
 - Use emotion AI to recommend related questions in real-time.
 - Transform Docker into lambda to reduce server load.
 - Implement Turn server in webRTC to increase connection stability.
-- 
+
 
 
 ## Author
